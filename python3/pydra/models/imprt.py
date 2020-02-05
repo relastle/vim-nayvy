@@ -78,34 +78,21 @@ def find_target_line_num(level: int, lines: List[str]) -> int:
     '''
     if not (0 <= level and level <= 2):
         return -1
-    import_block_indices = get_import_block_indices(buf)
+    import_block_indices = get_import_block_indices(lines)
     if len(import_block_indices) >= level + 1:
         # このときは素直に行挿入すればよい
         return import_block_indices[level][1]
     elif len(import_block_indices) == 0:
         # ブロックがそもそもないときは
         # コメントを抜かした一番上にimportするのがよい
-        target_line = get_first_line_num(buf)
-        if len(buf) >= target_line + 1 and buf[target_line] != '':
-            buf[target_line:target_line] = ['']
+        target_line = get_first_line_num(lines)
+        if len(lines) >= target_line + 1 and lines[target_line] != '':
+            lines[target_line:target_line] = ['']
         return target_line
     else:
         # 所与のブロックは見つからなかったがいくらかはあるとき
         # 存在しているブロックに空行付け加えて
         # 対処するのがよい
         target_line = import_block_indices[-1][1]
-        buf[target_line:target_line] = ['']
+        lines[target_line:target_line] = ['']
         return target_line + 1
-
-
-def auto_import(sentence, level):
-    # すでにimportされているかチェックする
-    if already_exists(sentence, snip.buffer):
-        return
-    target_line = find_target_line_num(level, snip.buffer)
-
-    # どこにimport文を挿入するべきかわからなかった場合は何もしない
-    if target_line < 0:
-        return
-    snip.buffer[target_line:target_line] = [sentence]
-    return
