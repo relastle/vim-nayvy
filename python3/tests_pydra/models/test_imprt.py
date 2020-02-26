@@ -1,6 +1,5 @@
 import unittest
 from typing import List
-from pprint import pformat
 
 from pydra.models.imprt import ImportAsPart, ImportSentence
 

@@ -3,7 +3,6 @@ Module for manipulating import statements
 generally defiend in top of the script.
 '''
 import re
-import json
 from typing import List, Tuple, Optional
 
 
