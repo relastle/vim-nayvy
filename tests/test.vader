@@ -1,0 +1,9 @@
+Given python (unused import):
+  import os
+
+Execute:
+  !flake8 %
+
+Expect python (Incremented color code):
+  import os
+
