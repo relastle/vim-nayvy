@@ -2,7 +2,160 @@
 Module for manipulating import statements
 generally defiend in top of the script.
 '''
-from typing import List, Tuple
+import re
+import json
+from typing import List, Tuple, Optional
+
+
+class ImportAsPart:
+
+    IMPORT_AS_RE = r'(?P<import>[\w\.]+)( +as +(?P<as>[\w\.]+)){0,1}'
+
+    @property
+    def import_what(self) -> str:
+        return self._import_what
+
+    @property
+    def as_what(self) -> str:
+        return self._as_what
+
+    def __init__(self, import_what: str, as_what: str) -> None:
+        self._import_what = import_what
+        self._as_what = as_what
+        return
+
+    @classmethod
+    def of(cls, s: str) -> Optional['ImportAsPart']:
+        m = re.match(cls.IMPORT_AS_RE, s)
+        if m is None:
+            return None
+        import_what = m.group('import')
+        if import_what is None:
+            return None
+        as_what = m.group('as')
+        if as_what is None:
+            as_what = ''
+        return ImportAsPart(import_what, as_what)
+
+    def __repr__(self) -> str:
+        if self.as_what == '':
+            return self.import_what
+        else:
+            return '{} as {}'.format(
+                self.import_what,
+                self.as_what,
+            )
+
+
+class ImportSentence:
+
+    FROM_IMPORT_SENTENCE_RE = r'from +(?P<from>[\w\.]+) +import +(?P<other>.*)'
+
+    @property
+    def from_what(self) -> str:
+        return self._from_what
+
+    @property
+    def import_as_parts(self) -> List[ImportAsPart]:
+        return self._import_as_parts
+
+    def __init__(
+        self,
+        from_what: str,
+        import_as_parts: List[ImportAsPart],
+    ) -> None:
+        self._from_what = from_what
+        self._import_as_parts = import_as_parts
+        return
+
+    @classmethod
+    def of(cls, s: str) -> Optional['ImportSentence']:
+        s = s.replace('(', '').replace(')', '')
+        s = s.strip()
+        s = s.strip(',')
+        if s.startswith('import '):
+            import_as_part = ImportAsPart.of(s.replace('import ', ''))
+            if import_as_part is None:
+                return None
+            return ImportSentence(
+                '',
+                [import_as_part],
+            )
+        m = re.match(cls.FROM_IMPORT_SENTENCE_RE, s)
+        if m is None:
+            return None
+
+        from_what = m.group('from')
+        other = m.group('other')
+        import_as_parts = []
+        for elm in other.split(','):
+            import_as_part = ImportAsPart.of(elm.strip())
+            if import_as_part is None:
+                return None
+            import_as_parts.append(import_as_part)
+        return ImportSentence(
+            from_what,
+            import_as_parts,
+        )
+
+    @classmethod
+    def get_all_imprts(
+        cls,
+        lines: List[str],
+    ) -> Optional[List['ImportSentence']]:
+        import_sentence_lines = []
+        line_coutinuous = False
+        line_tmp = ''
+        excessive_open_paren = 0
+        for line in lines:
+            if (
+                not line_coutinuous and
+                not line.startswith('from') and
+                not line.startswith('import')
+            ):
+                # Skip irrelevant line
+                continue
+
+            line = line.strip()
+
+            # calculate parenthesis for line continuation
+            excessive_open_paren += line.count('(')
+            excessive_open_paren -= line.count(')')
+
+            if excessive_open_paren < 0:
+                # illegal
+                return None
+            elif excessive_open_paren == 0:
+                import_sentence_lines.append(
+                    line_tmp + line
+                )
+                line_coutinuous = False
+                line_tmp = ''
+            else:
+                line_coutinuous = True
+                line_tmp += line
+
+        # Construct return value
+        import_sentences = []
+        for line in import_sentence_lines:
+            import_sentence = ImportSentence.of(line)
+            if import_sentence is not None:
+                import_sentences.append(import_sentence)
+        return import_sentences
+
+    def __repr__(self) -> str:
+        if self.from_what == '':
+            return 'import {}'.format(
+                self.import_as_parts[0],
+            )
+        else:
+            return 'from {} import {}'.format(
+                self.from_what,
+                ', '.join([
+                    str(import_as_part)
+                    for import_as_part in self.import_as_parts
+                ]),
+            )
 
 
 def get_first_line_num(lines: List[str]) -> int:
