@@ -97,11 +97,51 @@ class ImportSentence:
             import_as_parts,
         )
 
+    def merge(self, import_sentence: 'ImportSentence') -> bool:
+        ''' merge import_sentence to self if possible
+        '''
+        if not self.from_what == import_sentence.from_what:
+            return False
+
+        self_import_as_part_strs = [
+            str(import_as_part)
+            for import_as_part in self.import_as_parts
+        ]
+
+        for import_as_part in import_sentence.import_as_parts:
+            if str(import_as_part) not in self_import_as_part_strs:
+                self.import_as_parts.append(import_as_part)
+        return True
+
+    @classmethod
+    def merge_list(
+        cls,
+        import_sentences: List['ImportSentence'],
+    ) -> List['ImportSentence']:
+        ''' Merge multiple import_sentences
+
+        if some ImportSentence objects share `from_what`,
+        they are merged correctly
+        '''
+        merged_import_sentences: List['ImportSentence'] = []
+        for import_sentence in import_sentences:
+            for merged in merged_import_sentences:
+                merge_success = merged.merge(import_sentence)
+                if merge_success:
+                    break
+            else:
+                merged_import_sentences.append(import_sentence)
+        return merged_import_sentences
+
     @classmethod
     def get_all_imprts(
         cls,
         lines: List[str],
     ) -> Optional[List['ImportSentence']]:
+        '''
+        Create list of `ImportSentence` List
+        from lines( real python code)
+        '''
         import_sentence_lines = []
         line_coutinuous = False
         line_tmp = ''

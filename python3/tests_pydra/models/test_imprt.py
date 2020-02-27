@@ -48,6 +48,58 @@ class TestImportSentence(unittest.TestCase):
         assert res.import_as_parts[0].import_what == 'Dict'
         assert res.import_as_parts[2].as_what == ''
 
+    def test_merge(self) -> None:
+        pass
+
+    def test_merge_list(self) -> None:
+        import_sentences = [
+            ImportSentence(
+                'hoge',
+                [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+                ]
+            ),
+            ImportSentence(
+                'fuga',
+                [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+                ]
+            ),
+            ImportSentence(
+                'hoge',
+                [
+                    ImportAsPart('CCC', 'c'),
+                    ImportAsPart('DDD', 'd'),
+                ]
+            ),
+        ]
+        actuals = ImportSentence.merge_list(import_sentences)
+        expecteds = [
+            ImportSentence(
+                'hoge',
+                [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+                    ImportAsPart('CCC', 'c'),
+                    ImportAsPart('DDD', 'd'),
+                ]
+            ),
+            ImportSentence(
+                'fuga',
+                [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+                ]
+            ),
+        ]
+        assert len(actuals) == len(expecteds)
+        assert all([
+            str(a) == str(e)
+            for a, e in zip(actuals, expecteds)
+        ]) is True
+
     def test_get_all_imprts(self) -> None:
         lines = [
             'import os',
