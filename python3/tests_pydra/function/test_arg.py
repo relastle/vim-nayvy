@@ -1,6 +1,6 @@
 import unittest
 
-from pydra.models.arg import Arg
+from pydra.function.arg import Arg
 
 
 class TestClass(unittest.TestCase):
