@@ -160,21 +160,23 @@ class ImportSentence:
     def get_removed_lst(
         cls,
         import_sentences: List['ImportSentence'],
-        name: str,
+        names: List[str],
     ) -> List['ImportSentence']:
         ''' Remove certain name import from import_sentences
         '''
-        return [
-            maybe for maybe in
-            (
-                import_sentence.removed(name)
-                for import_sentence in import_sentences
-            )
-            if maybe is not None
-        ]
+        for name in names:
+            import_sentences = [
+                maybe for maybe in
+                (
+                    import_sentence.removed(name)
+                    for import_sentence in import_sentences
+                )
+                if maybe is not None
+            ]
+        return import_sentences
 
     @classmethod
-    def get_all_imprts(
+    def of_lines(
         cls,
         lines: List[str],
     ) -> Optional[List['ImportSentence']]:

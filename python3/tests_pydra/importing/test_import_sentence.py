@@ -164,7 +164,7 @@ class TestImportSentence(unittest.TestCase):
             for a, e in zip(actuals, expecteds)
         ]) is True
 
-    def test_get_all_imprts(self) -> None:
+    def test_of_lines(self) -> None:
         lines = [
             'import os',
             'import sys',
@@ -179,7 +179,7 @@ class TestImportSentence(unittest.TestCase):
             '',
             'import tensorflow as tf',
         ]
-        actuals = ImportSentence.get_all_imprts(lines)
+        actuals = ImportSentence.of_lines(lines)
         expecteds: List[ImportSentence] = [
             ImportSentence(
                 '',
