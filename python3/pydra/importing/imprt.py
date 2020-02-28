@@ -2,8 +2,9 @@
 Module for manipulating import statements
 generally defiend in top of the script.
 '''
+import json
 import re
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 
 
 class ImportAsPart:
@@ -17,6 +18,13 @@ class ImportAsPart:
     @property
     def as_what(self) -> str:
         return self._as_what
+
+    @property
+    def name(self) -> str:
+        if self._as_what == '':
+            return self.import_what
+        else:
+            return self._as_what
 
     def __init__(self, import_what: str, as_what: str) -> None:
         self._import_what = import_what
@@ -113,6 +121,26 @@ class ImportSentence:
                 self.import_as_parts.append(import_as_part)
         return True
 
+    def removed(self, name: str) -> Optional['ImportSentence']:
+        if self.from_what == '':
+            if self._import_as_parts[0].name == name:
+                return None
+            else:
+                return ImportSentence(
+                    self.from_what,
+                    self.import_as_parts,
+                )
+        res_import_as_parts = []
+        for import_as_part in self.import_as_parts:
+            if not import_as_part.name == name:
+                res_import_as_parts.append(import_as_part)
+        if not res_import_as_parts:
+            return None
+        return ImportSentence(
+            self.from_what,
+            res_import_as_parts,
+        )
+
     @classmethod
     def merge_list(
         cls,
@@ -132,6 +160,23 @@ class ImportSentence:
             else:
                 merged_import_sentences.append(import_sentence)
         return merged_import_sentences
+
+    @classmethod
+    def get_removed_lst(
+        cls,
+        import_sentences: List['ImportSentence'],
+        name: str,
+    ) -> List['ImportSentence']:
+        ''' Remove certain name import from import_sentences
+        '''
+        return [
+            maybe for maybe in
+            (
+                import_sentence.removed(name)
+                for import_sentence in import_sentences
+            )
+            if maybe is not None
+        ]
 
     @classmethod
     def get_all_imprts(
@@ -195,6 +240,30 @@ class ImportSentence:
                     for import_as_part in self.import_as_parts
                 ]),
             )
+
+
+class ImportConfig:
+
+    @property
+    def import_d(self) -> Dict[str, ImportSentence]:
+        return self._import_d
+
+    def __init__(self, import_d:  Dict[str, ImportSentence]) -> None:
+        self._import_d = import_d
+        return
+
+    @classmethod
+    def of_jsonfile(cls, json_path: str) -> Optional['ImportConfig']:
+        with open(json_path) as json_f:
+            json_d = json.load(json_f)
+        if 'import' not in json_d:
+            return None
+        import_d: Dict[str, ImportSentence] = {}
+        for k, v in json_d.items():
+            import_sentence = ImportSentence.of(v)
+            if import_sentence is not None:
+                import_d[k] = import_sentence
+        return ImportConfig(import_d)
 
 
 def get_first_line_num(lines: List[str]) -> int:

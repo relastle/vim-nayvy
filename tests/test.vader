@@ -1,9 +1,14 @@
 Given python (unused import):
   import os
+  a = 10
+  pp(a)
 
 Execute:
   !flake8 %
 
 Expect python (Incremented color code):
-  import os
+  from pprint import pprint as pp
+  a = 10
+  pp(a)
+
 

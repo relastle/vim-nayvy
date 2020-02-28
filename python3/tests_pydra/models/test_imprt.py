@@ -49,7 +49,68 @@ class TestImportSentence(unittest.TestCase):
         assert res.import_as_parts[2].as_what == ''
 
     def test_merge(self) -> None:
-        pass
+        # merge if from_what is the same
+        import_sentence = ImportSentence(
+            'hoge',
+            [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+            ],
+        )
+        target = ImportSentence(
+            'hoge',
+            [
+                ImportAsPart('BBB', 'b'),
+                ImportAsPart('CCC', 'c'),
+            ]
+        )
+        import_sentence.merge(target)
+        assert len(import_sentence.import_as_parts) == 3
+
+        # not merge if from_what is not the same
+        import_sentence = ImportSentence(
+            'hoge',
+            [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+            ],
+        )
+        target = ImportSentence(
+            'fuga',
+            [
+                ImportAsPart('BBB', 'b'),
+                ImportAsPart('CCC', 'c'),
+            ]
+        )
+        import_sentence.merge(target)
+        assert len(import_sentence.import_as_parts) == 2
+
+    def test_removed(self) -> None:
+        import_sentence = ImportSentence(
+            'hoge',
+            [
+                    ImportAsPart('AAA', 'a'),
+                    ImportAsPart('BBB', 'b'),
+                    ImportAsPart('c', ''),
+            ],
+        )
+
+        # remove as-imported name
+        removed = import_sentence.removed('a')
+        assert removed is not None
+
+        # remove no-as-import name
+        removed = removed.removed('c')
+        assert removed is not None
+
+        # assert that one import is remained
+        assert len(removed.import_as_parts) == 1
+        assert removed.import_as_parts[0].name == 'b'
+
+        # remove the last one
+        removed = removed.removed('b')
+        assert removed is None
+        return
 
     def test_merge_list(self) -> None:
         import_sentences = [
