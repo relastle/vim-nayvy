@@ -16,10 +16,24 @@ class ImportAsPart:
 
     @property
     def name(self) -> str:
+        ''' name that can be referred in python code
+
+        import subprocess as sp  --> 'sp'
+        import tensorflow        --> 'tensorflow'
+        '''
         if self._as_what == '':
             return self.import_what
         else:
             return self._as_what
+
+    @property
+    def import_name(self) -> str:
+        ''' import name that can be referred by flake8
+
+        import subprocess as sp   --> 'subprocess as sp'
+        from numpy import ndarray --> 'ndarray'
+        '''
+        return str(self)
 
     def __init__(self, import_what: str, as_what: str) -> None:
         self._import_what = import_what
@@ -116,9 +130,9 @@ class ImportSentence:
                 self.import_as_parts.append(import_as_part)
         return True
 
-    def removed(self, name: str) -> Optional['ImportSentence']:
+    def removed(self, import_name: str) -> Optional['ImportSentence']:
         if self.from_what == '':
-            if self._import_as_parts[0].name == name:
+            if self._import_as_parts[0].import_name == import_name:
                 return None
             else:
                 return ImportSentence(
@@ -127,7 +141,10 @@ class ImportSentence:
                 )
         res_import_as_parts = []
         for import_as_part in self.import_as_parts:
-            if not import_as_part.name == name:
+            if not '{}.{}'.format(
+                self.from_what,
+                import_as_part.import_name
+            ) == import_name:
                 res_import_as_parts.append(import_as_part)
         if not res_import_as_parts:
             return None
@@ -160,11 +177,11 @@ class ImportSentence:
     def get_removed_lst(
         cls,
         import_sentences: List['ImportSentence'],
-        names: List[str],
+        import_names: List[str],
     ) -> List['ImportSentence']:
         ''' Remove certain name import from import_sentences
         '''
-        for name in names:
+        for name in import_names:
             import_sentences = [
                 maybe for maybe in
                 (

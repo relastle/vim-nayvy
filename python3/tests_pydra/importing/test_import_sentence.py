@@ -99,11 +99,11 @@ class TestImportSentence(unittest.TestCase):
         )
 
         # remove as-imported name
-        removed = import_sentence.removed('a')
+        removed = import_sentence.removed('hoge.AAA as a')
         assert removed is not None
 
         # remove no-as-import name
-        removed = removed.removed('c')
+        removed = removed.removed('hoge.c')
         assert removed is not None
 
         # assert that one import is remained
@@ -111,7 +111,7 @@ class TestImportSentence(unittest.TestCase):
         assert removed.import_as_parts[0].name == 'b'
 
         # remove the last one
-        removed = removed.removed('b')
+        removed = removed.removed('hoge.BBB as b')
         assert removed is None
         return
 

@@ -1,13 +1,33 @@
 import unittest
 
-from pydra.importing.fixer import Fixer
-from pydra.importing.import_config import (
-    ImportConfig,
-    SingleImport,
-)
+from pydra.importing.fixer import Fixer, Flake8Result
+from pydra.importing.import_config import ImportConfig, SingleImport
 
 
-class TestClass(unittest.TestCase):
+class TestFlake8Result(unittest.TestCase):
+
+    def test_of_line(self) -> None:
+        # init of F401
+        res = Flake8Result.of_line(
+            "tmp.py:1:1: F401 'pprint.pprint as pp' imported but unused"
+        )
+        assert res is not None
+        assert res.error_msg == "'pprint.pprint as pp' imported but unused"
+        assert res.get_unused_import() == 'pprint.pprint as pp'
+        assert res.get_undefined_name() is None
+
+        # init of 821
+        res = Flake8Result.of_line(
+            "tmp.py:4:1: F821 undefined name 'sp'"
+        )
+        assert res is not None
+        assert res.error_msg == "undefined name 'sp'"
+        assert res.get_unused_import() is None
+        assert res.get_undefined_name() == 'sp'
+        return
+
+
+class TestFixer(unittest.TestCase):
 
     def test_fix_lines(self) -> None:
         config = ImportConfig(
@@ -36,7 +56,7 @@ class TestClass(unittest.TestCase):
             target_lines,
             [
                 'sys',
-                'pd',
+                'pandas as pd',
             ],
             [
                 'pp',
