@@ -37,10 +37,18 @@ class TestFixer(unittest.TestCase):
                     'from pprint import pprint as pp',
                     0,
                 ),
+                'np': SingleImport(
+                    'np',
+                    'import numpy as np',
+                    1,
+                ),
             },
         )
         fixer = Fixer(config)
+
+        # There are three import blocks
         target_lines = [
+            '#!/usr/bin/env python3',
             'import os',
             'import sys',
             '',
@@ -50,7 +58,7 @@ class TestFixer(unittest.TestCase):
             'from .hoge import hoge',
             '',
             '',
-            'print("Hello world!")'
+            'print("Hello, world!")'
         ]
         fixed_lines = fixer.fix_lines(
             target_lines,
@@ -63,6 +71,7 @@ class TestFixer(unittest.TestCase):
             ],
         )
         expected_lines = [
+            '#!/usr/bin/env python3',
             'import os',
             'from pprint import pprint as pp',
             '',
@@ -71,7 +80,52 @@ class TestFixer(unittest.TestCase):
             'from .hoge import hoge',
             '',
             '',
-            'print("Hello world!")'
+            'print("Hello, world!")'
         ]
         assert fixed_lines == expected_lines
+
+        # There are NO imports
+        target_lines = [
+            '#!/usr/bin/env python3',
+            'pp("Hello, world!")',
+        ]
+        fixed_lines = fixer.fix_lines(
+            target_lines,
+            [],
+            [
+                'pp',
+            ],
+        )
+        expected_lines = [
+            '#!/usr/bin/env python3',
+            'from pprint import pprint as pp',
+            'pp("Hello, world!")'
+        ]
+        assert fixed_lines == expected_lines
+
+        # There are already import block
+        target_lines = [
+            '#!/usr/bin/env python3',
+            'from pprint import pprint as pp',
+            '',
+            '',
+            'pp("Hello, world!")',
+            'a = np.ndarray([1, 2])',
+        ]
+        fixed_lines = fixer.fix_lines(
+            target_lines,
+            [],
+            [
+                'np',
+            ],
+        )
+        expected_lines = [
+            '#!/usr/bin/env python3',
+            'from pprint import pprint as pp',
+            '',
+            'import numpy as np',
+            '',
+            '',
+            'pp("Hello, world!")'
+        ]
         return
