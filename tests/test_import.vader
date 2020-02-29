@@ -98,18 +98,19 @@ Given python (Three blocks import):
 Execute:
   PydraImports
 
-Expect python (Nothing happned):
+Expect python (All are imported correctly):
   #!/usr/bin/env python3
   '''
   There three undefined names and each is defined
   in different blocks respectively
   '''
-  from typing import List
   from pprint import pprint as pp
+  from typing import List
 
   import numpy as np
 
   from .hoge import HogeHogeHoge as hoge
+
 
   pp(List)
   print(np.ndarray)
