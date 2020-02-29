@@ -223,3 +223,16 @@ class TestImportSentence(unittest.TestCase):
             for a, e in zip(actuals, expecteds)
         ]) is True
         return
+
+    def test_repr(self) -> None:
+        import_sentence = ImportSentence(
+            'hoge',
+            [
+                ImportAsPart('Hoge', 'hoge'),
+                ImportAsPart('Fuga', 'fuga'),
+            ],
+        )
+        assert (
+            str(import_sentence) ==
+            'from hoge import Fuga as fuga, Hoge as hoge'
+        )
