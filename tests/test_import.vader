@@ -115,3 +115,33 @@ Expect python (All are imported correctly):
   pp(List)
   print(np.ndarray)
   print(hoge())
+
+===============================================================================
+
+Given python (Commented import):
+  #!/usr/bin/env python3
+  '''
+  There is commented (used) import and undefined name.
+  Commented import should be as it is.
+  '''
+  import os  # Some comment fot an import
+
+
+  os.getenv('HOME', '')
+  sys.exit(1)
+
+Execute:
+  PydraImports
+
+Expect python (All are imported correctly):
+  #!/usr/bin/env python3
+  '''
+  There is commented (used) import and undefined name.
+  Commented import should be as it is.
+  '''
+  import os  # Some comment fot an import
+  import sys
+
+
+  os.getenv('HOME', '')
+  sys.exit(1)
