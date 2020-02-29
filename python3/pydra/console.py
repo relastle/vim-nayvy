@@ -1,5 +1,4 @@
 import argparse
-import os
 import sys
 
 from .importing.fixer import Fixer
@@ -13,10 +12,7 @@ def run() -> None:
     parser.add_argument('file_path', type=str)
     args = parser.parse_args()
     # load config
-    config = ImportConfig.of_jsonfile(
-        os.environ['HOME'] +
-        '/.config/pydra/config.json'
-    )
+    config = ImportConfig.init()
     if config is None:
         print('cannot load pydra config file', file=sys.stderr)
         sys.exit(1)

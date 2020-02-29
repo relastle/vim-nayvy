@@ -1,4 +1,3 @@
-import os
 import sys
 
 import vim  # noqa
@@ -14,10 +13,7 @@ from pydra.importing.import_config import (
 
 
 def pydra_import() -> None:
-    config = ImportConfig.of_jsonfile(
-        os.environ['HOME'] +
-        '/.config/pydra/config.json'
-    )
+    config = ImportConfig.init()
     if config is None:
         print('cannot load pydra config file', file=sys.stderr)
         sys.exit(1)

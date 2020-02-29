@@ -1,5 +1,8 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
+import os
 import json
+
+from .import_sentence import ImportSentence
 
 
 class SingleImport:
@@ -42,7 +45,55 @@ class ImportConfig:
         return
 
     @classmethod
-    def of_jsonfile(cls, json_path: str) -> Optional['ImportConfig']:
+    def init(cls) -> Optional['ImportConfig']:
+        xdg_root = os.getenv(
+            'XDG_CONFIG_HOME',
+            '{}/.config'.format(
+                os.environ['HOME']
+            )
+        )
+        pydra_import_config_path = '{}/pydra/import_config.py'.format(
+            xdg_root,
+        )
+        return cls._of_config_py(pydra_import_config_path)
+
+    @classmethod
+    def _of_config_py(cls, config_path: str) -> Optional['ImportConfig']:
+        if not os.path.exists(config_path):
+            return None
+
+        blocks: List[List[str]] = []
+        tmp_block: List[str] = []
+        with open(config_path) as f:
+            for line in f:
+                if line.strip() == '':
+                    blocks.append(tmp_block)
+                    tmp_block = []
+                else:
+                    tmp_block.append(line.strip())
+            if tmp_block:
+                blocks.append(tmp_block)
+
+        import_d: Dict[str, SingleImport] = {}
+        for block_i, block in enumerate(blocks):
+            import_sentences = ImportSentence.of_lines(block)
+            if import_sentences is None:
+                return None
+            for import_sentence in import_sentences:
+                for import_as_part in import_sentence.import_as_parts:
+                    single_import = SingleImport(
+                        import_as_part.name,
+                        import_sentence.get_single_sentence(
+                            import_as_part,
+                        ),
+                        block_i,
+                    )
+                    import_d[single_import.name] = single_import
+        return ImportConfig(import_d)
+
+    @classmethod
+    def _of_jsonfile(cls, json_path: str) -> Optional['ImportConfig']:
+        ''' DEPREDATED!! use `_of_config_py` instead'''
         with open(json_path) as json_f:
             json_d = json.load(json_f)
         if 'auto_import' not in json_d:

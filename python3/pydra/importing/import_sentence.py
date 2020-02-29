@@ -28,7 +28,8 @@ class ImportAsPart:
 
     @property
     def import_name(self) -> str:
-        ''' import name that can be referred by flake8
+        ''' import name that can be referred by linter
+        when it is unused in source code.
 
         import subprocess as sp   --> 'subprocess as sp'
         from numpy import ndarray --> 'ndarray'
@@ -153,6 +154,34 @@ class ImportSentence:
             res_import_as_parts,
         )
 
+    def get_single_sentence(
+        self,
+        import_as_part: ImportAsPart,
+    ) -> str:
+        if self.from_what == '':
+            return 'import {}'.format(
+                self.import_as_parts[0],
+            )
+        else:
+            return 'from {} import {}'.format(
+                self.from_what,
+                str(import_as_part)
+            )
+
+    def __repr__(self) -> str:
+        if self.from_what == '':
+            return 'import {}'.format(
+                self.import_as_parts[0],
+            )
+        else:
+            return 'from {} import {}'.format(
+                self.from_what,
+                ', '.join([
+                    str(import_as_part)
+                    for import_as_part in self.import_as_parts
+                ]),
+            )
+
     @classmethod
     def merge_list(
         cls,
@@ -240,17 +269,3 @@ class ImportSentence:
             if import_sentence is not None:
                 import_sentences.append(import_sentence)
         return import_sentences
-
-    def __repr__(self) -> str:
-        if self.from_what == '':
-            return 'import {}'.format(
-                self.import_as_parts[0],
-            )
-        else:
-            return 'from {} import {}'.format(
-                self.from_what,
-                ', '.join([
-                    str(import_as_part)
-                    for import_as_part in self.import_as_parts
-                ]),
-            )
