@@ -5,6 +5,7 @@ Fix the python lines of code dependent on flake8 result
 import re
 from typing import List, Optional, Tuple
 import subprocess as sp
+from pprint import pformat
 
 from .utils import get_import_block_indices
 from .import_config import ImportConfig
@@ -13,7 +14,7 @@ from .import_sentence import ImportSentence
 
 class Flake8Result:
 
-    FLAKE8_LINE_RE = r'(?P<filepath>[\w\.]+):(?P<row>\d+):(?P<column>\d+): (?P<error_code>\w+) (?P<error_msg>.*$)'  # noqa
+    FLAKE8_LINE_RE = r'(?P<filepath>[^:]+):(?P<row>\d+):(?P<column>\d+): (?P<error_code>\w+) (?P<error_msg>.*)'  # noqa
     FLAKE8_F401_MSG_RE = r"'(?P<target>.*)' imported but unused"
     FLAKE8_F821_MSG_RE = r"undefined name '(?P<target>.*)'"
 
@@ -133,6 +134,10 @@ class Fixer:
     ) -> List[str]:
         begin_end_indices = get_import_block_indices(lines)
 
+        # check block size
+        if not begin_end_indices:
+            return lines
+
         # get import_sentences for each block
         maybe_import_sentences_lst = [
             ImportSentence.of_lines(lines[begin_index:end_index])
@@ -194,7 +199,7 @@ class Fixer:
 
         # Fix line of codes
         with open(file_path) as f:
-            lines = f.readlines()
+            lines = [line.strip() for line in f.readlines()]
 
         fixed_lines = self.fix_lines(
             lines,
