@@ -1,4 +1,6 @@
-Given python (unused import):
+===============================================================================
+
+Given python (an unused import and an undefined name):
   #!/usr/bin/env python3
   '''
   There are unused import and undefined name
@@ -12,7 +14,7 @@ Given python (unused import):
 Execute:
   PydraImports
 
-Expect python (Incremented color code):
+Expect python (Remove unused and add undefined):
   #!/usr/bin/env python3
   '''
   There are unused import and undefined name
@@ -23,4 +25,37 @@ Expect python (Incremented color code):
   a = 10
   pp(a)
 
+===============================================================================
+
+Given python (Duplicated undefined name):
+  #!/usr/bin/env python3
+  '''
+  There are two undefined name (which are the same)
+  '''
+
+
+  def hoge(bar: str) -> List[str]:
+      pass
+
+
+  def fuga(bar: str) -> List[str]:
+      pass
+
+Execute:
+  PydraImports
+
+Expect python (Single import is added):
+  #!/usr/bin/env python3
+  '''
+  There are two undefined name (which are the same)
+  '''
+  import List
+
+
+  def hoge(bar: str) -> List[str]:
+      pass
+
+
+  def fuga(bar: str) -> List[str]:
+      pass
 
