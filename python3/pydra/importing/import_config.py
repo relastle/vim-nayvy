@@ -52,7 +52,7 @@ class ImportConfig:
                 os.environ['HOME']
             )
         )
-        pydra_import_config_path = '{}/pydra/import_config.py'.format(
+        pydra_import_config_path = '{}/pydra/import_config.pydra'.format(
             xdg_root,
         )
         return cls._of_config_py(pydra_import_config_path)
