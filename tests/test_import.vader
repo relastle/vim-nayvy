@@ -34,11 +34,11 @@ Given python (Duplicated undefined name):
   '''
 
 
-  def hoge(bar: str) -> List[str]:
+  def hoge(bar: str) -> Optional[List[str]]:
       pass
 
 
-  def fuga(bar: str) -> List[str]:
+  def fuga(bar: str) -> Optional[List[str]]:
       pass
 
 Execute:
@@ -49,13 +49,34 @@ Expect python (Single import is added):
   '''
   There are two undefined name (which are the same)
   '''
-  import List
+  from typing import List, Optional
 
 
-  def hoge(bar: str) -> List[str]:
+  def hoge(bar: str) -> Optional[List[str]]:
       pass
 
 
-  def fuga(bar: str) -> List[str]:
+  def fuga(bar: str) -> Optional[List[str]]:
       pass
 
+
+===============================================================================
+
+Given python (Non-configured import):
+  #!/usr/bin/env python3
+  '''
+  There is an undefined name, which is not configured
+  '''
+
+  print(np)
+
+Execute:
+  PydraImports
+
+Expect python (Nothing happned):
+  #!/usr/bin/env python3
+  '''
+  There is an undefined name, which is not configured
+  '''
+
+  print(np)
