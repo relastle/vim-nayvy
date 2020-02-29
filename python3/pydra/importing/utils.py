@@ -22,7 +22,7 @@ def get_first_line_num(lines: List[str]) -> int:
                 return i
     except Exception:
         return 0
-    return i
+    return i + 1
 
 
 def already_exists(sentence: str, lines: List[str]) -> bool:
