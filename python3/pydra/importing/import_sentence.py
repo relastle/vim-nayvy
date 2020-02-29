@@ -178,7 +178,10 @@ class ImportSentence:
                 self.from_what,
                 ', '.join([
                     str(import_as_part)
-                    for import_as_part in self.import_as_parts
+                    for import_as_part in sorted(
+                        self.import_as_parts,
+                        key=lambda x: x.name
+                    )
                 ]),
             )
 
