@@ -2,7 +2,8 @@
 test:
 	flake8 .
 	mypy --ignore-missing-imports --follow-imports=skip --strict-optional --disallow-untyped-defs --disallow-untyped-calls .
-	python3 -m pytest -vv
+	coverage run --source=. -m pytest -vv
+	coverage report -m
 
 .PHONY: clean
 clean:
