@@ -51,6 +51,11 @@ class Fixer:
         unused_imports: List[str],
         undefined_names: List[str],
     ) -> List[str]:
+        # remove duplicate entries
+        unused_imports = list(set(unused_imports))
+        undefined_names = list(set(undefined_names))
+
+        # get import blocks
         begin_end_indices = get_import_block_indices(lines)
 
         # get import_sentences for each block
