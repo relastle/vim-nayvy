@@ -23,6 +23,16 @@ class TestFixer(unittest.TestCase):
     def test_fix_lines(self) -> None:
         config = ImportConfig(
             {
+                'List': SingleImport(
+                    'List',
+                    'from typing import List',
+                    0,
+                ),
+                'Dict': SingleImport(
+                    'Dict',
+                    'from typing import Dict',
+                    0,
+                ),
                 'pp': SingleImport(
                     'pp',
                     'from pprint import pprint as pp',
@@ -123,6 +133,29 @@ class TestFixer(unittest.TestCase):
             'import numpy as np',
             '',
             '',
-            'pp("Hello, world!")'
+            'pp("Hello, world!")',
+            'a = np.ndarray([1, 2])',
         ]
+        assert fixed_lines == expected_lines
+
+        # -------------------------------------
+        # There are two import which belong to the same `from`
+        # -------------------------------------
+        target_lines = [
+            '#!/usr/bin/env python3',
+        ]
+        fixed_lines = fixer._fix_lines(
+            target_lines,
+            [],
+            [
+                'List',
+                'Dict',
+            ],
+        )
+        expected_lines = [
+            '#!/usr/bin/env python3',
+            'from typing import List, Dict',
+        ]
+        assert fixed_lines == expected_lines
+
         return
