@@ -13,6 +13,11 @@ from pydra.importing.import_config import (
 
 
 def pydra_import() -> None:
+    '''
+    Automatically
+    - import for undefined names
+    - remove unused imports
+    '''
     config = ImportConfig.init()
     if config is None:
         print('cannot load pydra config file', file=sys.stderr)
