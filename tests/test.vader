@@ -1,13 +1,25 @@
 Given python (unused import):
+  #!/usr/bin/env python3
+  '''
+  There are unused import and undefined name
+  '''
   import os
+
+
   a = 10
   pp(a)
 
 Execute:
-  !flake8 %
+  PydraImports
 
 Expect python (Incremented color code):
+  #!/usr/bin/env python3
+  '''
+  There are unused import and undefined name
+  '''
   from pprint import pprint as pp
+
+
   a = 10
   pp(a)
 
