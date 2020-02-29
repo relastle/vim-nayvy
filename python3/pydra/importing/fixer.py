@@ -119,10 +119,10 @@ class Fixer:
             res_lines += lines[:begin_end_indices[0][0]]
 
         # add organized import blocks
-        for i, removed_import_sentences in enumerate(
+        for i, merged_import_sentence in enumerate(
             merged_import_sentences
         ):
-            for import_sentence in removed_import_sentences:
+            for import_sentence in merged_import_sentence:
                 res_lines.append(str(import_sentence))
             if i < len(merged_import_sentences) - 1:
                 res_lines.append('')
