@@ -3,10 +3,10 @@ import sys
 
 import vim
 
-from pydra.importing.fixer import (
+from .pydra.importing.fixer import (
     Fixer,
 )
-from pydra.importing.import_config import (
+from .pydra.importing.import_config import (
     ImportConfig,
 )
 
