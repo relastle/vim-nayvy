@@ -5,10 +5,12 @@ Fix the python lines of code dependent on flake8 result
 import re
 from typing import List, Optional, Tuple
 import subprocess as sp
-from pprint import pformat
 
-from .utils import get_import_block_indices
-from .import_config import ImportConfig
+from .utils import (
+    get_import_block_indices,
+    get_first_line_num,
+)
+from .import_config import ImportConfig, SingleImport
 from .import_sentence import ImportSentence
 
 
@@ -134,10 +136,6 @@ class Fixer:
     ) -> List[str]:
         begin_end_indices = get_import_block_indices(lines)
 
-        # check block size
-        if not begin_end_indices:
-            return lines
-
         # get import_sentences for each block
         maybe_import_sentences_lst = [
             ImportSentence.of_lines(lines[begin_index:end_index])
@@ -155,22 +153,44 @@ class Fixer:
             for import_sentences in import_sentences_lst
         ]
 
-        # add not defined names
+        # Constructing not-None single import list
+        imports_to_add: List[SingleImport] = []
         for undefined_name in undefined_names:
-            single_import = self.config.import_d.get(undefined_name, None)
+            single_import = self.config.import_d.get(
+                undefined_name,
+                None,
+            )
             if single_import is None:
                 continue
-            added_import_sentence = ImportSentence.of(single_import.sentence)
-            if added_import_sentence is None:
-                return lines
-            removed_import_sentences_lst[single_import.level].append(
-                added_import_sentence
-            )
+            imports_to_add.append(single_import)
+
+        # sort by import block level
+        imports_to_add = sorted(imports_to_add, key=lambda x: x.level)
+
+        # constructing import import sentences
+        for import_to_add in imports_to_add:
+            import_sentence_to_add = ImportSentence.of(import_to_add.sentence)
+            if import_sentence_to_add is None:
+                continue
+            if len(removed_import_sentences_lst) <= import_to_add.level:
+                removed_import_sentences_lst.append([import_sentence_to_add])
+            else:
+                removed_import_sentences_lst[import_to_add.level].append(
+                    import_sentence_to_add
+                )
 
         # constructing resulting lines
         res_lines: List[str] = []
 
-        res_lines += lines[:begin_end_indices[0][0]]
+        fitst_line_num = get_first_line_num(lines)
+
+        # add lines before import as it is
+        if not begin_end_indices:
+            res_lines += lines[:fitst_line_num]
+        else:
+            res_lines += lines[:begin_end_indices[0][0]]
+
+        # add organized import blocks
         for i, removed_import_sentences in enumerate(
             removed_import_sentences_lst
         ):
@@ -178,7 +198,12 @@ class Fixer:
                 res_lines.append(str(import_sentence))
             if i < len(removed_import_sentences_lst) - 1:
                 res_lines.append('')
-        res_lines += lines[begin_end_indices[-1][1]:]
+
+        # add lines after import as it is
+        if not begin_end_indices:
+            res_lines += lines[fitst_line_num:]
+        else:
+            res_lines += lines[begin_end_indices[-1][1]:]
         return res_lines
 
     def print_fixed_content(self, file_path: str) -> None:
