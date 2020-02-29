@@ -92,6 +92,7 @@ class TestFixer(unittest.TestCase):
         # -------------------------------------
         target_lines = [
             '#!/usr/bin/env python3',
+            '',
             'pp("Hello, world!")',
         ]
         fixed_lines = fixer._fix_lines(
@@ -104,6 +105,7 @@ class TestFixer(unittest.TestCase):
         expected_lines = [
             '#!/usr/bin/env python3',
             'from pprint import pprint as pp',
+            '',
             'pp("Hello, world!")'
         ]
         assert fixed_lines == expected_lines
@@ -154,7 +156,7 @@ class TestFixer(unittest.TestCase):
         )
         expected_lines = [
             '#!/usr/bin/env python3',
-            'from typing import List, Dict',
+            'from typing import Dict, List',
         ]
         assert fixed_lines == expected_lines
 
