@@ -68,7 +68,7 @@ Given python (Non-configured import):
   There is an undefined name, which is not configured
   '''
 
-  print(np)
+  print(unconfigured_name)
 
 Execute:
   PydraImports
@@ -79,4 +79,38 @@ Expect python (Nothing happned):
   There is an undefined name, which is not configured
   '''
 
-  print(np)
+  print(unconfigured_name)
+
+===============================================================================
+
+Given python (Three blocks import):
+  #!/usr/bin/env python3
+  '''
+  There three undefined names and each is defined
+  in different blocks respectively
+  '''
+
+
+  pp(List)
+  print(np.ndarray)
+  print(hoge())
+
+Execute:
+  PydraImports
+
+Expect python (Nothing happned):
+  #!/usr/bin/env python3
+  '''
+  There three undefined names and each is defined
+  in different blocks respectively
+  '''
+  from typing import List
+  from pprint import pprint as pp
+
+  import numpy as np
+
+  from .hoge import HogeHogeHoge as hoge
+
+  pp(List)
+  print(np.ndarray)
+  print(hoge())
