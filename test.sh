@@ -3,7 +3,7 @@ if [[ ! -e ./vader.vim ]]; then
     git clone https://github.com/junegunn/vader.vim
 fi
 
-export XDG_CONFIG_HOME="$(pwd)/configs/pydra"
+export XDG_CONFIG_HOME="$(pwd)/configs"
 
 nvim -Es -u <(cat << EOF
 filetype off
