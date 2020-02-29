@@ -101,6 +101,12 @@ class Fixer:
                     import_sentence_to_add
                 )
 
+        # Merget the imports
+        merged_import_sentences = [
+            ImportSentence.merge_list(removed_import_sentences)
+            for removed_import_sentences in removed_import_sentences_lst
+        ]
+
         # constructing resulting lines
         res_lines: List[str] = []
 
@@ -114,11 +120,11 @@ class Fixer:
 
         # add organized import blocks
         for i, removed_import_sentences in enumerate(
-            removed_import_sentences_lst
+            merged_import_sentences
         ):
             for import_sentence in removed_import_sentences:
                 res_lines.append(str(import_sentence))
-            if i < len(removed_import_sentences_lst) - 1:
+            if i < len(merged_import_sentences) - 1:
                 res_lines.append('')
 
         # add lines after import as it is
