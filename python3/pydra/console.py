@@ -20,5 +20,5 @@ def run() -> None:
         print('cannot load pydra config file', file=sys.stderr)
         sys.exit(1)
     fixer = Fixer(config)
-    fixer.print_fixed_content(args.file_path)
+    fixer.print_fixed_content_with_flake8(args.file_path)
     return

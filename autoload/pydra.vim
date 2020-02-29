@@ -5,11 +5,9 @@
 
 " Also import vim as we expect it to be imported in many places.
 py3 import vim
-py3 from pydra.models.imprt import ImportSentence
-py3 from pydra.pydra_vim import test_function
+py3 from pydra_vim import pydra_import
 
 
 function! pydra#imports() abort
-  let l:res = py3eval('test_function()')
-  echom 'l:res: ' . string(l:res)
+  py3 pydra_import()
 endfunction

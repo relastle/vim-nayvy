@@ -3,13 +3,10 @@ Fix the python lines of code dependent on flake8 result
 '''
 
 import re
-from typing import List, Optional, Tuple
 import subprocess as sp
+from typing import List, Tuple, Optional
 
-from .utils import (
-    get_import_block_indices,
-    get_first_line_num,
-)
+from .utils import get_first_line_num, get_import_block_indices
 from .import_config import ImportConfig, SingleImport
 from .import_sentence import ImportSentence
 
@@ -206,7 +203,31 @@ class Fixer:
             res_lines += lines[begin_end_indices[-1][1]:]
         return res_lines
 
-    def print_fixed_content(self, file_path: str) -> None:
+    def fix_lines_with_flake8(self, lines: List[str]) -> List[str]:
+        flake8_job = sp.run(
+            'flake8 -',
+            shell=True,
+            input='\n'.join(lines).encode('utf-8'),
+            stdout=sp.PIPE,
+            stderr=sp.DEVNULL,
+        )
+
+        # Extract result
+        flake8_output = flake8_job.stdout.decode('utf-8')
+
+        # Parse output
+        unused_imports, undefined_names = self.parse_flake8_output(
+            flake8_output,
+        )
+
+        fixed_lines = self.fix_lines(
+            lines,
+            unused_imports,
+            undefined_names,
+        )
+        return fixed_lines
+
+    def print_fixed_content_with_flake8(self, file_path: str) -> None:
         flake8_job = sp.run(
             'flake8 {}'.format(file_path),
             shell=True,
