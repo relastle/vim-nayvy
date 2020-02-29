@@ -1,30 +1,21 @@
 import unittest
+from typing import Tuple
+from typing import List
 
-from pydra.importing.fixer import Fixer, Flake8Result
+from pydra.importing.fixer import Fixer, LintEngine
 from pydra.importing.import_config import ImportConfig, SingleImport
 
 
-class TestFlake8Result(unittest.TestCase):
+class LintEngineMock(LintEngine):
 
-    def test_of_line(self) -> None:
-        # init of F401
-        res = Flake8Result.of_line(
-            "tmp.py:1:1: F401 'pprint.pprint as pp' imported but unused"
-        )
-        assert res is not None
-        assert res.error_msg == "'pprint.pprint as pp' imported but unused"
-        assert res.get_unused_import() == 'pprint.pprint as pp'
-        assert res.get_undefined_name() is None
+    def get_cmd_piped(self) -> str:
+        return 'hoge'
 
-        # init of 821
-        res = Flake8Result.of_line(
-            "tmp.py:4:1: F821 undefined name 'sp'"
-        )
-        assert res is not None
-        assert res.error_msg == "undefined name 'sp'"
-        assert res.get_unused_import() is None
-        assert res.get_undefined_name() == 'sp'
-        return
+    def get_cmd_filepath(self, file_path: str) -> str:
+        return 'hoge'
+
+    def parse_output(self, output: str) -> Tuple[List[str], List[str]]:
+        return ([], [])
 
 
 class TestFixer(unittest.TestCase):
@@ -44,9 +35,11 @@ class TestFixer(unittest.TestCase):
                 ),
             },
         )
-        fixer = Fixer(config)
+        fixer = Fixer(config, LintEngineMock())
 
+        # -------------------------------------
         # There are three import blocks
+        # -------------------------------------
         target_lines = [
             '#!/usr/bin/env python3',
             'import os',
@@ -60,7 +53,7 @@ class TestFixer(unittest.TestCase):
             '',
             'print("Hello, world!")'
         ]
-        fixed_lines = fixer.fix_lines(
+        fixed_lines = fixer._fix_lines(
             target_lines,
             [
                 'sys',
@@ -84,12 +77,14 @@ class TestFixer(unittest.TestCase):
         ]
         assert fixed_lines == expected_lines
 
+        # -------------------------------------
         # There are NO imports
+        # -------------------------------------
         target_lines = [
             '#!/usr/bin/env python3',
             'pp("Hello, world!")',
         ]
-        fixed_lines = fixer.fix_lines(
+        fixed_lines = fixer._fix_lines(
             target_lines,
             [],
             [
@@ -103,7 +98,9 @@ class TestFixer(unittest.TestCase):
         ]
         assert fixed_lines == expected_lines
 
+        # -------------------------------------
         # There are already import block
+        # -------------------------------------
         target_lines = [
             '#!/usr/bin/env python3',
             'from pprint import pprint as pp',
@@ -112,7 +109,7 @@ class TestFixer(unittest.TestCase):
             'pp("Hello, world!")',
             'a = np.ndarray([1, 2])',
         ]
-        fixed_lines = fixer.fix_lines(
+        fixed_lines = fixer._fix_lines(
             target_lines,
             [],
             [

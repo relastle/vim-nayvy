@@ -4,6 +4,7 @@ import sys
 
 from .importing.fixer import Fixer
 from .importing.import_config import ImportConfig
+from .importing.pyflakes import PyflakesEngine
 
 
 def run() -> None:
@@ -19,6 +20,6 @@ def run() -> None:
     if config is None:
         print('cannot load pydra config file', file=sys.stderr)
         sys.exit(1)
-    fixer = Fixer(config)
-    fixer.print_fixed_content_with_flake8(args.file_path)
+    fixer = Fixer(config, PyflakesEngine())
+    fixer.print_fixed_content(args.file_path)
     return

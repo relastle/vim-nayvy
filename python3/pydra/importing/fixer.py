@@ -1,95 +1,29 @@
 '''
-Fix the python lines of code dependent on flake8 result
+Fix the python lines of code dependent on Linter result
 '''
 
-import re
 import subprocess as sp
-from typing import List, Tuple, Optional
+from abc import ABCMeta, abstractmethod
+from typing import List, Tuple
 
 from .utils import get_first_line_num, get_import_block_indices
 from .import_config import ImportConfig, SingleImport
 from .import_sentence import ImportSentence
 
 
-class Flake8Result:
+class LintEngine(metaclass=ABCMeta):
 
-    FLAKE8_LINE_RE = r'(?P<filepath>[^:]+):(?P<row>\d+):(?P<column>\d+): (?P<error_code>\w+) (?P<error_msg>.*)'  # noqa
-    FLAKE8_F401_MSG_RE = r"'(?P<target>.*)' imported but unused"
-    FLAKE8_F821_MSG_RE = r"undefined name '(?P<target>.*)'"
+    @abstractmethod
+    def get_cmd_piped(self) -> str:
+        raise NotImplementedError
 
-    @property
-    def filepath(self) -> str:
-        return self._filepath
+    @abstractmethod
+    def get_cmd_filepath(self, file_path: str) -> str:
+        raise NotImplementedError
 
-    @property
-    def row(self) -> int:
-        return self._row
-
-    @property
-    def column(self) -> int:
-        return self._column
-
-    @property
-    def error_code(self) -> str:
-        return self._error_code
-
-    @property
-    def error_msg(self) -> str:
-        return self._error_msg
-
-    def __init__(
-        self,
-        filepath: str,
-        row: int,
-        column: int,
-        error_code: str,
-        error_msg: str,
-    ) -> None:
-        self._filepath = filepath
-        self._row = row
-        self._column = column
-        self._error_code = error_code
-        self._error_msg = error_msg
-        return
-
-    def get_unused_import(self) -> Optional[str]:
-        if self.error_code != 'F401':
-            return None
-
-        m = re.match(self.FLAKE8_F401_MSG_RE, self.error_msg)
-        if m is None:
-            return None
-        return m.group('target')
-
-    def get_undefined_name(self) -> Optional[str]:
-        if self.error_code != 'F821':
-            return None
-
-        m = re.match(self.FLAKE8_F821_MSG_RE, self.error_msg)
-        if m is None:
-            return None
-        return m.group('target')
-
-    @classmethod
-    def of_line(
-        cls,
-        flake8_line: str,
-    ) -> Optional['Flake8Result']:
-        m = re.match(cls.FLAKE8_LINE_RE, flake8_line)
-        if m is None:
-            return None
-        filepath = m.group('filepath')
-        row = int(m.group('row'))
-        column = int(m.group('column'))
-        error_code = m.group('error_code')
-        error_msg = m.group('error_msg')
-        return Flake8Result(
-            filepath,
-            row,
-            column,
-            error_code,
-            error_msg,
-        )
+    @abstractmethod
+    def parse_output(self, output: str) -> Tuple[List[str], List[str]]:
+        raise NotImplementedError
 
 
 class Fixer:
@@ -98,34 +32,20 @@ class Fixer:
     def config(self) -> ImportConfig:
         return self._config
 
-    def __init__(self, config: ImportConfig) -> None:
+    @property
+    def lint_engine(self) -> LintEngine:
+        return self._lint_engine
+
+    def __init__(
+        self,
+        config: ImportConfig,
+        lint_engnie: LintEngine,
+    ) -> None:
         self._config = config
+        self._lint_engine = lint_engnie
         return
 
-    def parse_flake8_output(
-        self,
-        flake8_output: str,
-    ) -> Tuple[List[str], List[str]]:
-        lines = flake8_output.split('\n')
-        unused_imports = []
-        undefined_names = []
-        for line in lines:
-            flake8_res = Flake8Result.of_line(line.strip())
-            if flake8_res is None:
-                continue
-
-            # check if line is warning unused import
-            unused_import = flake8_res.get_unused_import()
-            if unused_import is not None:
-                unused_imports.append(unused_import)
-
-            # check if line is warning undefined name
-            undefined_name = flake8_res.get_undefined_name()
-            if undefined_name is not None:
-                undefined_names.append(undefined_name)
-        return unused_imports, undefined_names
-
-    def fix_lines(
+    def _fix_lines(
         self,
         lines: List[str],
         unused_imports: List[str],
@@ -203,9 +123,9 @@ class Fixer:
             res_lines += lines[begin_end_indices[-1][1]:]
         return res_lines
 
-    def fix_lines_with_flake8(self, lines: List[str]) -> List[str]:
-        flake8_job = sp.run(
-            'flake8 -',
+    def fix_lines(self, lines: List[str]) -> List[str]:
+        lint_job = sp.run(
+            self.lint_engine.get_cmd_piped(),
             shell=True,
             input='\n'.join(lines).encode('utf-8'),
             stdout=sp.PIPE,
@@ -213,41 +133,41 @@ class Fixer:
         )
 
         # Extract result
-        flake8_output = flake8_job.stdout.decode('utf-8')
+        lint_output = lint_job.stdout.decode('utf-8')
 
         # Parse output
-        unused_imports, undefined_names = self.parse_flake8_output(
-            flake8_output,
+        unused_imports, undefined_names = self.lint_engine.parse_output(
+            lint_output,
         )
 
-        fixed_lines = self.fix_lines(
+        fixed_lines = self._fix_lines(
             lines,
             unused_imports,
             undefined_names,
         )
         return fixed_lines
 
-    def print_fixed_content_with_flake8(self, file_path: str) -> None:
-        flake8_job = sp.run(
-            'flake8 {}'.format(file_path),
+    def print_fixed_content(self, file_path: str) -> None:
+        lint_job = sp.run(
+            self.lint_engine.get_cmd_filepath(file_path),
             shell=True,
             stdout=sp.PIPE,
             stderr=sp.DEVNULL,
         )
 
         # Extract result
-        flake8_output = flake8_job.stdout.decode('utf-8')
+        lint_output = lint_job.stdout.decode('utf-8')
 
         # Parse output
-        unused_imports, undefined_names = self.parse_flake8_output(
-            flake8_output,
+        unused_imports, undefined_names = self.lint_engine.parse_output(
+            lint_output,
         )
 
         # Fix line of codes
         with open(file_path) as f:
             lines = [line.strip() for line in f.readlines()]
 
-        fixed_lines = self.fix_lines(
+        fixed_lines = self._fix_lines(
             lines,
             unused_imports,
             undefined_names,
