@@ -1,11 +1,7 @@
 import unittest
 from typing import List
-from pprint import pformat
 
-from pydra.importing.import_sentence import (
-    ImportAsPart,
-    ImportSentence,
-)
+from pydra.importing.import_sentence import ImportAsPart, ImportSentence
 
 
 class TestImportAsPart(unittest.TestCase):
