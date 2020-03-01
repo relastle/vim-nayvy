@@ -5,7 +5,12 @@ let b:did_autoload_pydra = 1
 
 python3 << EOF
 import vim
-from pydra_vim import pydra_auto_imports, pydra_import, pydra_list_imports
+from pydra_vim import (
+    pydra_auto_imports,
+    pydra_fix_lines,
+    pydra_import,
+    pydra_list_imports,
+  )
 EOF
 
 " Automatically resolve current buffer's
@@ -14,6 +19,11 @@ EOF
 " warned by linters such as `flake` and `pyflakes`
 function! pydra#imports() abort
   py3 pydra_auto_imports()
+endfunction
+
+function! pydra#ale_fixer(buffer, lines) abort
+  let l:py_expr = 'pydra_fix_lines(' . string(a:lines) . ')'
+  return py3eval(l:py_expr)
 endfunction
 
 " sink function for multiple selected import sentence
