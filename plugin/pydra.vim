@@ -25,3 +25,4 @@ endif
 let loaded_plugin_vim_pydra=1
 
 command! PydraImports call pydra#imports()
+command! PydraImportFzf call pydra#import_fzf()

@@ -158,6 +158,15 @@ class Fixer:
         )
         return fixed_lines
 
+    def add_imports(
+        self,
+        lines: List[str],
+        names: List[str],
+    ) -> List[str]:
+        ''' add import by names
+        '''
+        return self._fix_lines(lines, [], names)
+
     def print_fixed_content(self, file_path: str) -> None:
         lint_job = sp.run(
             self.lint_engine.get_cmd_filepath(file_path),
