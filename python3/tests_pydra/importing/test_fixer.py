@@ -1,6 +1,7 @@
 import unittest
 from typing import Tuple
 from typing import List
+from pprint import pformat
 
 from pydra.importing.fixer import Fixer, LintEngine
 from pydra.importing.import_config import ImportConfig, SingleImport
@@ -23,14 +24,24 @@ class TestFixer(unittest.TestCase):
     def test_fix_lines(self) -> None:
         config = ImportConfig(
             {
-                'List': SingleImport(
-                    'List',
-                    'from typing import List',
+                'os': SingleImport(
+                    'os',
+                    'import os',
+                    0,
+                ),
+                'sys': SingleImport(
+                    'sys',
+                    'import sys',
                     0,
                 ),
                 'Dict': SingleImport(
                     'Dict',
                     'from typing import Dict',
+                    0,
+                ),
+                'List': SingleImport(
+                    'Dict',
+                    'from typing import List',
                     0,
                 ),
                 'pp': SingleImport(
@@ -53,7 +64,6 @@ class TestFixer(unittest.TestCase):
         target_lines = [
             '#!/usr/bin/env python3',
             'import os',
-            'import sys',
             '',
             'import numpy as np',
             'import pandas as pd',
@@ -66,17 +76,18 @@ class TestFixer(unittest.TestCase):
         fixed_lines = fixer._fix_lines(
             target_lines,
             [
-                'sys',
                 'pandas as pd',
             ],
             [
                 'pp',
+                'sys',
             ],
         )
         expected_lines = [
             '#!/usr/bin/env python3',
             'import os',
             'from pprint import pprint as pp',
+            'import sys',
             '',
             'import numpy as np',
             '',
@@ -157,6 +168,31 @@ class TestFixer(unittest.TestCase):
         expected_lines = [
             '#!/usr/bin/env python3',
             'from typing import Dict, List',
+        ]
+        assert fixed_lines == expected_lines
+
+        # -------------------------------------
+        # There are tailing comments
+        # -------------------------------------
+        target_lines = [
+            '#!/usr/bin/env python3',
+            'from typing import (',
+            '    List,  # inline comment 1',
+            '    Dict,  # inline comment 2',
+            ')',
+        ]
+        fixed_lines = fixer._fix_lines(
+            target_lines,
+            [],
+            [],
+        )
+        print('==============================')
+        print(f'fixed_lines: {pformat(fixed_lines, indent=2)}')
+        print('==============================')
+        expected_lines = [
+            '#!/usr/bin/env python3',
+            'from typing import Dict  # inline comment 2',
+            'from typing import List  # inline comment 1',
         ]
         assert fixed_lines == expected_lines
 

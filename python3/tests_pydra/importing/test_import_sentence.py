@@ -1,5 +1,6 @@
 import unittest
 from typing import List
+from pprint import pformat
 
 from pydra.importing.import_sentence import (
     ImportAsPart,
@@ -166,17 +167,20 @@ class TestImportSentence(unittest.TestCase):
 
     def test_of_lines(self) -> None:
         lines = [
-            'import os',
+            'import os  # tailing comment',
+            '# comment above',
             'import sys',
             'from pprint import ('
             '    pprint as pp,',
             '    pformat,',
             ')',
             'from typing import (',
-            '    List as L,',
-            '    Dict as D,',
+            '    List as L,  # tailing comment 1',
+            '    Dict as D,# tailing comment 2',
             ')',
             '',
+            '# multi-line comment 1',
+            '# multi-line comment 2',
             'import tensorflow as tf',
         ]
         actuals = ImportSentence.of_lines(lines)
@@ -184,13 +188,13 @@ class TestImportSentence(unittest.TestCase):
             ImportSentence(
                 '',
                 [
-                    ImportAsPart('os', ''),
+                    ImportAsPart('os', '', 'tailing comment'),
                 ],
             ),
             ImportSentence(
                 '',
                 [
-                    ImportAsPart('sys', ''),
+                    ImportAsPart('sys', '', 'comment above'),
                 ],
             ),
             ImportSentence(
@@ -203,14 +207,18 @@ class TestImportSentence(unittest.TestCase):
             ImportSentence(
                 'typing',
                 [
-                    ImportAsPart('List', 'L'),
-                    ImportAsPart('Dict', 'D'),
+                    ImportAsPart('List', 'L', 'tailing comment 1'),
+                    ImportAsPart('Dict', 'D', 'tailing comment 2'),
                 ],
             ),
             ImportSentence(
                 '',
                 [
-                    ImportAsPart('tensorflow', 'tf'),
+                    ImportAsPart('tensorflow', 'tf',
+                                 (
+                                     'multi-line comment 1 '
+                                     'multi-line comment 2'
+                                 )),
                 ],
             ),
 

@@ -5,6 +5,7 @@ Fix the python lines of code dependent on Linter result
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
 from typing import List, Tuple
+from pprint import pformat
 
 from .utils import get_first_line_num, get_import_block_indices
 from .import_config import ImportConfig, SingleImport
@@ -123,7 +124,7 @@ class Fixer:
             merged_import_sentences
         ):
             for import_sentence in merged_import_sentence:
-                res_lines.append(str(import_sentence))
+                res_lines += import_sentence.to_lines()
             if i < len(merged_import_sentences) - 1:
                 res_lines.append('')
 

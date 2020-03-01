@@ -39,27 +39,29 @@ def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
             (1st block's start begin(inclusive), 1st block's end(exclusive)),
             (2nd block's start begin(inclusive), 2nd block's end(exclusive)),
             (3rd block's start begin(inclusive), 3rd block's end(exclusive)),
+            ...
             ]
     '''
     res = []
     in_block = False
-    try:
-        for i, line in enumerate(lines):
-            if (
-                not in_block and
-                (
-                    line.startswith('import ') or
-                    line.startswith('from ')
-                )
-            ):
-                in_block = True
-                start_index = i
-                continue
-            elif in_block and line == '':
-                in_block = False
-                res.append((start_index, i))
-    except Exception:
-        return res
+    start_index = -1
+    for i, line in enumerate(lines):
+        if (
+            not in_block and
+            (
+                line.startswith('import ') or
+                line.startswith('from ')
+            )
+        ):
+            in_block = True
+            start_index = i
+            continue
+        elif in_block and line == '':
+            in_block = False
+            res.append((start_index, i))
+            start_index = -1
+    if start_index >= 0:
+        res.append((start_index, i + 1))
     return res
 
 

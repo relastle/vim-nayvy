@@ -4,7 +4,7 @@ from typing import List, Optional
 
 class ImportAsPart:
 
-    IMPORT_AS_RE = r'(?P<import>[\w\.]+)( +as +(?P<as>[\w\.]+)){0,1}'
+    IMPORT_AS_RE = r'(?P<import>[\w\.]+)( +as +(?P<as>[\w\.]+)){0,1}( *#(?P<comment>.*)){0,1}'  # noqa
 
     @property
     def import_what(self) -> str:
@@ -13,6 +13,10 @@ class ImportAsPart:
     @property
     def as_what(self) -> str:
         return self._as_what
+
+    @property
+    def comment(self) -> str:
+        return self._comment.strip()
 
     @property
     def name(self) -> str:
@@ -36,9 +40,15 @@ class ImportAsPart:
         '''
         return str(self)
 
-    def __init__(self, import_what: str, as_what: str) -> None:
+    def __init__(
+        self,
+        import_what: str,
+        as_what: str,
+        comment: str = '',
+    ) -> None:
         self._import_what = import_what
         self._as_what = as_what
+        self._comment = comment
         return
 
     @classmethod
@@ -47,21 +57,20 @@ class ImportAsPart:
         if m is None:
             return None
         import_what = m.group('import')
-        if import_what is None:
-            return None
         as_what = m.group('as')
         if as_what is None:
             as_what = ''
-        return ImportAsPart(import_what, as_what)
+        comment = m.group('comment')
+        if comment is None:
+            comment = ''
+        return ImportAsPart(import_what, as_what, comment)
 
     def __repr__(self) -> str:
-        if self.as_what == '':
-            return self.import_what
-        else:
-            return '{} as {}'.format(
-                self.import_what,
-                self.as_what,
-            )
+        return '{}{}{}'.format(
+            self.import_what,
+            ' as {}'.format(self.as_what) if self.as_what else '',
+            '  # {}'.format(self.comment) if self.comment else '',
+        )
 
 
 class ImportSentence:
@@ -118,6 +127,14 @@ class ImportSentence:
     def merge(self, import_sentence: 'ImportSentence') -> bool:
         ''' merge import_sentence to self if possible
         '''
+        if str(self) == str(import_sentence):
+            # is completely same, assume that merged successfully
+            return True
+
+        if self.from_what == '':
+            # if no-from sentence, merge is impossible
+            return False
+
         if not self.from_what == import_sentence.from_what:
             return False
 
@@ -168,22 +185,43 @@ class ImportSentence:
                 str(import_as_part)
             )
 
+    def to_lines(self) -> List[str]:
+        return str(self).split('\n')
+
     def __repr__(self) -> str:
         if self.from_what == '':
+            # Just a one line import without from
             return 'import {}'.format(
                 self.import_as_parts[0],
             )
-        else:
-            return 'from {} import {}'.format(
-                self.from_what,
-                ', '.join([
-                    str(import_as_part)
-                    for import_as_part in sorted(
-                        self.import_as_parts,
-                        key=lambda x: x.name
-                    )
-                ]),
-            )
+
+        if any(
+            import_as_part.comment
+            for import_as_part in self.import_as_parts
+        ):
+            # If any is commented no grouping
+            return '\n'.join([
+                'from {} import {}'.format(
+                    self.from_what,
+                    str(import_as_part),
+                )
+                for import_as_part in sorted(
+                    self.import_as_parts,
+                    key=lambda x: x.name
+                )
+            ])
+
+        # represents with commna-seperated
+        return 'from {} import {}'.format(
+            self.from_what,
+            ', '.join([
+                str(import_as_part)
+                for import_as_part in sorted(
+                    self.import_as_parts,
+                    key=lambda x: x.name
+                )
+            ]),
+        )
 
     @classmethod
     def merge_list(
@@ -236,17 +274,35 @@ class ImportSentence:
         import_sentence_lines = []
         line_coutinuous = False
         line_tmp = ''
+        comment_tmp = ''
         excessive_open_paren = 0
         for line in lines:
             if (
                 not line_coutinuous and
                 not line.startswith('from') and
-                not line.startswith('import')
+                not line.startswith('import') and
+                not line.startswith('#')
             ):
                 # Skip irrelevant line
                 continue
 
             line = line.strip()
+
+            only_comment = line.startswith('#')
+
+            # handle the comment
+            COMMENT_RE = r'#.*$'
+            comment_m = re.search(COMMENT_RE, line)
+            if comment_m is not None:
+                line = re.sub(COMMENT_RE, '', line).strip()
+                comment = comment_m.group().lstrip('#')
+            else:
+                comment = ''
+
+            comment_tmp += comment
+
+            if only_comment:
+                continue
 
             # calculate parenthesis for line continuation
             excessive_open_paren += line.count('(')
@@ -256,15 +312,30 @@ class ImportSentence:
                 # illegal
                 return None
             elif excessive_open_paren == 0:
+                # when import sentence is completed
+                # with the number of open parenthesis 0
+                line_completed = '{}{}'.format(
+                    line_tmp + line,
+                    '# ' + comment_tmp if comment_tmp else '',
+                )
                 import_sentence_lines.append(
-                    line_tmp + line
+                    line_completed
                 )
                 line_coutinuous = False
                 line_tmp = ''
+                comment_tmp = ''
+
             else:
+                # open parenthesis is excessive,
+                if line.endswith(','):
+                    line = '{}{}{}'.format(
+                        line.rstrip(','),
+                        '# ' + comment_tmp if comment_tmp else '',
+                        ',',
+                    )
+                    comment_tmp = ''
                 line_coutinuous = True
                 line_tmp += line
-
         # Construct return value
         import_sentences = []
         for line in import_sentence_lines:
