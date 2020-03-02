@@ -67,30 +67,27 @@ def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
 
 def find_target_line_num(level: int, lines: List[str]) -> int:
     '''
-    import文を探して、与えられたlevelのblockの最後の
-    import文の次の行番号を返す(0-based-index)
-    level:
-        0 (標準ライブラリのimport)
-        1 (third-partyライブラリのimport)
-        2 (相対パスでのimportなどなど)
+    Find next line index to
+    last import sentence of gien block level.
+    In other words, this function returns
+    where another additional import sentence to be appneded.
     '''
     if not (0 <= level and level <= 2):
         return -1
     import_block_indices = get_import_block_indices(lines)
     if len(import_block_indices) >= level + 1:
-        # このときは素直に行挿入すればよい
+        # already exits target import block
         return import_block_indices[level][1]
     elif len(import_block_indices) == 0:
-        # ブロックがそもそもないときは
-        # コメントを抜かした一番上にimportするのがよい
+        # if Any target block does not exist.
+        # new import should be added to first line
         target_line = get_first_line_num(lines)
         if len(lines) >= target_line + 1 and lines[target_line] != '':
             lines[target_line:target_line] = ['']
         return target_line
     else:
-        # 所与のブロックは見つからなかったがいくらかはあるとき
-        # 存在しているブロックに空行付け加えて
-        # 対処するのがよい
+        # New import block is needed.
+        # So create new block and add new import sentence
         target_line = import_block_indices[-1][1]
         lines[target_line:target_line] = ['']
         return target_line + 1
