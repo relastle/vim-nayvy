@@ -6,8 +6,9 @@ let b:did_autoload_pydra = 1
 python3 << EOF
 import vim
 from pydra_vim import (
-    pydra_auto_imports,
     pydra_fix_lines,
+    pydra_auto_imports,
+    pydra_get_fixed_lines,
     pydra_import,
     pydra_list_imports,
   )
@@ -22,7 +23,7 @@ function! pydra#imports() abort
 endfunction
 
 function! pydra#ale_fixer(buffer) abort
-  let l:py_expr = 'pydra_fix_lines(' . string(a:buffer) . ')'
+  let l:py_expr = 'pydra_get_fixed_lines(' . string(a:buffer) . ')'
   return py3eval(l:py_expr)
 endfunction
 
