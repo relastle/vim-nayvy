@@ -32,15 +32,32 @@ def already_exists(sentence: str, lines: List[str]) -> bool:
     return any(sentence in line.strip() for line in lines)
 
 
+def is_import_related_line(line: str) -> bool:
+    return (
+        line.startswith('import ') or
+        line.startswith('from ')
+    )
+
+
+def is_import_unrelated_line(line: str) -> bool:
+    return (
+        not line.startswith('import ') and
+        not line.startswith('from ') and
+        not line.strip().startswith('#') and
+        not line.startswith(' ') and
+        not line.startswith(')')
+    )
+
+
 def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
     '''
     Returns:
-        [
-            (1st block's start begin(inclusive), 1st block's end(exclusive)),
-            (2nd block's start begin(inclusive), 2nd block's end(exclusive)),
-            (3rd block's start begin(inclusive), 3rd block's end(exclusive)),
-            ...
-            ]
+    [
+        (1st block's start begin(inclusive), 1st block's end(exclusive)),
+        (2nd block's start begin(inclusive), 2nd block's end(exclusive)),
+        (3rd block's start begin(inclusive), 3rd block's end(exclusive)),
+        ...
+    ]
     '''
     res = []
     in_block = False
@@ -48,15 +65,14 @@ def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
     for i, line in enumerate(lines):
         if (
             not in_block and
-            (
-                line.startswith('import ') or
-                line.startswith('from ')
-            )
+            is_import_related_line(line)
         ):
+            # start of import block
             in_block = True
             start_index = i
             continue
-        elif in_block and line == '':
+        elif in_block and is_import_unrelated_line(line):
+            # end of import block
             in_block = False
             res.append((start_index, i))
             start_index = -1

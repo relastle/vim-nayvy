@@ -58,9 +58,6 @@ class TestFixer(unittest.TestCase):
         )
         fixer = Fixer(config, LintEngineMock())
 
-        # -------------------------------------
-        # There are three import blocks
-        # -------------------------------------
         target_lines = [
             '#!/usr/bin/env python3',
             'import os',
@@ -186,9 +183,6 @@ class TestFixer(unittest.TestCase):
             [],
             [],
         )
-        print('==============================')
-        print(f'fixed_lines: {pformat(fixed_lines, indent=2)}')
-        print('==============================')
         expected_lines = [
             '#!/usr/bin/env python3',
             'from typing import Dict  # inline comment 2',
