@@ -15,6 +15,15 @@ def init_config() -> Optional[ImportConfig]:
     return config
 
 
+def pydra_fix_lines(lines: List[str]) -> List[str]:
+    config = init_config()
+    if config is None:
+        return lines
+    fixer = Fixer(config, PyflakesEngine())
+    fixed_lines = fixer.fix_lines(lines)
+    return fixed_lines
+
+
 def pydra_auto_imports() -> None:
     '''
     Automatically
@@ -27,13 +36,9 @@ def pydra_auto_imports() -> None:
     return
 
 
-def pydra_fix_lines(lines: List) -> List[str]:
-    config = init_config()
-    if config is None:
-        return lines
-    fixer = Fixer(config, PyflakesEngine())
-    fixed_lines = fixer.fix_lines(lines)
-    return fixed_lines
+def pydra_get_fixed_lines(buffer_nr: int) -> List[str]:
+    lines = vim.buffers[buffer_nr][:]
+    return pydra_fix_lines(lines)
 
 
 def pydra_import(names: List[str]) -> None:
