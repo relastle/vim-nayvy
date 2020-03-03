@@ -1,7 +1,5 @@
 import unittest
-from typing import Tuple
-from typing import List
-from pprint import pformat
+from typing import List, Tuple
 
 from pydra.importing.fixer import Fixer, LintEngine
 from pydra.importing.import_config import ImportConfig, SingleImport
