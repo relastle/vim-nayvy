@@ -6,13 +6,21 @@ let b:did_autoload_pydra = 1
 python3 << EOF
 import vim
 from pydra_vim import (
+    # imports
     pydra_fix_lines,
     pydra_auto_imports,
     pydra_get_fixed_lines,
     pydra_import,
     pydra_list_imports,
+
+    # testing
+    pydra_auto_touch_test,
   )
 EOF
+
+"---------------------------------------
+" Imports
+"---------------------------------------
 
 " Automatically resolve current buffer's
 " - Unused imports
@@ -29,11 +37,8 @@ endfunction
 
 " sink function for multiple selected import sentence
 function! pydra#sink_multiple_imports(list) abort
-  echom 'a:list: ' . string(a:list)
   let l:names = map(a:list, {index, line -> split(line, ":")[0]})
-  echom 'l:names: ' . string(l:names)
   let l:py_expr = 'pydra_import(' . string(l:names) . ')'
-  echom 'l:py_expr: ' . string(l:py_expr)
   call py3eval(l:py_expr)
 endfunction
 
@@ -50,4 +55,12 @@ function! pydra#import_fzf() abort
         \ 'sink*': function('pydra#sink_multiple_imports'),
         \ 'options': '-m',
         \ }, get(g:, 'fzf_layout', {})))
+endfunction
+
+"---------------------------------------
+" Testing
+"---------------------------------------
+function! pydra#make_unittest() abort
+  let l:py_expr = 'pydra_auto_touch_test("' . expand('%') . '")'
+  call py3eval(l:py_expr)
 endfunction

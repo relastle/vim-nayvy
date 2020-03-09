@@ -5,3 +5,7 @@ from .importing import (  # noqa
     pydra_import,
     pydra_list_imports
 )
+
+from .testing import (  # noqa
+    pydra_auto_touch_test,
+)

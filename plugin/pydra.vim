@@ -24,5 +24,13 @@ if exists('loaded_plugin_vim_pydra') || &compatible
 endif
 let loaded_plugin_vim_pydra=1
 
+"---------------------------------------
+" Imports
+"---------------------------------------
 command! PydraImports call pydra#imports()
+
+"---------------------------------------
+" Testing
+"---------------------------------------
 command! PydraImportFzf call pydra#import_fzf()
+command! PydraMakeUnittest call pydra#make_unittest()
