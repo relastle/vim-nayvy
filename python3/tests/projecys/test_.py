@@ -3,13 +3,16 @@ import unittest
 from os.path import dirname
 from pathlib import Path
 
-from pydra.projects import get_git_root
+from pydra.projects import (
+    get_git_root,
+    get_pyproject_root,
+)
 
 
 class TestClass(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.work_dir = dirname(__file__) + '/test_workdir'
+        self.work_dir = f'{dirname(__file__)}/test_workdir'
         Path(self.work_dir).mkdir(parents=True, exist_ok=True)
         return
 
@@ -18,19 +21,38 @@ class TestClass(unittest.TestCase):
         return
 
     def test_get_git_root(self) -> None:
-        Path(self.work_dir + '/a/b/c').mkdir(parents=True, exist_ok=True)
+        Path(f'{self.work_dir}/a/b/c').mkdir(parents=True, exist_ok=True)
         assert get_git_root(
-            self.work_dir + '/a/b/c',
+            f'{self.work_dir}/a/b/c',
             parents_max_lookup_n=3,
         ) is None
 
-        Path(self.work_dir + '/a/.git').touch()
+        Path(f'{self.work_dir}/a/.git').touch()
         assert get_git_root(
-            self.work_dir + '/a/b/c',
+            f'{self.work_dir}/a/b/c',
             parents_max_lookup_n=1,
         ) is None
 
         assert get_git_root(
+            f'{self.work_dir}/a/b/c',
+            parents_max_lookup_n=2,
+        ) == f'{self.work_dir}/a'
+
+    def test_pyproject_root(self) -> None:
+        Path(f'{self.work_dir}/a/b/c').mkdir(parents=True, exist_ok=True)
+        assert get_pyproject_root(
+            f'{self.work_dir}/a/b/c',
+            parents_max_lookup_n=3,
+        ) is None
+
+        Path(f'{self.work_dir}/a/setup.py').touch()
+        assert get_pyproject_root(
+            f'{self.work_dir}/a/b/c',
+            parents_max_lookup_n=2,
+        ) == f'{self.work_dir}/a'
+
+        Path(f'{self.work_dir}/a/b/pyproject.toml').touch()
+        assert get_pyproject_root(
             self.work_dir + '/a/b/c',
             parents_max_lookup_n=2,
-        ) == self.work_dir + '/a'
+        ) == self.work_dir + '/a/b'
