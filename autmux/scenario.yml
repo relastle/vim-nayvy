@@ -1,0 +1,64 @@
+---
+name: pydra-scenario
+description: Demonstration of autoimport and typed snippet
+steps:
+
+  - job: tmux_exec
+    description: hide status line
+    props:
+      command: set status off
+
+  - job: sleep
+    description: Sleep for recording
+    props:
+      sleep-ms: 5000
+
+  - job: do
+    description: launch nvim with tmp buffer
+    props:
+      keystrokes: nvim pydra_demo.py<CR>
+      key-interval-ms: 40
+
+  - job: sleep
+    description: Sleep for launching neovim
+    props:
+      sleep-ms: 2000
+
+  - job: do
+    description: Shebang
+    props:
+      keystrokes: 'I#!<C-J><C-[>'
+      key-interval-ms: 300
+
+  - job: do
+    description: class-snippet
+    props:
+      keystrokes: 'o<CR>class<C-j>SampleClass<C-j>, first_member: int, second_member: str<C-j>This is a sample class for pydra demonstration<C-j><CR><C-[>'
+      key-interval-ms: 50
+
+  - job: do
+    description: AutoImport
+    props:
+      keystrokes: 'o<CR>def function_with_type_hint(self) -> Optional[int]:<CR>if self._a > 0:<CR>return 0<CR>else:<CR>return None<C-[>:PydraImports<CR>'
+      key-interval-ms: 50
+
+  - job: sleep
+    description: wait for auto import
+    props:
+      sleep-ms: 200
+
+  - job: do
+    description: main-snippet
+    props:
+      keystrokes: 'Go<CR><BS><BS>main<C-j>#This is a snippet for main boiler-plate<CR>sample = SampleClass()<CR>_ = sample.function_with_type_hint()<CR># Please enjoy pydra-vim!!'
+      key-interval-ms: 50
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 1000
+
+  - job: tmux_exec
+    description: restore status line
+    props:
+      command: set status on
