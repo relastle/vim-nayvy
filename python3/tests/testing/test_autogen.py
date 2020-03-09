@@ -3,7 +3,6 @@ import unittest
 from typing import List
 from os.path import dirname
 from pathlib import Path
-import subprocess as sp
 
 from pydra.testing.autogen import AutoGenerator
 
