@@ -43,13 +43,6 @@ class TestAutoGenerator(unittest.TestCase):
             f'{self.work_dir}/package/sub_sub_package/c.py',
         )
 
-        output = sp.run(
-            f'tree {self.work_dir}',
-            shell=True,
-            stdout=sp.PIPE,
-        ).stdout.decode('utf-8')
-        print(output)
-
         assert Path(
             f'{self.work_dir}/tests/test_a.py',
         ).exists()
