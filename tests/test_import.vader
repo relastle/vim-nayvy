@@ -1,5 +1,17 @@
 ===============================================================================
 
+Given python (simple undefined import):
+  pp(a)
+
+Execute:
+  PydraImports
+
+Expect python (Remove unused and add undefined):
+  from pprint import pprint as pp
+  pp(a)
+
+===============================================================================
+
 Given python (an unused import and an undefined name):
   #!/usr/bin/env python3
   '''
