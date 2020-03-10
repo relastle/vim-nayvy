@@ -3,13 +3,12 @@ from os.path import abspath, relpath
 from pathlib import Path
 
 from pydra.projects import get_pyproject_root
-from pydra.projects.attrs import AttrResult
+from pydra.projects.attrs import AttrResult, ClassAttrs, TopLevelFunctionAttrs
 
 
 class AutoGenerator:
 
-    @classmethod
-    def touch_test_file(cls, module_filepath: str) -> Optional[str]:
+    def touch_test_file(self, module_filepath: str) -> Optional[str]:
         """ touch the unittest file for module located in `module_filepath`
 
         Touched test file path will be retunred if succeeded.
@@ -38,9 +37,8 @@ class AutoGenerator:
         target_test_path.touch()
         return str(target_test_path)
 
-    @classmethod
     def get_additional_attrs(
-        cls,
+        self,
         impl_ar: AttrResult,
         test_ar: AttrResult,
     ) -> AttrResult:
@@ -48,8 +46,25 @@ class AutoGenerator:
         Calculate additional attributes defined in
         test script compared to implementation module file.
         """
-        return test_ar - impl_ar
+        expected_test_ar = AttrResult(
+            {
+                **{
+                    k: v.to_test()
+                    for k, v in impl_ar.class_attrs_d.items()
+                },
+                **{
+                    'Test': ClassAttrs(
+                        [],
+                        [
+                            f'test_{name}' for name in
+                            impl_ar.top_level_function_attrs.function_names
+                        ]
+                    ),
+                }
+            },
+            TopLevelFunctionAttrs.of_empty(),
+        )
+        return expected_test_ar - test_ar
 
-    @classmethod
-    def generate_test_module(cls, test_module_path: str) -> bool:
+    def generate_test_module(self, test_module_path: str) -> bool:
         pass

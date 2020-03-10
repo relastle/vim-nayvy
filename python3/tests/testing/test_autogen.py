@@ -17,6 +17,7 @@ class TestAutoGenerator(unittest.TestCase):
         return
 
     def setUp(self) -> None:
+        self.target = AutoGenerator()
         self.work_dir = f'{dirname(__file__)}/test_workdir'
         Path(self.work_dir).mkdir(parents=True, exist_ok=True)
         self.__generate_files([
@@ -32,13 +33,13 @@ class TestAutoGenerator(unittest.TestCase):
         return
 
     def test_touch_test_file(self) -> None:
-        assert AutoGenerator.touch_test_file(
+        assert self.target.touch_test_file(
             f'{self.work_dir}/package/a.py',
         )
-        assert AutoGenerator.touch_test_file(
+        assert self.target.touch_test_file(
             f'{self.work_dir}/package/sub_package/b.py',
         )
-        assert AutoGenerator.touch_test_file(
+        assert self.target.touch_test_file(
             f'{self.work_dir}/package/sub_sub_package/c.py',
         )
 
