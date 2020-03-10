@@ -4,7 +4,7 @@
 import sys
 import types
 import importlib.util
-from typing import Any, List, Tuple, Optional, Generator
+from typing import Any, List, Tuple, Optional, Generator, Dict
 from os.path import basename
 from dataclasses import dataclass
 from importlib.abc import Loader
@@ -32,11 +32,48 @@ class ClassAttrs:
     class_method_names: List[str]
     instance_method_names: List[str]
 
+    def sub(self, target: 'ClassAttrs') -> 'ClassAttrs':
+        return ClassAttrs(
+            class_method_names=[
+                name for name in self.class_method_names
+                if name not in target.class_method_names
+            ],
+            instance_method_names=[
+                name for name in self.instance_method_names
+                if name not in target.instance_method_names
+            ],
+        )
+
+    def __sub__(self, target: 'ClassAttrs') -> 'ClassAttrs':
+        return self.sub(target)
+
+    @classmethod
+    def of_empty(cls) -> 'ClassAttrs':
+        return ClassAttrs([], [])
+
 
 @dataclass(frozen=True)
 class TopLevelFunctionAttrs:
 
     function_names: List[str]
+
+    def sub(self, target: 'TopLevelFunctionAttrs') -> 'TopLevelFunctionAttrs':
+        return TopLevelFunctionAttrs(
+            function_names=[
+                name for name in self.function_names
+                if name not in target.function_names
+            ],
+        )
+
+    def __sub__(
+        self,
+        target: 'TopLevelFunctionAttrs',
+    ) -> 'TopLevelFunctionAttrs':
+        return self.sub(target)
+
+    @classmethod
+    def of_empty(cls) -> 'TopLevelFunctionAttrs':
+        return TopLevelFunctionAttrs([])
 
 
 @dataclass(frozen=True)
@@ -44,8 +81,26 @@ class AttrResult:
     """ Result of attributes obtained from a single module file
     """
 
-    class_attrs_lst: List[ClassAttrs]
+    class_attrs_d: Dict[str, ClassAttrs]
     top_level_function_attrs: TopLevelFunctionAttrs
+
+    def sub(self, target: 'AttrResult') -> 'AttrResult':
+        return AttrResult(
+            {
+                k: v - target.class_attrs_d.get(
+                    k,
+                    ClassAttrs.of_empty(),
+                )
+                for k, v in self.class_attrs_d.items()
+            },
+            (
+                self.top_level_function_attrs -
+                target.top_level_function_attrs
+            ),
+        )
+
+    def __sub__(self, target: 'AttrResult') -> 'AttrResult':
+        return self.sub(target)
 
 
 def _get_function_names(attr: Any) -> List[str]:
@@ -101,15 +156,15 @@ def get_attrs(module_filepath: str) -> Optional[AttrResult]:
         _get_function_names(module)
     )
 
-    class_attrs_lst = [
-        ClassAttrs(
+    class_attrs_lst = {
+        class_name: ClassAttrs(
             _get_class_method_names(class_attr),
             _get_instance_method_names(class_attr),
-        ) for class_attr in [
-            getattr(module, class_name)
+        ) for class_name, class_attr in [
+            (class_name, getattr(module, class_name))
             for class_name in _get_class_names(module)
         ]
-    ]
+    }
 
     return AttrResult(
         class_attrs_lst,

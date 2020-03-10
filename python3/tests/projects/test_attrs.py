@@ -5,9 +5,9 @@ from pathlib import Path
 from pydra.projects.attrs import get_attrs
 
 
-class TestClass(unittest.TestCase):
+class Test(unittest.TestCase):
 
-    def test_name(self) -> None:
+    def test_get_attrs(self) -> None:
         module_path = Path(dirname(__file__)) / 'resources/sample.py'
         res = get_attrs(str(module_path))
 
@@ -15,20 +15,20 @@ class TestClass(unittest.TestCase):
 
         # Assertion of class methods
         assert (
-            res.class_attrs_lst[0].class_method_names ==
+            res.class_attrs_d['TopLevelClass1'].class_method_names ==
             ['class_method1']
         )
         assert (
-            res.class_attrs_lst[0].instance_method_names ==
+            res.class_attrs_d['TopLevelClass1'].instance_method_names ==
             ['instance_method1', 'instance_method2']
         )
 
         assert (
-            res.class_attrs_lst[1].class_method_names ==
+            res.class_attrs_d['TopLevelClass2'].class_method_names ==
             ['class_method2']
         )
         assert (
-            res.class_attrs_lst[1].instance_method_names ==
+            res.class_attrs_d['TopLevelClass2'].instance_method_names ==
             ['instance_method3', 'instance_method4']
         )
 
