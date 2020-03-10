@@ -2,7 +2,27 @@ import unittest
 from os.path import dirname
 from pathlib import Path
 
-from pydra.projects.attrs import get_attrs
+from pydra.projects.attrs import ClassAttrs, get_attrs
+
+
+class TestClassAttrs(unittest.TestCase):
+
+    def test_to_test(self) -> None:
+        class_attrs = ClassAttrs(
+            ['cm1', 'cm2'],
+            ['im1', 'im2', 'im3'],
+        )
+        actual = class_attrs.to_test()
+        assert vars(actual) == vars(ClassAttrs(
+            [],
+            [
+                'test_cm1',
+                'test_cm2',
+                'test_im1',
+                'test_im2',
+                'test_im3',
+            ],
+        ))
 
 
 class Test(unittest.TestCase):

@@ -47,6 +47,15 @@ class ClassAttrs:
     def __sub__(self, target: 'ClassAttrs') -> 'ClassAttrs':
         return self.sub(target)
 
+    def to_test(self) -> 'ClassAttrs':
+        return ClassAttrs(
+            [],
+            (
+                [f'test_{name}' for name in self.class_method_names] +
+                [f'test_{name}' for name in self.instance_method_names]
+            ),
+        )
+
     @classmethod
     def of_empty(cls) -> 'ClassAttrs':
         return ClassAttrs([], [])
