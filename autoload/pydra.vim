@@ -5,7 +5,7 @@ let b:did_autoload_pydra = 1
 
 python3 << EOF
 import vim
-from pydra_vim import (
+from pydra_vim_if import (
     # imports
     pydra_fix_lines,
     pydra_auto_imports,

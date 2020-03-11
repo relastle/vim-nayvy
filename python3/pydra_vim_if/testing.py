@@ -54,8 +54,8 @@ def pydra_jump_to_test_or_generate(
     for i, line in enumerate(lines):
         needle = f'def test_{cword}'
         if needle in line:
-            vim.current.buffer.cursor = (
+            vim.current.window.cursor = (
                 i,
-                line.index(needle),
+                line.index(needle) + 1,
             )
     return
