@@ -34,3 +34,4 @@ command! PydraImports call pydra#imports()
 "---------------------------------------
 command! PydraImportFzf call pydra#import_fzf()
 command! PydraMakeUnittest call pydra#make_unittest()
+command! PydraJumpToTestOrGenerate call pydra#jump_to_test_or_generate()

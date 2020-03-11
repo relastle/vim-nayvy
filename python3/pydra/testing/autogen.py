@@ -100,7 +100,7 @@ class AutoGenerator:
         """ Add testing attribute for a given `func_name`.
 
         If target testing function is already defined,
-        it returns None.
+        it returns lines no-changed.
         """
         impl_ar = get_attrs(imple_module_path)
         if impl_ar is None:
@@ -113,14 +113,17 @@ class AutoGenerator:
         # calculate additional attributes for testing
         additional_ar = impl_ar.to_test() - test_ar
 
+        with open(test_module_path) as f:
+            test_module_lines = [
+                line.strip('\n') for line in f.readlines()
+            ]
+
         if (f'test_{func_name}' not in additional_ar.get_all_func_names()):
             # already defined or
             # not propername as tested attribute.
-            return None
+            return test_module_lines
 
         class_name = impl_ar.get_defined_class_name(func_name)
-        with open(test_module_path) as f:
-            test_module_lines = f.readlines()
         if class_name is None:
             # creation of test method for top level function
             return TestModule.add_func(

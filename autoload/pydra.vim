@@ -15,6 +15,7 @@ from pydra_vim import (
 
     # testing
     pydra_auto_touch_test,
+    pydra_jump_to_test_or_generate,
   )
 EOF
 
@@ -62,5 +63,11 @@ endfunction
 "---------------------------------------
 function! pydra#make_unittest() abort
   let l:py_expr = 'pydra_auto_touch_test("' . expand('%') . '")'
+  call py3eval(l:py_expr)
+endfunction
+
+
+function! pydra#jump_to_test_or_generate() abort
+  let l:py_expr = 'pydra_jump_to_test_or_generate("' . expand('%') . '", "' . expand('<cword>') . '")'
   call py3eval(l:py_expr)
 endfunction
