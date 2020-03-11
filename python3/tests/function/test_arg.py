@@ -3,7 +3,7 @@ import unittest
 from pydra.function.arg import Arg
 
 
-class TestClass(unittest.TestCase):
+class TestArg(unittest.TestCase):
     def test_arg_construction(self) -> None:
         cases = [
             {
