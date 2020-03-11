@@ -1,6 +1,7 @@
 """
 `Module` for organizing attiributes defined in a module
 """
+from abc import ABCMeta, abstractmethod
 import sys
 import types
 import importlib.util
@@ -11,10 +12,12 @@ from importlib.abc import Loader
 import itertools
 
 
-def __is_dunder(function_name: str) -> bool:
+def __is_dunder(attr_name: str) -> bool:
+    """ check if a given attr_name is `double underscored` one.
+    """
     return (
-        function_name.startswith('__') and
-        function_name.endswith('__')
+        attr_name.startswith('__') and
+        attr_name.endswith('__')
     )
 
 
@@ -154,6 +157,20 @@ class AttrResult:
             },
             TopLevelFunctionAttrs.of_empty(),
         )
+
+
+class ModulePresenter(metaclass=ABCMeta):
+
+    @abstractmethod
+    def get_attrs_from_path(
+        self,
+        module_filepath: str,
+    ) -> Optional[AttrResult]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_attrs_from_lines(self, lines: List[str]) -> Optional[AttrResult]:
+        raise NotImplementedError
 
 
 def _get_function_names(attr: Any) -> List[str]:
