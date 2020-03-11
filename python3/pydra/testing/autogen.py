@@ -3,7 +3,11 @@ from os.path import abspath, relpath
 from pathlib import Path
 
 from pydra.projects import get_pyproject_root
-from pydra.projects.attrs import AttrResult, ClassAttrs, TopLevelFunctionAttrs
+from pydra.projects.attrs import (
+    AttrResult,
+    ClassAttrs,
+    TopLevelFunctionAttrs
+)
 
 
 class AutoGenerator:
@@ -49,7 +53,7 @@ class AutoGenerator:
         expected_test_ar = AttrResult(
             {
                 **{
-                    k: v.to_test()
+                    f'Test{k}': v.to_test()
                     for k, v in impl_ar.class_attrs_d.items()
                 },
                 **{

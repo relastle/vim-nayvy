@@ -4,6 +4,11 @@ from typing import List
 from os.path import dirname
 from pathlib import Path
 
+from pydra.projects.attrs import (
+    AttrResult,
+    ClassAttrs,
+    TopLevelFunctionAttrs
+)
 from pydra.testing.autogen import AutoGenerator
 
 
@@ -53,3 +58,61 @@ class TestAutoGenerator(unittest.TestCase):
             f'{self.work_dir}/tests/sub_sub_package/test_c.py',
         ).exists()
         return
+
+    def test_get_additional_attrs(self) -> None:
+        impl_ar = AttrResult(
+            class_attrs_d={
+                'Hoge': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im1'],
+                ),
+                'Fuga': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im2'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                ['tf1', 'tf2'],
+            )
+        )
+
+        test_ar = AttrResult(
+            class_attrs_d={
+                'TestHoge': ClassAttrs(
+                    [],
+                    ['test_cm1'],
+                ),
+                'TestFuga': ClassAttrs(
+                    [],
+                    ['test_cm2', 'test_im2'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                [],
+            )
+        )
+
+        actual = self.target.get_additional_attrs(
+            impl_ar,
+            test_ar,
+        )
+
+        assert vars(actual) == vars(AttrResult(
+            class_attrs_d={
+                'TestHoge': ClassAttrs(
+                    [],
+                    ['test_cm2', 'test_im1'],
+                ),
+                'TestFuga': ClassAttrs(
+                    [],
+                    ['test_cm1'],
+                ),
+                'Test': ClassAttrs(
+                    [],
+                    ['test_tf1', 'test_tf2'],
+                )
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                [],
+            )
+        ))
