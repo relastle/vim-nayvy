@@ -2,7 +2,12 @@ import unittest
 from os.path import dirname
 from pathlib import Path
 
-from pydra.projects.attrs import ClassAttrs, get_attrs
+from pydra.projects.attrs import (
+    ClassAttrs,
+    get_attrs,
+    AttrResult,
+    TopLevelFunctionAttrs,
+)
 
 
 class TestClassAttrs(unittest.TestCase):
@@ -22,6 +27,91 @@ class TestClassAttrs(unittest.TestCase):
                 'test_im2',
                 'test_im3',
             ],
+        ))
+
+
+class TestAttrResult(unittest.TestCase):
+
+    def test_to_test(self) -> None:
+        ar = AttrResult(
+            class_attrs_d={
+                'Hoge': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im1'],
+                ),
+                'Fuga': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im2'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                ['tf1', 'tf2'],
+            )
+        )
+        actual = ar.to_test()
+        assert actual == AttrResult(
+            class_attrs_d={
+                'TestHoge': ClassAttrs(
+                    [],
+                    ['test_cm1', 'test_cm2', 'test_im1'],
+                ),
+                'TestFuga': ClassAttrs(
+                    [],
+                    ['test_cm1', 'test_cm2', 'test_im2'],
+                ),
+                'Test': ClassAttrs(
+                    [],
+                    ['test_tf1', 'test_tf2'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs([]),
+        )
+
+    def test_sub(self) -> None:
+        ar_self = AttrResult(
+            class_attrs_d={
+                'Hoge': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im1'],
+                ),
+                'Fuga': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im2'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                ['tf1', 'tf2'],
+            )
+        )
+
+        ar_target = AttrResult(
+            class_attrs_d={
+                'Hoge': ClassAttrs(
+                    ['cm1'],
+                    ['im1'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                [],
+            )
+        )
+
+        actual = ar_self.sub(ar_target)
+
+        assert vars(actual) == vars(AttrResult(
+            class_attrs_d={
+                'Hoge': ClassAttrs(
+                    ['cm2'],
+                    [],
+                ),
+                'Fuga': ClassAttrs(
+                    ['cm1', 'cm2'],
+                    ['im2'],
+                ),
+            },
+            top_level_function_attrs=TopLevelFunctionAttrs(
+                ['tf1', 'tf2'],
+            )
         ))
 
 

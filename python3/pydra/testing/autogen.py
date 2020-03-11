@@ -1,13 +1,63 @@
-from typing import Optional
+from typing import Optional, List
 from os.path import abspath, relpath
 from pathlib import Path
 
 from pydra.projects import get_pyproject_root
 from pydra.projects.attrs import (
-    AttrResult,
-    ClassAttrs,
-    TopLevelFunctionAttrs
+    get_attrs,
 )
+
+
+class TestModule:
+
+    @classmethod
+    def class_lines(
+        cls,
+        class_name: str,
+    ) -> List[str]:
+        return [
+            '',
+            '',
+            f'class Test{class_name}(unittest.TestCase):',
+            '',
+        ]
+
+    @classmethod
+    def function_lines(
+        cls,
+        class_name: str,
+        func_name: str,
+    ) -> List[str]:
+        return [
+            f'    def test_{func_name}(self) -> None:',
+            '        pass',
+        ]
+
+    @classmethod
+    def add_func(
+        cls,
+        lines: List[str],
+        class_name: str,
+        func_name: str,
+    ) -> List[str]:
+        class_index = -1
+        for i, line in enumerate(lines):
+            if f'class Test{class_name}' in line:
+                class_index = i
+        if class_index < 0:
+            # there is no class yet.
+            return (
+                lines +
+                cls.class_lines(class_name) +
+                cls.function_lines(class_name, func_name)
+            )
+        # there already exists class.
+        return (
+            lines[:class_index+1] +
+            cls.function_lines(class_name, func_name) +
+            [''] +
+            lines[class_index+1:]
+        )
 
 
 class AutoGenerator:
@@ -41,34 +91,48 @@ class AutoGenerator:
         target_test_path.touch()
         return str(target_test_path)
 
-    def get_additional_attrs(
+    def get_added_test_lines(
         self,
-        impl_ar: AttrResult,
-        test_ar: AttrResult,
-    ) -> AttrResult:
-        """
-        Calculate additional attributes defined in
-        test script compared to implementation module file.
-        """
-        expected_test_ar = AttrResult(
-            {
-                **{
-                    f'Test{k}': v.to_test()
-                    for k, v in impl_ar.class_attrs_d.items()
-                },
-                **{
-                    'Test': ClassAttrs(
-                        [],
-                        [
-                            f'test_{name}' for name in
-                            impl_ar.top_level_function_attrs.function_names
-                        ]
-                    ),
-                }
-            },
-            TopLevelFunctionAttrs.of_empty(),
-        )
-        return expected_test_ar - test_ar
+        func_name: str,
+        imple_module_path: str,
+        test_module_path: str,
+    ) -> Optional[List[str]]:
+        """ Add testing attribute for a given `func_name`.
 
-    def generate_test_module(self, test_module_path: str) -> bool:
-        pass
+        If target testing function is already defined,
+        it returns None.
+        """
+        impl_ar = get_attrs(imple_module_path)
+        if impl_ar is None:
+            return None
+
+        test_ar = get_attrs(test_module_path)
+        if test_ar is None:
+            return None
+
+        # calculate additional attributes for testing
+        additional_ar = impl_ar.to_test() - test_ar
+
+        if (f'test_{func_name}' not in additional_ar.get_all_func_names()):
+            # already defined or
+            # not propername as tested attribute.
+            return None
+
+        class_name = impl_ar.get_defined_class_name(func_name)
+        with open(test_module_path) as f:
+            test_module_lines = f.readlines()
+        if class_name is None:
+            # creation of test method for top level function
+            return TestModule.add_func(
+                test_module_lines,
+                '',
+                func_name,
+            )
+
+        else:
+            # creation of test method for class-or-instance method
+            return TestModule.add_func(
+                test_module_lines,
+                class_name,
+                func_name,
+            )

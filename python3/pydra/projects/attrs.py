@@ -8,6 +8,7 @@ from typing import Any, List, Tuple, Optional, Generator, Dict
 from os.path import basename
 from dataclasses import dataclass
 from importlib.abc import Loader
+import itertools
 
 
 def __is_dunder(function_name: str) -> bool:
@@ -54,6 +55,13 @@ class ClassAttrs:
                 [f'test_{name}' for name in self.class_method_names] +
                 [f'test_{name}' for name in self.instance_method_names]
             ),
+        )
+
+    @property
+    def names(self) -> List[str]:
+        return (
+            self.class_method_names +
+            self.instance_method_names
         )
 
     @classmethod
@@ -110,6 +118,42 @@ class AttrResult:
 
     def __sub__(self, target: 'AttrResult') -> 'AttrResult':
         return self.sub(target)
+
+    def get_defined_class_name(self, func_name: str) -> Optional[str]:
+        for class_name, class_attr in self.class_attrs_d.items():
+            if func_name in class_attr.names:
+                return class_name
+        return None
+
+    def get_all_func_names(self) -> List[str]:
+        """ Get all function names defined in this AttrResult
+        """
+        return list(itertools.chain(*[
+            class_attr.class_method_names + class_attr.instance_method_names
+            for class_attr in self.class_attrs_d.values()
+        ])) + self.top_level_function_attrs.function_names
+
+    def to_test(self) -> 'AttrResult':
+        """ Get expected attributes for test module for self.
+        """
+        return AttrResult(
+            {
+                **{
+                    f'Test{k}': v.to_test()
+                    for k, v in self.class_attrs_d.items()
+                },
+                **{
+                    'Test': ClassAttrs(
+                        [],
+                        [
+                            f'test_{name}' for name in
+                            self.top_level_function_attrs.function_names
+                        ]
+                    ),
+                }
+            },
+            TopLevelFunctionAttrs.of_empty(),
+        )
 
 
 def _get_function_names(attr: Any) -> List[str]:
