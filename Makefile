@@ -1,4 +1,4 @@
 .PHONY: test
 test:
 	(cd ./python3 && make)
-	./test.sh
+	./test_vader.sh
