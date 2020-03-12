@@ -1,7 +1,35 @@
-package = []
+[[package]]
+category = "main"
+description = "Composable command line interface toolkit"
+name = "click"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "7.1.1"
+
+[[package]]
+category = "main"
+description = "Colorization of help messages in Click"
+name = "click-help-colors"
+optional = false
+python-versions = "*"
+version = "0.7"
+
+[package.dependencies]
+click = ">=7.0"
+
+[package.extras]
+dev = ["pytest"]
 
 [metadata]
-content-hash = "ae1f216c71b9b712a5c479d19bf075b718c35d9248fd89cb1eb7624528ec5ad1"
+content-hash = "a144137729f2b38fa0750c9947386b625e34f9eff0355141a5d65f30f61ee0a5"
 python-versions = "^3.6"
 
 [metadata.files]
+click = [
+    {file = "click-7.1.1-py2.py3-none-any.whl", hash = "sha256:e345d143d80bf5ee7534056164e5e112ea5e22716bbb1ce727941f4c8b471b9a"},
+    {file = "click-7.1.1.tar.gz", hash = "sha256:8a18b4ea89d8820c5d0c7da8a64b2c324b4dabb695804dbfea19b9be9d88c0cc"},
+]
+click-help-colors = [
+    {file = "click-help-colors-0.7.tar.gz", hash = "sha256:fa574d591ee1d80e6da035df9f471cf0248060c177ff8f99008e45b8401c7fe2"},
+    {file = "click_help_colors-0.7-py3-none-any.whl", hash = "sha256:f41ae922e649a9b48119a66109532613ccd0d414f628eafddb897bbf6f577bd1"},
+]
