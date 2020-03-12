@@ -75,7 +75,7 @@ def pydra_jump_to_test_or_generate(
     return
 
 
-def pydra_list_untedted_functions() -> List[str]:
+def pydra_list_untested_functions() -> List[str]:
     """ Vim interface for implementing not-tested functions
     """
     filepath = vim.eval('expand("%")')

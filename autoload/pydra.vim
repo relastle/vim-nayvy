@@ -68,7 +68,7 @@ endfunction
 
 " list all functions that are not tested in a `test_{}` manner
 function! pydra#pydra_list_untested_functions() abort
-  return py3eval('pydra_list_untedted_functions()')
+  return py3eval('pydra_list_untested_functions()')
 endfunction
 
 function! pydra#make_unittest_fzf() abort
