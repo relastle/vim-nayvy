@@ -5,18 +5,7 @@ let b:did_autoload_pydra = 1
 
 python3 << EOF
 import vim
-from pydra_vim_if import (
-    # imports
-    pydra_fix_lines,
-    pydra_auto_imports,
-    pydra_get_fixed_lines,
-    pydra_import,
-    pydra_list_imports,
-
-    # testing
-    pydra_auto_touch_test,
-    pydra_jump_to_test_or_generate,
-  )
+from pydra_vim_if import *
 EOF
 
 "---------------------------------------
@@ -61,7 +50,7 @@ endfunction
 "---------------------------------------
 " Testing
 "---------------------------------------
-function! pydra#make_unittest() abort
+function! pydra#touch_unittest_file() abort
   let l:py_expr = 'pydra_auto_touch_test("' . expand('%') . '")'
   call py3eval(l:py_expr)
 endfunction
@@ -70,4 +59,23 @@ endfunction
 function! pydra#jump_to_test_or_generate() abort
   let l:py_expr = 'pydra_jump_to_test_or_generate("' . expand('%') . '", "' . expand('<cword>') . '")'
   call py3eval(l:py_expr)
+endfunction
+
+" sink function for multiple selected untested functions
+function! pydra#sink_multiple_functions(list) abort
+  " TODO:
+endfunction
+
+" list all functions that are not tested in a `test_{}` manner
+function! pydra#pydra_list_untested_functions() abort
+  return py3eval('pydra_list_untedted_functions()')
+endfunction
+
+function! pydra#make_unittest_fzf() abort
+  let l:function_lst = pydra#pydra_list_untested_functions()
+  call fzf#run(extend({
+        \ 'source': l:function_lst,
+        \ 'sink*': function('pydra#sink_multiple_functions'),
+        \ 'options': '-m',
+        \ }, get(g:, 'fzf_layout', {})))
 endfunction

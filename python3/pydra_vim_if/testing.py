@@ -1,11 +1,15 @@
 import sys
+from typing import List
 
 import vim  # noqa
+
 from pydra.testing.autogen import AutoGenerator
 from pydra.projects.modules.loader import SyntacticModuleLoader
 
 
 def pydra_auto_touch_test(filepath: str) -> None:
+    """ Vim interface for touch unittest script.
+    """
     auto_generator = AutoGenerator(SyntacticModuleLoader())
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
@@ -22,6 +26,8 @@ def pydra_jump_to_test_or_generate(
     filepath: str,
     func_name: str,
 ) -> None:
+    """ Vim interface for jump of generate unittest.
+    """
     auto_generator = AutoGenerator(SyntacticModuleLoader())
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
@@ -32,10 +38,14 @@ def pydra_jump_to_test_or_generate(
         return
 
     with open(filepath) as f:
-        impl_module_lines = f.readlines()
+        impl_module_lines = [
+            line.strip() for line in f.readlines()
+        ]
 
     with open(test_path) as f:
-        test_module_lines = f.readlines()
+        test_module_lines = [
+            line.strip() for line in f.readlines()
+        ]
 
     lines = auto_generator.get_added_test_lines(
         func_name,
@@ -63,3 +73,30 @@ def pydra_jump_to_test_or_generate(
                 line.index(needle),
             )
     return
+
+
+def pydra_list_untedted_functions() -> List[str]:
+    """ Vim interface for implementing not-tested functions
+    """
+    filepath = vim.eval('expand("%")')
+    lines = vim.current.buffer[:]
+    loader = SyntacticModuleLoader()
+    auto_generator = AutoGenerator(loader)
+    test_path = auto_generator.touch_test_file(filepath)
+    if test_path is None:
+        print(
+            'Please check if your python project is created correcty',
+            file=sys.stderr,
+        )
+        return []
+
+    impl_mod = loader.load_module_from_lines(lines)
+    test_mod = loader.load_module_from_path(test_path)
+    if impl_mod is None or test_mod is None:
+        print(
+            'Loading python scripts failed.',
+            file=sys.stderr,
+        )
+        return []
+    subtraction = impl_mod.to_test().sub(test_mod)
+    return subtraction.to_func_list_lines()

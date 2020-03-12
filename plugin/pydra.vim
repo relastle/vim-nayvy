@@ -32,6 +32,7 @@ command! PydraImports call pydra#imports()
 "---------------------------------------
 " Testing
 "---------------------------------------
-command! PydraImportFzf call pydra#import_fzf()
-command! PydraMakeUnittest call pydra#make_unittest()
+command! PydraImportFZF call pydra#import_fzf()
+command! PydraTouchUnitTestFile call pydra#touch_unittest_file()
 command! PydraJumpToTestOrGenerate call pydra#jump_to_test_or_generate()
+command! PydraMakeUnitTestFZF call pydra#make_unittest_fzf()
