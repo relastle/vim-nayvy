@@ -1,11 +1,11 @@
 from typing import List, Optional
-from os.path import abspath, relpath
+from os.path import dirname
 from pathlib import Path
 from dataclasses import dataclass
 
-from pydra.projects import get_pyproject_root
 from pydra.projects.modules.loader import ModuluLoader
 from pydra.projects.modules.models import Module
+from .path import impl_path_to_test_path
 
 
 @dataclass
@@ -81,29 +81,14 @@ class AutoGenerator:
 
         Touched test file path will be retunred if succeeded.
         """
-        module_abspath = abspath(module_filepath)
-        pyproject_root = get_pyproject_root(module_abspath)
-        if pyproject_root is None:
+        test_path = impl_path_to_test_path(module_filepath)
+        if test_path is None:
             return None
-
-        rel_path = Path(relpath(module_abspath, pyproject_root))
-        # Directory path where unit test script will be put.
-        target_test_dir = (
-            Path(pyproject_root) /
-            'tests' /
-            Path(*rel_path.parts[1:-1])
-        )
-
-        # Test script path
-        target_test_path: Path = (
-            target_test_dir /
-            ('test_' + rel_path.parts[-1])
-        )
-
-        target_test_dir.mkdir(parents=True, exist_ok=True)
-        (target_test_dir / '__init__.py').touch()
-        target_test_path.touch()
-        return str(target_test_path)
+        test_dir = Path(dirname(test_path))
+        test_dir.mkdir(parents=True, exist_ok=True)
+        (test_dir / '__init__.py').touch()
+        Path(test_path).touch()
+        return str(test_path)
 
     def get_added_test_lines(
         self,
