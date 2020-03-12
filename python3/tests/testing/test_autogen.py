@@ -4,60 +4,81 @@ from typing import List
 from os.path import dirname
 from pathlib import Path
 
-from pydra.testing.autogen import (
-    TestModule,
-    AutoGenerator,
-)
+from pydra.testing.autogen import AutoGenerator, ReactiveTestModule
+from pydra.projects.modules.loader import SyntacticModuleLoader
 
 
-class TestTestModule(unittest.TestCase):
+class TestReactiveTestModule(unittest.TestCase):
 
     def test_add_func(self) -> None:
+        loader = SyntacticModuleLoader()
+
+        # --------------------------------------------
+        # Test for adding function to already defined class
+        # --------------------------------------------
         given = [
-            'import unittest',
-            '',
             'class TestClass1(unittest.TestCase):',
-            '    def test_func1(self) -> None:',
-            '        pass',
-        ]
-
-        actual = TestModule.add_func(
-            given,
-            'Class2',
-            'func1',
-        )
-
-        expected = [
-            'import unittest',
             '',
-            'class TestClass1(unittest.TestCase):',
-            '    def test_func1(self) -> None:',
-            '        pass',
+            '    def test_method1(self) -> None:',
+            '        return',
+            '',
+            '    def test_method2(self) -> None:',
+            '        return',
             '',
             '',
             'class TestClass2(unittest.TestCase):',
             '',
-            '    def test_func1(self) -> None:',
-            '        pass',
+            '    def test_method1(cls) -> None:',
+            '        return',
+            '',
+            '    def test_method2(self) -> None:',
+            '        return',
         ]
 
-        assert actual == expected
-
-        actual = TestModule.add_func(
+        react_mod = ReactiveTestModule.of(
+            loader,
             given,
-            'Class1',
-            'func2',
+        )
+        assert react_mod is not None
+
+        react_mod.add_func(
+            'TestClass2',
+            'added_func',
         )
 
-        assert actual == [
-            'import unittest',
+        actual = react_mod.lines
+        # assert that existing lines are unchanged
+        assert actual[:len(given)] == given
+        # assert added lines
+        assert actual[len(given):] == [
             '',
-            'class TestClass1(unittest.TestCase):',
-            '    def test_func2(self) -> None:',
-            '        pass',
+            '    def added_func(self) -> None:',
+            '        return',
+        ]
+
+        # --------------------------------------------
+        # Test for adding function to new class
+        # --------------------------------------------
+        react_mod = ReactiveTestModule.of(
+            loader,
+            given,
+        )
+        assert react_mod is not None
+
+        react_mod.add_func(
+            'TopLevelClass3',
+            'added_func',
+        )
+        # assert that existing lines are unchanged
+        assert actual[:len(given)] == given
+        # assert added lines
+        assert react_mod.lines[len(given):] == [
             '',
-            '    def test_func1(self) -> None:',
-            '        pass',
+            '',
+            'class TopLevelClass3(unittest.TestCase):',
+            '',
+            '    def added_func(self) -> None:',
+            '        return',
         ]
 
 
@@ -71,7 +92,8 @@ class TestAutoGenerator(unittest.TestCase):
         return
 
     def setUp(self) -> None:
-        self.target = AutoGenerator()
+        loader = SyntacticModuleLoader()
+        self.target = AutoGenerator(loader)
         self.work_dir = f'{dirname(__file__)}/test_workdir'
         Path(self.work_dir).mkdir(parents=True, exist_ok=True)
         self.__generate_files([

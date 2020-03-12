@@ -96,6 +96,11 @@ class Module:
     class_map: Dict[str, Class]
 
     def sub(self, _module: 'Module') -> 'Module':
+        """ Subtraction of module.
+
+        It returns subtracted module which has attributes
+        that are defined in self and not-defined in _module.
+        """
         sub_class_map = {
             k: v.sub(_module.class_map[k])
             for k, v in self.class_map.items()
@@ -115,6 +120,8 @@ class Module:
         )
 
     def to_test(self) -> 'Module':
+        """ Convert self to module for test script.
+        """
         return Module(
             function_map={},
             class_map={

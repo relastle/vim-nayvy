@@ -1,66 +1,80 @@
-from typing import Optional, List
+from typing import List, Optional
 from os.path import abspath, relpath
 from pathlib import Path
+from dataclasses import dataclass
 
 from pydra.projects import get_pyproject_root
-from pydra.projects.attrs import (
-    get_attrs,
-)
+from pydra.projects.modules.loader import ModuluLoader
+from pydra.projects.modules.models import Module
 
 
-class TestModule:
+@dataclass
+class ReactiveTestModule:
+    """ ReactiveTestModule is reactive module for testing.
 
-    @classmethod
-    def class_lines(
-        cls,
-        class_name: str,
-    ) -> List[str]:
-        return [
-            '',
-            '',
-            f'class Test{class_name}(unittest.TestCase):',
-            '',
-        ]
+    In that it automatiaclly updated its module
+    when lines are changed, it is reactivetest.
+    """
 
-    @classmethod
-    def function_lines(
-        cls,
-        class_name: str,
-        func_name: str,
-    ) -> List[str]:
-        return [
-            f'    def test_{func_name}(self) -> None:',
-            '        pass',
-        ]
+    mod: Module
+    lines: List[str]
+
+    _loader: ModuluLoader
+
+    def __refresh(self) -> None:
+        self.mod = self._loader.load_module_from_lines(self.lines)
+        return
 
     @classmethod
-    def add_func(
+    def of(
         cls,
+        loader: ModuluLoader,
         lines: List[str],
-        class_name: str,
-        func_name: str,
-    ) -> List[str]:
-        class_index = -1
-        for i, line in enumerate(lines):
-            if f'class Test{class_name}' in line:
-                class_index = i
-        if class_index < 0:
-            # there is no class yet.
-            return (
-                lines +
-                cls.class_lines(class_name) +
-                cls.function_lines(class_name, func_name)
-            )
-        # there already exists class.
-        return (
-            lines[:class_index+1] +
-            cls.function_lines(class_name, func_name) +
-            [''] +
-            lines[class_index+1:]
+    ) -> Optional['ReactiveTestModule']:
+        mod = loader.load_module_from_lines(lines)
+        if mod is None:
+            return None
+        return ReactiveTestModule(
+            mod=mod,
+            lines=lines[:],  # copy
+            _loader=loader,
         )
 
+    def add_func(
+        self,
+        class_name: str,
+        func_name: str,
+    ) -> None:
+        if class_name not in self.mod.class_map:
+            self.lines += [
+                '',
+                '',
+                f'class {class_name}(unittest.TestCase):',
+                f'',
+                f'    def {func_name}(self) -> None:',
+                f'        return',
 
+            ]
+        else:
+            target_line = self.mod.class_map[class_name].line_end
+            self.lines[target_line:target_line] = [
+                '',
+                f'    def {func_name}(self) -> None:',
+                f'        return',
+            ]
+
+        self.__refresh()
+        return
+
+
+@dataclass
 class AutoGenerator:
+    """
+    AutoGenerator has functions for auto-generating
+    test-related components.
+    """
+
+    module_loader: ModuluLoader
 
     def touch_test_file(self, module_filepath: str) -> Optional[str]:
         """ touch the unittest file for module located in `module_filepath`
@@ -94,48 +108,40 @@ class AutoGenerator:
     def get_added_test_lines(
         self,
         func_name: str,
-        imple_module_path: str,
-        test_module_path: str,
+        impl_module_lines: List[str],
+        test_module_lines: List[str],
     ) -> Optional[List[str]]:
         """ Add testing attribute for a given `func_name`.
 
         If target testing function is already defined,
         it returns lines no-changed.
         """
-        impl_ar = get_attrs(imple_module_path)
-        if impl_ar is None:
-            return None
+        impl_mod = self.module_loader.load_module_from_lines(impl_module_lines)
+        if impl_mod is None:
+            raise Exception(
+                'Error occurred in loading implementation script.'
+            )
 
-        test_ar = get_attrs(test_module_path)
-        if test_ar is None:
-            return None
+        react_test_mod = ReactiveTestModule.of(
+            self.module_loader,
+            test_module_lines,
+        )
+        if react_test_mod is None:
+            raise Exception(
+                'Error occurred in loading testing script.'
+            )
 
         # calculate additional attributes for testing
-        additional_ar = impl_ar.to_test() - test_ar
+        additional_mod = impl_mod.to_test().sub(react_test_mod.mod)
 
-        with open(test_module_path) as f:
-            test_module_lines = [
-                line.strip('\n') for line in f.readlines()
-            ]
+        # check where func_name is defined
+        defined_class_name = ''
+        for class_name, _class in additional_mod.class_map:
+            if f'test_{func_name}' in _class.function_map:
+                defined_class_name = class_name
 
-        if (f'test_{func_name}' not in additional_ar.get_all_func_names()):
-            # already defined or
-            # not propername as tested attribute.
-            return test_module_lines
-
-        class_name = impl_ar.get_defined_class_name(func_name)
-        if class_name is None:
-            # creation of test method for top level function
-            return TestModule.add_func(
-                test_module_lines,
-                '',
-                func_name,
-            )
-
-        else:
-            # creation of test method for class-or-instance method
-            return TestModule.add_func(
-                test_module_lines,
-                class_name,
-                func_name,
-            )
+        react_test_mod.add_func(
+            defined_class_name,
+            func_name,
+        )
+        return react_test_mod.lines
