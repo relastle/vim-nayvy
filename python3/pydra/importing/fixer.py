@@ -168,29 +168,10 @@ class Fixer:
         return self._fix_lines(lines, [], names)
 
     def print_fixed_content(self, file_path: str) -> None:
-        lint_job = sp.run(
-            self.lint_engine.get_cmd_filepath(file_path),
-            shell=True,
-            stdout=sp.PIPE,
-            stderr=sp.DEVNULL,
-        )
-
-        # Extract result
-        lint_output = lint_job.stdout.decode('utf-8')
-
-        # Parse output
-        unused_imports, undefined_names = self.lint_engine.parse_output(
-            lint_output,
-        )
-
-        # Fix line of codes
         with open(file_path) as f:
             lines = [line.strip() for line in f.readlines()]
 
-        fixed_lines = self._fix_lines(
-            lines,
-            unused_imports,
-            undefined_names,
-        )
+        fixed_lines = self.fix_lines(lines)
+
         for fixed_line in fixed_lines:
             print(fixed_line)
