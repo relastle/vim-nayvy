@@ -1,37 +1,16 @@
 from typing import Dict, Optional, List
 import os
-import json
+from dataclasses import dataclass
 
 from .import_sentence import ImportSentence
 
 
+@dataclass(frozen=True)
 class SingleImport:
 
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def sentence(self) -> str:
-        return self._sentence
-
-    @property
-    def level(self) -> int:
-        return self._level
-
-    def __init__(
-        self,
-        name: str,
-        sentence: str,
-        level: int,
-    ) -> None:
-        self._name = name
-        self._sentence = sentence
-        self._level = level
-        return
-
-    def __repr__(self) -> str:
-        return json.dumps(self.__dict__, indent=2)
+    name: str
+    sentence: str
+    level: int
 
 
 class ImportConfig:
@@ -89,20 +68,4 @@ class ImportConfig:
                         block_i,
                     )
                     import_d[single_import.name] = single_import
-        return ImportConfig(import_d)
-
-    @classmethod
-    def _of_jsonfile(cls, json_path: str) -> Optional['ImportConfig']:
-        ''' DEPREDATED!! use `_of_config_py` instead'''
-        with open(json_path) as json_f:
-            json_d = json.load(json_f)
-        if 'auto_import' not in json_d:
-            return None
-        import_d: Dict[str, SingleImport] = {}
-        for single_import_d in json_d['auto_import']:
-            import_d[single_import_d['name']] = SingleImport(
-                single_import_d['name'],
-                single_import_d['sentence'],
-                single_import_d['level'],
-            )
         return ImportConfig(import_d)
