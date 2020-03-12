@@ -14,8 +14,8 @@ from pydra_vim_if import (
     pydra_list_imports,
 
     # testing
-    # pydra_auto_touch_test,
-    # pydra_jump_to_test_or_generate,
+    pydra_auto_touch_test,
+    pydra_jump_to_test_or_generate,
   )
 EOF
 

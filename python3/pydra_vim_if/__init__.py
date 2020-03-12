@@ -1,3 +1,3 @@
 from .importing import *   # noqa
 
-#  from .testing import *  # noqa TODO
+from .testing import *  # noqa
