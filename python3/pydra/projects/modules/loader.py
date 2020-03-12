@@ -1,7 +1,6 @@
 import re
 from abc import ABCMeta, abstractmethod
 from typing import List, Optional
-from pprint import pformat
 
 from .models import Class, Module, Function, FuncDeclType
 

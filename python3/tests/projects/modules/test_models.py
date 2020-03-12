@@ -1,5 +1,4 @@
 import unittest
-from pprint import pformat
 
 from pydra.projects.modules.models import (
     Class,

@@ -1,7 +1,6 @@
 import unittest
 from os.path import dirname
 from pathlib import Path
-from pprint import pformat
 
 from pydra.projects.modules.loader import SyntacticModuleLoader
 from pydra.projects.modules.models import (
