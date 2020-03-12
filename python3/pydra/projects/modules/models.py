@@ -1,15 +1,9 @@
 """
 `Module` for organizing attiributes defined in a module
 """
-from abc import ABCMeta, abstractmethod
-import sys
-import types
-import importlib.util
-from typing import Any, List, Tuple, Optional, Generator, Dict
-from os.path import basename
+from enum import Enum, auto
+from typing import Any, Dict, Tuple, Generator
 from dataclasses import dataclass
-from importlib.abc import Loader
-import itertools
 
 
 def __is_dunder(attr_name: str) -> bool:
@@ -30,213 +24,120 @@ def attr_iter(attr: Any) -> Generator[Tuple[str, Any], None, None]:
         yield (inner_attr_name, inner_attr)
 
 
-@dataclass(frozen=True)
-class ClassAttrs:
+class FuncDeclType(Enum):
 
-    class_method_names: List[str]
-    instance_method_names: List[str]
-
-    def sub(self, target: 'ClassAttrs') -> 'ClassAttrs':
-        return ClassAttrs(
-            class_method_names=[
-                name for name in self.class_method_names
-                if name not in target.class_method_names
-            ],
-            instance_method_names=[
-                name for name in self.instance_method_names
-                if name not in target.instance_method_names
-            ],
-        )
-
-    def __sub__(self, target: 'ClassAttrs') -> 'ClassAttrs':
-        return self.sub(target)
-
-    def to_test(self) -> 'ClassAttrs':
-        return ClassAttrs(
-            [],
-            (
-                [f'test_{name}' for name in self.class_method_names] +
-                [f'test_{name}' for name in self.instance_method_names]
-            ),
-        )
-
-    @property
-    def names(self) -> List[str]:
-        return (
-            self.class_method_names +
-            self.instance_method_names
-        )
-
-    @classmethod
-    def of_empty(cls) -> 'ClassAttrs':
-        return ClassAttrs([], [])
+    TOP_LEVEL = auto()
+    CLASS = auto()
+    INSTANCE = auto()
 
 
 @dataclass(frozen=True)
-class TopLevelFunctionAttrs:
-
-    function_names: List[str]
-
-    def sub(self, target: 'TopLevelFunctionAttrs') -> 'TopLevelFunctionAttrs':
-        return TopLevelFunctionAttrs(
-            function_names=[
-                name for name in self.function_names
-                if name not in target.function_names
-            ],
-        )
-
-    def __sub__(
-        self,
-        target: 'TopLevelFunctionAttrs',
-    ) -> 'TopLevelFunctionAttrs':
-        return self.sub(target)
-
-    @classmethod
-    def of_empty(cls) -> 'TopLevelFunctionAttrs':
-        return TopLevelFunctionAttrs([])
-
-
-@dataclass(frozen=True)
-class AttrResult:
-    """ Result of attributes obtained from a single module file
+class Function:
+    """ Function represents one function
     """
 
-    class_attrs_d: Dict[str, ClassAttrs]
-    top_level_function_attrs: TopLevelFunctionAttrs
+    name: str
+    line_begin: int
+    line_end: int
+    func_decl_type: FuncDeclType
 
-    def sub(self, target: 'AttrResult') -> 'AttrResult':
-        return AttrResult(
-            {
-                k: v - target.class_attrs_d.get(
-                    k,
-                    ClassAttrs.of_empty(),
-                )
-                for k, v in self.class_attrs_d.items()
-            },
-            (
-                self.top_level_function_attrs -
-                target.top_level_function_attrs
-            ),
+    def to_test(self) -> 'Function':
+        return Function(
+            name=f'test_{self.name}',
+            line_begin=-1,  # TODO
+            line_end=-1,  # TODO
+            func_decl_type=FuncDeclType.INSTANCE,
         )
 
-    def __sub__(self, target: 'AttrResult') -> 'AttrResult':
-        return self.sub(target)
 
-    def get_defined_class_name(self, func_name: str) -> Optional[str]:
-        for class_name, class_attr in self.class_attrs_d.items():
-            if func_name in class_attr.names:
-                return class_name
-        return None
+@dataclass(frozen=True)
+class Class:
+    """ Class represents one class
+    """
 
-    def get_all_func_names(self) -> List[str]:
-        """ Get all function names defined in this AttrResult
-        """
-        return list(itertools.chain(*[
-            class_attr.class_method_names + class_attr.instance_method_names
-            for class_attr in self.class_attrs_d.values()
-        ])) + self.top_level_function_attrs.function_names
+    name: str
+    line_begin: int
+    line_end: int
+    function_map: Dict[str, Function]
 
-    def to_test(self) -> 'AttrResult':
-        """ Get expected attributes for test module for self.
-        """
-        return AttrResult(
-            {
+    def to_test(self) -> 'Class':
+        return Class(
+            name=f'Test{self.name}',
+            line_begin=-1,  # TODO
+            line_end=-1,  # TODO
+            function_map={
+                f.name: f for f in
+                (
+                    f.to_test()
+                    for f in self.function_map.values()
+                )
+            },
+        )
+
+    def sub(self, _class: 'Class') -> 'Class':
+        return Class(
+            name=self.name,
+            line_begin=-1,  # TODO
+            line_end=-1,  # TODO
+            function_map={
+                k: v for k, v in
+                self.function_map.items()
+                if k not in _class.function_map
+            },
+        )
+
+
+@dataclass(frozen=True)
+class Module:
+    """ Module represents one module(file)
+    """
+
+    function_map: Dict[str, Function]
+    class_map: Dict[str, Class]
+
+    def sub(self, _module: 'Module') -> 'Module':
+        sub_class_map = {
+            k: v.sub(_module.class_map[k])
+            for k, v in self.class_map.items()
+        }
+        sub_class_map = {
+            k: v for k, v in sub_class_map.items()
+            if v.function_map
+        }
+
+        return Module(
+            function_map={
+                k: v for k, v in
+                self.function_map.items()
+                if k not in _module.function_map
+            },
+            class_map=sub_class_map,
+        )
+
+    def to_test(self) -> 'Module':
+        return Module(
+            function_map={},
+            class_map={
                 **{
-                    f'Test{k}': v.to_test()
-                    for k, v in self.class_attrs_d.items()
+                    c.name: c for c in
+                    (
+                        _class.to_test() for _class in
+                        self.class_map.values()
+                    )
                 },
                 **{
-                    'Test': ClassAttrs(
-                        [],
-                        [
-                            f'test_{name}' for name in
-                            self.top_level_function_attrs.function_names
-                        ]
-                    ),
-                }
+                    'Test': Class(
+                        'Test',
+                        -1,
+                        -1,
+                        {
+                            f.name: f for f in
+                            (
+                                function.to_test() for function in
+                                self.function_map.values()
+                            )
+                        }
+                    )
+                },
             },
-            TopLevelFunctionAttrs.of_empty(),
         )
-
-
-class ModulePresenter(metaclass=ABCMeta):
-
-    @abstractmethod
-    def get_attrs_from_path(
-        self,
-        module_filepath: str,
-    ) -> Optional[AttrResult]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_attrs_from_lines(self, lines: List[str]) -> Optional[AttrResult]:
-        raise NotImplementedError
-
-
-def _get_function_names(attr: Any) -> List[str]:
-    return [
-        top_level_attr_name
-        for top_level_attr_name, top_level_attr in attr_iter(attr)
-        if isinstance(top_level_attr, types.FunctionType)
-    ]
-
-
-def _get_class_names(attr: Any) -> List[str]:
-    return [
-        top_level_attr_name
-        for top_level_attr_name, top_level_attr in attr_iter(attr)
-        if isinstance(top_level_attr, type)
-    ]
-
-
-def _get_instance_method_names(class_attr: Any) -> List[str]:
-    return [
-        inner_attr_name
-        for inner_attr_name, inner_attr in attr_iter(class_attr)
-        if isinstance(inner_attr, types.FunctionType)
-    ]
-
-
-def _get_class_method_names(class_attr: Any) -> List[str]:
-    return [
-        inner_attr_name
-        for inner_attr_name, inner_attr in attr_iter(class_attr)
-        if isinstance(inner_attr, types.MethodType)
-    ]
-
-
-def get_attrs(module_filepath: str) -> Optional[AttrResult]:
-    """ Get attributes from a given module path
-
-    Especially for function or classes that should be
-    explicitly covered by unittesting.
-    """
-    module_name = basename(module_filepath)
-    spec = importlib.util.spec_from_file_location(
-        module_name,
-        module_filepath,
-    )
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    if not isinstance(spec.loader, Loader):
-        return None
-    spec.loader.exec_module(module)
-
-    top_level_function_attrs = TopLevelFunctionAttrs(
-        _get_function_names(module)
-    )
-
-    class_attrs_lst = {
-        class_name: ClassAttrs(
-            _get_class_method_names(class_attr),
-            _get_instance_method_names(class_attr),
-        ) for class_name, class_attr in [
-            (class_name, getattr(module, class_name))
-            for class_name in _get_class_names(module)
-        ]
-    }
-
-    return AttrResult(
-        class_attrs_lst,
-        top_level_function_attrs,
-    )
