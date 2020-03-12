@@ -137,3 +137,42 @@ class TestModule(unittest.TestCase):
                 ),
             },
         ))
+
+    def test_to_func_list_lines(self) -> None:
+        m = Module(
+            function_map={
+                'a': Function(
+                    'a',
+                    -1,
+                    -1,
+                    FuncDeclType.TOP_LEVEL,
+                ),
+            },
+            class_map={
+                'C': Class(
+                    'C',
+                    -1,
+                    -1,
+                    {
+                        'a': Function(
+                            'a',
+                            -1,
+                            -1,
+                            FuncDeclType.INSTANCE,
+                        ),
+                        'b': Function(
+                            'b',
+                            -1,
+                            -1,
+                            FuncDeclType.CLASS,
+                        ),
+                    }
+                ),
+            },
+        )
+
+        assert m.to_func_list_lines() == [
+            'top_level::a',
+            'C::a',
+            'C::b',
+        ]

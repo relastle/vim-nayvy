@@ -2,7 +2,7 @@
 `Module` for organizing attiributes defined in a module
 """
 from enum import Enum, auto
-from typing import Any, Dict, Tuple, Generator
+from typing import Any, Dict, Tuple, Generator, List
 from dataclasses import dataclass
 
 
@@ -156,3 +156,16 @@ class Module:
                 },
             },
         )
+
+    def to_func_list_lines(self) -> List[str]:
+        """ Represent self as a List of functions.
+        """
+        res_lines: List[str] = []
+        res_lines += [
+            f'top_level::{f.name}' for f in self.function_map.values()
+        ]
+        for c in self.class_map.values():
+            res_lines += [
+                f'{c.name}::{f.name}' for f in c.function_map.values()
+            ]
+        return res_lines
