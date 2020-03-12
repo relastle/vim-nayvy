@@ -129,3 +129,36 @@ class TestAutoGenerator(unittest.TestCase):
             f'{self.work_dir}/tests/sub_sub_package/test_c.py',
         ).exists()
         return
+
+    def test_get_added_test_lines(self) -> None:
+        """ Simple integration test of `get_added_test_lines`
+        """
+        given_impl_module_lines = [
+            'class Hoge:',
+            '',
+            '    def hoge(self) -> None:',
+            '        return',
+        ]
+
+        given_test_module_lines = [
+            'class TestHoge(unittest.TestCase):',
+            '',
+            '    def test_fuga(self) -> None:',
+            '        return',
+        ]
+
+        actual_lines = self.target.get_added_test_lines(
+            'hoge',
+            given_impl_module_lines,
+            given_test_module_lines,
+        )
+
+        assert actual_lines == [
+            'class TestHoge(unittest.TestCase):',
+            '',
+            '    def test_fuga(self) -> None:',
+            '        return',
+            '',
+            '    def test_hoge(self) -> None:',
+            '        return',
+        ]

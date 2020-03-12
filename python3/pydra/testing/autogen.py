@@ -136,12 +136,12 @@ class AutoGenerator:
 
         # check where func_name is defined
         defined_class_name = ''
-        for class_name, _class in additional_mod.class_map:
+        for class_name, _class in additional_mod.class_map.items():
             if f'test_{func_name}' in _class.function_map:
                 defined_class_name = class_name
 
         react_test_mod.add_func(
             defined_class_name,
-            func_name,
+            f'test_{func_name}',
         )
         return react_test_mod.lines

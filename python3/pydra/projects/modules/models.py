@@ -102,7 +102,15 @@ class Module:
         that are defined in self and not-defined in _module.
         """
         sub_class_map = {
-            k: v.sub(_module.class_map[k])
+            k: v.sub(_module.class_map.get(
+                k,
+                Class(
+                    k,
+                    v.line_begin,
+                    v.line_begin,
+                    {},
+                )
+            ))
             for k, v in self.class_map.items()
         }
         sub_class_map = {
