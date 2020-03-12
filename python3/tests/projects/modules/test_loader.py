@@ -12,7 +12,10 @@ from pydra.projects.modules.models import (
 
 class TestSyntacticModuleLoader(unittest.TestCase):
 
-    def test_get_attrs(self) -> None:
+    def test_load_module_from_path(self) -> None:
+        # -------------------------------------
+        # Simple file loading
+        # -------------------------------------
         module_path = Path(dirname(__file__)) / 'resources/sample.py'
         loader = SyntacticModuleLoader()
         module = loader.load_module_from_path(module_path)
@@ -88,3 +91,42 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 },
             )
         )
+
+        # -------------------------------------
+        # Complex file loading
+        # -------------------------------------
+        module_path = Path(dirname(__file__)) / 'resources/sample_complex.py'
+        loader = SyntacticModuleLoader()
+        module = loader.load_module_from_path(module_path)
+
+        assert module is not None
+
+        # Assertion of top level functions
+        assert (
+            module.function_map['top_level_function1'] ==
+            Function(
+                'top_level_function1',
+                2,
+                11,
+                FuncDeclType.TOP_LEVEL,
+            )
+        )
+
+        # Assertion of class methods
+        assert (
+            vars(module.class_map['TopLevelClass1']) ==
+            vars(Class(
+                'TopLevelClass1',
+                13,
+                23,
+                {
+                    'instance_method1': Function(
+                        'instance_method1',
+                        15,
+                        23,
+                        FuncDeclType.INSTANCE,
+                    ),
+                },
+            ))
+        )
+        return

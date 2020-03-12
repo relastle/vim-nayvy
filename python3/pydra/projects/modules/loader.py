@@ -47,6 +47,12 @@ class SyntacticModuleLoader(ModuluLoader):
 
         buf_functions: List[Function]
 
+        # buffer for multi line declarations
+        buf_decl_line: str
+        buf_exessive_paren_open: int
+        buf_decl_indent: int
+        buf_decl_begin: int
+
         buf_class_name: str
         buf_class_begin: int
         buf_class_indent: int
@@ -79,6 +85,11 @@ class SyntacticModuleLoader(ModuluLoader):
 
             self.buf_functions = []
 
+            self.buf_decl_line = ''
+            self.buf_exessive_paren_open = 0
+            self.buf_decl_indent = 0
+            self.buf_decl_begin = 0
+
             self._clean_buf_class()
             self._clean_buf_func()
 
@@ -89,6 +100,33 @@ class SyntacticModuleLoader(ModuluLoader):
 
         def get_indent(self, line: str) -> int:
             return len(line) - len(line.lstrip())
+
+        def _starts_multi_line_buffer(self, line: str) -> bool:
+            if (
+                not line.lstrip().startswith('class') and
+                not line.lstrip().startswith('def')
+            ):
+                return False
+
+            par_open_count = line.count('(')
+            par_close_count = line.count(')')
+            if par_open_count == par_close_count:
+                return False
+
+            self.buf_decl_line += line.strip()
+            self.buf_exessive_paren_open = par_open_count - par_close_count
+            self.buf_decl_indent = self.current_indent
+            self.buf_decl_begin = self.processed_line_num
+            return True
+
+        def _ends_multi_line_buffer(self, line: str) -> bool:
+            self.buf_decl_line += line.strip()
+            par_open_count = line.count('(')
+            par_close_count = line.count(')')
+            self.buf_exessive_paren_open += par_open_count - par_close_count
+            if self.buf_exessive_paren_open > 0:
+                return False
+            return True
 
         def _check_closure(self) -> None:
             """ proccess related to change of indent
@@ -144,17 +182,27 @@ class SyntacticModuleLoader(ModuluLoader):
                 self.buf_functions = []
                 self._clean_buf_class()
 
-        def _check_class_decl(self, line: str) -> bool:
+        def _check_class_decl(
+            self,
+            line: str,
+            begin: int,
+            indent: int,
+        ) -> bool:
             m = re.match(self.CLASS_DECL_RE, line)
             if m is None:
                 return False
             class_name = m.group('class_name')
             self.buf_class_name = class_name
-            self.buf_class_begin = self.processed_line_num
-            self.buf_class_indent = self.current_indent
+            self.buf_class_begin = begin
+            self.buf_class_indent = indent
             return True
 
-        def _check_instance_method_decl(self, line: str) -> bool:
+        def _check_instance_method_decl(
+            self,
+            line: str,
+            begin: int,
+            indent: int,
+        ) -> bool:
             m = re.match(self.INSTANCE_FUNC_DECL_RE, line)
             if m is None:
                 return False
@@ -162,12 +210,17 @@ class SyntacticModuleLoader(ModuluLoader):
             if is_dunder(function_name):
                 return True
             self.buf_func_name = function_name
-            self.buf_func_begin = self.processed_line_num
+            self.buf_func_begin = begin
             self.buf_func_decl_type = FuncDeclType.INSTANCE
-            self.buf_func_indent = self.current_indent
+            self.buf_func_indent = indent
             return True
 
-        def _check_class_method_decl(self, line: str) -> bool:
+        def _check_class_method_decl(
+            self,
+            line: str,
+            begin: int,
+            indent: int,
+        ) -> bool:
             m = re.match(self.CLASS_FUNC_DECL_RE, line)
             if m is None:
                 return False
@@ -175,12 +228,17 @@ class SyntacticModuleLoader(ModuluLoader):
             if is_dunder(function_name):
                 return True
             self.buf_func_name = function_name
-            self.buf_func_begin = self.processed_line_num
+            self.buf_func_begin = begin
             self.buf_func_decl_type = FuncDeclType.CLASS
-            self.buf_func_indent = self.current_indent
+            self.buf_func_indent = indent
             return True
 
-        def _check_other_function_decl(self, line: str) -> bool:
+        def _check_other_function_decl(
+            self,
+            line: str,
+            begin: int,
+            indent: int,
+        ) -> bool:
             m = re.match(self.FUNCTION_DECL_RE, line)
             if m is None:
                 return False
@@ -188,9 +246,9 @@ class SyntacticModuleLoader(ModuluLoader):
             if is_dunder(function_name):
                 return True
             self.buf_func_name = function_name
-            self.buf_func_begin = self.processed_line_num
+            self.buf_func_begin = begin
             self.buf_func_decl_type = FuncDeclType.TOP_LEVEL
-            self.buf_func_indent = self.current_indent
+            self.buf_func_indent = indent
             return True
 
         def _consume(self, line: str) -> None:
@@ -202,18 +260,52 @@ class SyntacticModuleLoader(ModuluLoader):
             indent = self.get_indent(line)
             self.current_indent = indent
 
+            # check if multi line declarations starts.
+            if (
+                self._starts_multi_line_buffer(line)
+            ):
+                return
+
+            # check if multi line declarations ends.
+            if (
+                self.buf_decl_line and
+                not self._ends_multi_line_buffer(line)
+            ):
+                return
+
             self._check_closure()
 
-            (
-                self._check_class_decl(line) or
-                self._check_instance_method_decl(line) or
-                self._check_class_method_decl(line) or
-                self._check_other_function_decl(line)
-            )
+            if self.buf_decl_line:
+                args = (
+                    self.buf_decl_line,
+                    self.buf_decl_begin,
+                    self.buf_decl_indent,
+                )
+                (
+                    self._check_class_decl(*args) or
+                    self._check_instance_method_decl(*args) or
+                    self._check_class_method_decl(*args) or
+                    self._check_other_function_decl(*args)
+                )
+                # clean up
+                self.buf_decl_line = ''
+                self.buf_decl_begin = 0
+                self.buf_decl_indent = 0
+            else:
+                args = (
+                    line,
+                    self.processed_line_num,
+                    self.current_indent,
+                )
+                (
+                    self._check_class_decl(*args) or
+                    self._check_instance_method_decl(*args) or
+                    self._check_class_method_decl(*args) or
+                    self._check_other_function_decl(*args)
+                )
 
             # reset empty line counter
             self.buf_empty_line_num = 0
-
             return
 
         def consume(self, line: str) -> None:
