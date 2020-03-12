@@ -19,7 +19,7 @@ class LintEngineMock(LintEngine):
 
 class TestFixer(unittest.TestCase):
 
-    def test_fix_lines(self) -> None:
+    def test__fix_lines(self) -> None:
         config = ImportConfig(
             {
                 'os': SingleImport(
