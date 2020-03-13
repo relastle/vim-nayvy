@@ -2,34 +2,19 @@
 Module for manipulating arg (of function)
 '''
 from typing import List
+from dataclasses import dataclass
 
 
 # The code is inspired by https://github.com/honza/vim-snippets
+@dataclass
 class Arg:
     '''
     Domain object of one argument of `Function`,
     '''
 
-    @property
-    def arg_str(self) -> str:
-        return self._arg_str
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def type(self) -> str:
-        return self._type
-
-    def __init__(self, arg_str: str) -> None:
-        self._arg_str = arg_str
-        name_and_type = arg_str.split('=')[0].split(':')
-        self._name = name_and_type[0].strip()
-        if len(name_and_type) == 2:
-            self._type = name_and_type[1].strip()
-        else:
-            self._type = 'None'
+    arg_str: str
+    name: str
+    t: str
 
     def is_kwarg(self) -> bool:
         return '=' in self.arg_str
@@ -58,7 +43,21 @@ class Arg:
         ''' `make_docstring` of type included version'''
         return '{} ({}):'.format(
             self.name,
-            self.type,
+            self.t,
+        )
+
+    @classmethod
+    def of(cls, arg_str: str) -> 'Arg':
+        name_and_type = arg_str.split('=')[0].split(':')
+        _name = name_and_type[0].strip()
+        if len(name_and_type) == 2:
+            _type = name_and_type[1].strip()
+        else:
+            _type = 'None'
+        return Arg(
+            arg_str,
+            _name,
+            _type,
         )
 
     @classmethod
@@ -78,8 +77,12 @@ class Arg:
                 square_bracket_level -= 1
             tmp_arg += c
         argstr_lst.append(tmp_arg)
+        # strip arg_str
+        argstr_lst = [
+            argstr.strip() for argstr in argstr_lst
+        ]
         args = [
-            Arg(argstr) for argstr in argstr_lst
+            Arg.of(argstr) for argstr in argstr_lst
             if argstr != 'self' and argstr.strip() != ''
         ]
         return args

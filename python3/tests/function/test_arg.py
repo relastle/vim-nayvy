@@ -4,7 +4,23 @@ from pydra.function.arg import Arg
 
 
 class TestArg(unittest.TestCase):
-    def test_arg_construction(self) -> None:
+
+    def test_make_assignment_stmt(self) -> None:
+        arg = Arg.of('name: Dict[str, Any]')
+        assignment_stmt = arg.make_assignment_stmt()
+        self.assertEqual(assignment_stmt, 'self._name = name')
+
+    def test_make_docstring(self) -> None:
+        arg = Arg.of('name: Dict[str, Any]')
+        docstring = arg.make_docstring()
+        self.assertEqual(docstring, 'name:')
+
+    def test_make_docstring_with_type(self) -> None:
+        arg = Arg.of('name: Dict[str, Any]')
+        docstring = arg.make_docstring_with_type()
+        self.assertEqual(docstring, 'name (Dict[str, Any]):')
+
+    def test_of(self) -> None:
         cases = [
             {
                 'input_arg_str': 'name',
@@ -19,22 +35,17 @@ class TestArg(unittest.TestCase):
         ]
 
         for case in cases:
-            arg = Arg(case['input_arg_str'])
+            arg = Arg.of(case['input_arg_str'])
             self.assertEqual(arg.name, case['expected_name'])
-            self.assertEqual(arg.type, case['expected_type'])
+            self.assertEqual(arg.t, case['expected_type'])
         return
 
-    def test_make_assignment_stmt(self) -> None:
-        arg = Arg('name: Dict[str, Any]')
-        assignment_stmt = arg.make_assignment_stmt()
-        self.assertEqual(assignment_stmt, 'self._name = name')
-
-    def test_make_docstring(self) -> None:
-        arg = Arg('name: Dict[str, Any]')
-        docstring = arg.make_docstring()
-        self.assertEqual(docstring, 'name:')
-
-    def test_make_docstring_with_type(self) -> None:
-        arg = Arg('name: Dict[str, Any]')
-        docstring = arg.make_docstring_with_type()
-        self.assertEqual(docstring, 'name (Dict[str, Any]):')
+    def test_parse_args(self) -> None:
+        given = 'a: int, b: str, c: Dict[str, Any]'
+        actual = Arg.parse_args(given)
+        assert actual == [
+            Arg('a: int', 'a', 'int'),
+            Arg('b: str', 'b', 'str'),
+            Arg('c: Dict[str, Any]', 'c', 'Dict[str, Any]'),
+        ]
+        return
