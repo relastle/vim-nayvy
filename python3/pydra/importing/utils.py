@@ -8,13 +8,19 @@ def get_first_line_num(lines: List[str]) -> int:
     and shebang (#!/usr/bin/env python3)
     '''
     in_docstring = False
+    docstring_quotes = ''
     try:
         for i, line in enumerate(lines):
-            if in_docstring and line.startswith("'''"):
+            if in_docstring and line.startswith(docstring_quotes):
                 in_docstring = False
                 continue
             if (not in_docstring) and line.startswith("'''"):
                 in_docstring = True
+                docstring_quotes = "'''"
+                continue
+            if (not in_docstring) and line.startswith('"""'):
+                in_docstring = True
+                docstring_quotes = '"""'
                 continue
             if line.startswith('#'):
                 continue
@@ -50,7 +56,7 @@ def is_import_unrelated_line(line: str) -> bool:
 
 
 def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
-    '''
+    """
     Returns:
     [
         (1st block's start begin(inclusive), 1st block's end(exclusive)),
@@ -58,7 +64,7 @@ def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
         (3rd block's start begin(inclusive), 3rd block's end(exclusive)),
         ...
     ]
-    '''
+    """
     res = []
     in_block = False
     start_index = -1
@@ -82,12 +88,14 @@ def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
 
 
 def find_target_line_num(level: int, lines: List[str]) -> int:
-    '''
+    """
     Find next line index to
     last import sentence of gien block level.
     In other words, this function returns
     where another additional import sentence to be appneded.
-    '''
+
+    Note: it changes lines destructively.
+    """
     if not (0 <= level and level <= 2):
         return -1
     import_block_indices = get_import_block_indices(lines)
