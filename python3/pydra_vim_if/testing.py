@@ -39,12 +39,12 @@ def pydra_jump_to_test_or_generate(
 
     with open(filepath) as f:
         impl_module_lines = [
-            line.strip() for line in f.readlines()
+            line.strip('\n') for line in f.readlines()
         ]
 
     with open(test_path) as f:
         test_module_lines = [
-            line.strip() for line in f.readlines()
+            line.strip('\n') for line in f.readlines()
         ]
 
     lines = auto_generator.get_added_test_lines(
