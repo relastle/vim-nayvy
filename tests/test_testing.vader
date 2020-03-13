@@ -1,19 +1,20 @@
-After:
-  !rm -rf ./vader_workspace/tests
-
 ===============================================================================
 
 Given python (simple python code):
 
 Execute:
   e ./vader_workspace/package/main.py
-  norm gg0w
+  norm gg0jjww
   PydraJumpToTestOrGenerate
 
 Expect python (Test script was genenrated):
+  import unittest
 
 
-  class Test(unittest.TestCase):
+  class TestHoge(unittest.TestCase):
+
+      def test_fuga(self) -> None:
+          pass
 
       def test_hoge(self) -> None:
           return

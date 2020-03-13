@@ -3,7 +3,7 @@ import unittest
 from pydra.importing.utils import get_import_block_indices
 
 
-class TestUtils(unittest.TestCase):
+class Test(unittest.TestCase):
 
     def test_get_import_block_indices(self) -> None:
         # -------------------------------------
