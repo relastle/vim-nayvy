@@ -3,7 +3,7 @@ from os.path import dirname
 from pathlib import Path
 from dataclasses import dataclass
 
-from pydra.projects.modules.loader import ModuluLoader
+from pydra.projects.modules.loader import ModuleLoader
 from pydra.projects.modules.models import Module
 from .path import impl_path_to_test_path
 
@@ -19,7 +19,7 @@ class ReactiveTestModule:
     mod: Module
     lines: List[str]
 
-    _loader: ModuluLoader
+    _loader: ModuleLoader
 
     def __refresh(self) -> None:
         self.mod = self._loader.load_module_from_lines(self.lines)
@@ -28,7 +28,7 @@ class ReactiveTestModule:
     @classmethod
     def of(
         cls,
-        loader: ModuluLoader,
+        loader: ModuleLoader,
         lines: List[str],
     ) -> Optional['ReactiveTestModule']:
         mod = loader.load_module_from_lines(lines)
@@ -74,7 +74,7 @@ class AutoGenerator:
     test-related components.
     """
 
-    module_loader: ModuluLoader
+    module_loader: ModuleLoader
 
     def touch_test_file(self, module_filepath: str) -> Optional[str]:
         """ touch the unittest file for module located in `module_filepath`

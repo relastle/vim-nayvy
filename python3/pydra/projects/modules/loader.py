@@ -12,7 +12,7 @@ def is_dunder(func_name: str) -> bool:
     )
 
 
-class ModuluLoader(metaclass=ABCMeta):
+class ModuleLoader(metaclass=ABCMeta):
 
     @abstractmethod
     def load_module_from_path(
@@ -29,9 +29,9 @@ class ModuluLoader(metaclass=ABCMeta):
         raise NotImplementedError
 
 
-class SyntacticModuleLoader(ModuluLoader):
+class SyntacticModuleLoader(ModuleLoader):
     """
-    Implementation for ModuluLoader using
+    Implementation for ModuleLoader using
     only syntastic feature obtained from just line by line.
     """
 
