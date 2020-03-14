@@ -1,8 +1,9 @@
-import sys
 from typing import List, Tuple, Optional
 from os.path import basename
 
 import vim  # noqa
+
+from . import error
 from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 
@@ -12,15 +13,12 @@ def nayvy_auto_touch_test() -> None:
     """
     filepath = vim.eval('expand("%")')
     if basename(filepath).startswith('test_'):
-        print('You are already in test script.', file=sys.stderr)
+        error('You are already in test script.')
         return
     auto_generator = AutoGenerator(SyntacticModuleLoader())
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
-        print(
-            'Please check if your python project is created correcty',
-            file=sys.stderr,
-        )
+        error('Please check if your python project is created correcty')
         return
     vim.command(f'vs {test_path}')
     return
@@ -32,33 +30,24 @@ def nayvy_jump_to_test_or_generate() -> None:
     filepath = vim.eval('expand("%")')
     # check if alredy in test file
     if basename(filepath).startswith('test_'):
-        print('You are already in test script.', file=sys.stderr)
+        error('You are already in test script.')
         return
     loader = SyntacticModuleLoader()
     auto_generator = AutoGenerator(loader)
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
-        print(
-            'Please check if your python project is created correcty',
-            file=sys.stderr,
-        )
+        error('Please check if your python project is created correcty')
         return
 
     impl_module_lines = vim.current.buffer[:]
     impl_mod = loader.load_module_from_lines(impl_module_lines)
     if impl_mod is None:
-        print(
-            'Please check the current buffer is valid',
-            file=sys.stderr,
-        )
+        error('Please check the current buffer is valid')
         return
 
     func_name = impl_mod.get_function(vim.current.window.cursor[0]-1)
     if func_name is None:
-        print(
-            'The cursor is probably outside the function.',
-            file=sys.stderr,
-        )
+        error('The cursor is probably outside the function.')
         return
 
     # load test file lines.
@@ -103,26 +92,20 @@ def nayvy_list_tested_and_untested_functions() -> Optional[Tuple[List[str], List
     """
     filepath = vim.eval('expand("%")')
     if basename(filepath).startswith('test_'):
-        print('You are already in test script.', file=sys.stderr)
+        error('You are already in test script.')
         return None
     lines = vim.current.buffer[:]
     loader = SyntacticModuleLoader()
     auto_generator = AutoGenerator(loader)
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
-        print(
-            'Please check if your python project is created correcty',
-            file=sys.stderr,
-        )
+        error('Please check if your python project is created correcty')
         return ([], [])
 
     impl_mod = loader.load_module_from_lines(lines)
     test_mod = loader.load_module_from_path(test_path)
     if impl_mod is None or test_mod is None:
-        print(
-            'Loading python scripts failed.',
-            file=sys.stderr,
-        )
+        error('Loading python scripts failed.')
         return ([], [])
     intersection = impl_mod.to_test().intersect(test_mod)
     subtraction = impl_mod.to_test().sub(test_mod)

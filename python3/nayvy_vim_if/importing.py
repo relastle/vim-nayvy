@@ -1,8 +1,9 @@
-import sys
 from typing import List, Optional, Tuple, Any, Generator
 from dataclasses import dataclass
 
 import vim  # noqa
+
+from . import error, warning
 from nayvy.importing.fixer import Fixer, ImportStatementMap
 from nayvy.importing.import_statement import SingleImport
 from nayvy.importing.pyflakes import PyflakesEngine
@@ -18,10 +19,10 @@ class IntegratedMap(ImportStatementMap):
     project_import_helper: ProjectImportHelper
 
     def __getitem__(self, name: str) -> Optional[SingleImport]:
-        single_import = self.import_config[name]
+        single_import = self.project_import_helper[name]
         if single_import is not None:
             return single_import
-        single_import = self.project_import_helper[name]
+        single_import = self.import_config[name]
         if single_import is not None:
             return single_import
         return None
@@ -37,13 +38,18 @@ class IntegratedMap(ImportStatementMap):
 def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
     config = ImportConfig.init()
     if config is None:
-        print('cannot load nayvy config file', file=sys.stderr)
+        error('Cannot load nayvy config file')
         return None
     project_import_helper = ProjectImportHelper.of_filepath(
         SyntacticModuleLoader(),
         filepath,
     )
     if project_import_helper is None:
+        warning(
+            'cannot load project. '
+            '(check if the current buffer is saved correctly, '
+            'or you are working in a Python project)'
+        )
         return config
     return IntegratedMap(
         config,
