@@ -3,7 +3,7 @@ from os.path import basename
 
 import vim  # noqa
 
-from . import error
+from .utils import error
 from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 

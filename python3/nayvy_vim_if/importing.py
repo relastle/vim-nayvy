@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import vim  # noqa
 
-from . import error, warning
+from .utils import error, warning
 from nayvy.importing.fixer import Fixer, ImportStatementMap
 from nayvy.importing.import_statement import SingleImport
 from nayvy.importing.pyflakes import PyflakesEngine
