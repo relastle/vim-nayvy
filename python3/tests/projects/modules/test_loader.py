@@ -12,11 +12,23 @@ from pydra.projects.modules.models import (
 
 class TestSyntacticModuleLoader(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.sample_project_path = (
+            Path(dirname(__file__)) /
+            '..' /
+            '..' /
+            '_resources' /
+            'sample_project'
+        )
+
     def test_load_module_from_path(self) -> None:
         # -------------------------------------
         # Simple file loading
         # -------------------------------------
-        module_path = Path(dirname(__file__)) / 'resources/sample.py'
+        module_path = (
+            self.sample_project_path /
+            'package/main.py'
+        )
         loader = SyntacticModuleLoader()
         module = loader.load_module_from_path(module_path)
 
@@ -95,7 +107,10 @@ class TestSyntacticModuleLoader(unittest.TestCase):
         # -------------------------------------
         # Complex file loading
         # -------------------------------------
-        module_path = Path(dirname(__file__)) / 'resources/sample_complex.py'
+        module_path = (
+            self.sample_project_path /
+            'package/subpackage/sub_main.py'
+        )
         loader = SyntacticModuleLoader()
         module = loader.load_module_from_path(module_path)
 
