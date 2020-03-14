@@ -1,5 +1,5 @@
 import sys
-from typing import List
+from typing import List, Tuple
 from os.path import basename
 
 import vim  # noqa
@@ -79,8 +79,10 @@ def nayvy_jump_to_test_or_generate(
     return
 
 
-def nayvy_list_untested_functions() -> List[str]:
-    """ Vim interface for implementing not-tested functions
+def nayvy_list_tested_and_untested_functions() -> Tuple[List[str], List[str]]:
+    """ Vim interface for listing up
+    - Already tested function
+    - Non-tested function
     """
     filepath = vim.eval('expand("%")')
     lines = vim.current.buffer[:]
@@ -92,7 +94,7 @@ def nayvy_list_untested_functions() -> List[str]:
             'Please check if your python project is created correcty',
             file=sys.stderr,
         )
-        return []
+        return ([], [])
 
     impl_mod = loader.load_module_from_lines(lines)
     test_mod = loader.load_module_from_path(test_path)
@@ -101,6 +103,10 @@ def nayvy_list_untested_functions() -> List[str]:
             'Loading python scripts failed.',
             file=sys.stderr,
         )
-        return []
+        return ([], [])
+    intersection = impl_mod.to_test().intersect(test_mod)
     subtraction = impl_mod.to_test().sub(test_mod)
-    return subtraction.to_func_list_lines()
+    return (
+        intersection.to_func_list_lines(),
+        subtraction.to_func_list_lines(),
+    )

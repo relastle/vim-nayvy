@@ -53,8 +53,8 @@ class Function:
     def to_test(self) -> 'Function':
         return Function(
             name=f'test_{self.name}',
-            line_begin=-1,  # TODO
-            line_end=-1,  # TODO
+            line_begin=-1,
+            line_end=-1,
             func_decl_type=FuncDeclType.INSTANCE,
         )
 
@@ -83,8 +83,8 @@ class Class:
     def to_test(self) -> 'Class':
         return Class(
             name=f'Test{self.name}',
-            line_begin=-1,  # TODO
-            line_end=-1,  # TODO
+            line_begin=-1,
+            line_end=-1,
             function_map={
                 f.name: f for f in
                 (
@@ -95,14 +95,30 @@ class Class:
         )
 
     def sub(self, _class: 'Class') -> 'Class':
+        """ Get substacted class
+        """
         return Class(
             name=self.name,
-            line_begin=-1,  # TODO
-            line_end=-1,  # TODO
+            line_begin=-1,
+            line_end=-1,
             function_map={
                 k: v for k, v in
                 self.function_map.items()
                 if k not in _class.function_map
+            },
+        )
+
+    def intersect(self, _class: 'Class') -> 'Class':
+        """ Get intersection class
+        """
+        return Class(
+            name=self.name,
+            line_begin=-1,
+            line_end=-1,
+            function_map={
+                k: v for k, v in
+                self.function_map.items()
+                if k in _class.function_map
             },
         )
 
@@ -143,6 +159,38 @@ class Module:
                 k: v for k, v in
                 self.function_map.items()
                 if k not in _module.function_map
+            },
+            class_map=sub_class_map,
+        )
+
+    def intersect(self, _module: 'Module') -> 'Module':
+        """ Intersection of module.
+
+        It returns intersection module which has attributes
+        that are defined in self and also in _module.
+        """
+        sub_class_map = {
+            k: v.intersect(_module.class_map.get(
+                k,
+                Class(
+                    k,
+                    v.line_begin,
+                    v.line_begin,
+                    {},
+                )
+            ))
+            for k, v in self.class_map.items()
+        }
+        sub_class_map = {
+            k: v for k, v in sub_class_map.items()
+            if v.function_map
+        }
+
+        return Module(
+            function_map={
+                k: v for k, v in
+                self.function_map.items()
+                if k in _module.function_map
             },
             class_map=sub_class_map,
         )

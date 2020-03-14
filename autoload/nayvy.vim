@@ -67,15 +67,17 @@ function! nayvy#sink_multiple_functions(list) abort
 endfunction
 
 " list all functions that are not tested in a `test_{}` manner
-function! nayvy#nayvy_list_untested_functions() abort
-  return py3eval('nayvy_list_untested_functions()')
+function! nayvy#nayvy_list_tested_and_untested_functions() abort
+  return py3eval('nayvy_list_tested_and_untested_functions()')
 endfunction
 
 function! nayvy#make_unittest_fzf() abort
-  let l:function_lst = nayvy#nayvy_list_untested_functions()
+  let l:function_lsts = nayvy#nayvy_list_tested_and_untested_functions()
+  let l:tested_functions = l:function_lsts[0]
+  let l:untedted_functions = l:function_lsts[1]
   call fzf#run(extend({
-        \ 'source': l:function_lst,
+        \ 'source': l:tested_functions + l:untedted_functions,
         \ 'sink*': function('nayvy#sink_multiple_functions'),
-        \ 'options': '-m',
+        \ 'options': printf('-m --header-lines=%d', len(l:tested_functions)),
         \ }, get(g:, 'fzf_layout', {})))
 endfunction
