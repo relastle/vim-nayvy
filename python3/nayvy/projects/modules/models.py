@@ -3,7 +3,7 @@
 """
 import json
 from enum import Enum
-from typing import Any, Dict, List, Tuple, Generator
+from typing import Any, Dict, List, Tuple, Generator, Optional
 from dataclasses import asdict, dataclass, is_dataclass
 
 
@@ -224,6 +224,21 @@ class Module:
                 },
             },
         )
+
+    def get_function(self, line_index: int) -> Optional[str]:
+        """ Get the name offunction that is wrapping `line_index`
+        """
+        # Loop over top level functions.
+        for f in self.function_map.values():
+            if f.line_begin <= line_index < f.line_end:
+                return f.name
+
+        # Loop over class methods and instance methods.
+        for c in self.class_map.values():
+            for f in c.function_map.values():
+                if f.line_begin <= line_index < f.line_end:
+                    return f.name
+        return None
 
     def to_func_list_lines(self) -> List[str]:
         """ Represent self as a List of functions.

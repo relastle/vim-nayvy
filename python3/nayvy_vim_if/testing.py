@@ -26,7 +26,7 @@ def nayvy_auto_touch_test() -> None:
     return
 
 
-def nayvy_jump_to_test_or_generate(func_name: str,) -> None:
+def nayvy_jump_to_test_or_generate() -> None:
     """ Vim interface for jump of generate unittest.
     """
     filepath = vim.eval('expand("%")')
@@ -34,7 +34,8 @@ def nayvy_jump_to_test_or_generate(func_name: str,) -> None:
     if basename(filepath).startswith('test_'):
         print('You are already in test script.', file=sys.stderr)
         return
-    auto_generator = AutoGenerator(SyntacticModuleLoader())
+    loader = SyntacticModuleLoader()
+    auto_generator = AutoGenerator(loader)
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
         print(
@@ -43,11 +44,24 @@ def nayvy_jump_to_test_or_generate(func_name: str,) -> None:
         )
         return
 
-    with open(filepath) as f:
-        impl_module_lines = [
-            line.strip('\n') for line in f.readlines()
-        ]
+    impl_module_lines = vim.current.buffer[:]
+    impl_mod = loader.load_module_from_lines(impl_module_lines)
+    if impl_mod is None:
+        print(
+            'Please check the current buffer is valid',
+            file=sys.stderr,
+        )
+        return
 
+    func_name = impl_mod.get_function(vim.current.window.cursor[0]-1)
+    if func_name is None:
+        print(
+            'The cursor is probably outside the function.',
+            file=sys.stderr,
+        )
+        return
+
+    # load test file lines.
     with open(test_path) as f:
         test_module_lines = [
             line.strip('\n') for line in f.readlines()
@@ -67,6 +81,7 @@ def nayvy_jump_to_test_or_generate(func_name: str,) -> None:
         vim.current.buffer[:] = lines
     else:
         lines = test_module_lines
+        print('Test function already exists')
 
     # search lines
     row: int

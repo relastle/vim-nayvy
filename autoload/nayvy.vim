@@ -57,7 +57,7 @@ endfunction
 
 
 function! nayvy#jump_to_test_or_generate() abort
-  let l:py_expr = 'nayvy_jump_to_test_or_generate("' . expand('<cword>') . '")'
+  let l:py_expr = 'nayvy_jump_to_test_or_generate()'
   call py3eval(l:py_expr)
 endfunction
 
