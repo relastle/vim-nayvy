@@ -20,4 +20,14 @@ jobs:
         python_version: 3.7.6
         poetry_version: 1.0.3
         working_directory: ./python3
-        args: run python -m pytest --cov=src --cov-branch --cov-fail-under=100 tests/
+        args: run coverage run --omit='./nayvy_vim_if/*,./tests/**/*' --source=. -m pytest -vv --durations=10
+    - name: coverage report
+      uses: abatilo/actions-poetry@v1.5.0
+      with:
+        python_version: 3.7.6
+        poetry_version: 1.0.3
+        working_directory: ./python3
+        args: run coverage report -m
+
+
+
