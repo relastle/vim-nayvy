@@ -26,6 +26,7 @@ def attr_iter(attr: Any) -> Generator[Tuple[str, Any], None, None]:
 
 class FuncDeclType(Enum):
 
+    NO_SET = auto()
     TOP_LEVEL = auto()
     CLASS = auto()
     INSTANCE = auto()
@@ -47,6 +48,17 @@ class Function:
             line_begin=-1,  # TODO
             line_end=-1,  # TODO
             func_decl_type=FuncDeclType.INSTANCE,
+        )
+
+    @classmethod
+    def of_name(cls, name: str) -> 'Function':
+        """ utility function for constructing with default values
+        """
+        return Function(
+            name=name,
+            line_begin=-1,
+            line_end=-1,
+            func_decl_type=FuncDeclType.NO_SET,
         )
 
 
