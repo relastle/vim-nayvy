@@ -5,6 +5,7 @@ import click
 from click_help_colors import HelpColorsGroup, HelpColorsCommand
 
 from nayvy.projects.path import ProjectImportHelper
+from nayvy.projects.modules.models import Module
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 
 CONTEXT_SETTINGS = dict(
@@ -53,6 +54,22 @@ def lint(
 ) -> None:
     """ Run lint of nayvy.
     """
+    return
+
+
+@nayvy_sub_command
+@click.argument('python_script_path', nargs=1)
+def load(
+    python_script_path: str,
+) -> None:
+    """ Load filepath and convert is to Nayvy's object
+    """
+    loader = SyntacticModuleLoader()
+    module = loader.load_module_from_path(python_script_path)
+    if module is None:
+        print('Failed to load script', file=sys.stderr)
+        return
+    print(module.to_json())
     return
 
 
