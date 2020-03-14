@@ -2,9 +2,10 @@ from typing import Dict, Optional, List
 import os
 
 from .import_statement import ImportStatement, SingleImport
+from .fixer import ImportStatementMap
 
 
-class ImportConfig:
+class ImportConfig(ImportStatementMap):
 
     @property
     def import_d(self) -> Dict[str, SingleImport]:
@@ -13,6 +14,9 @@ class ImportConfig:
     def __init__(self, import_d:  Dict[str, SingleImport]) -> None:
         self._import_d = import_d
         return
+
+    def __getitem__(self, name: str) -> Optional[SingleImport]:
+        return self._import_d.get(name, None)
 
     @classmethod
     def init(cls) -> Optional['ImportConfig']:

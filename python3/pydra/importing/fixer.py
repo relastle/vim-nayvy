@@ -4,11 +4,10 @@ Fix the python lines of code dependent on Linter result
 
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
-from .import_config import ImportConfig
 from .import_statement import ImportStatement, SingleImport
 
 
@@ -27,10 +26,17 @@ class LintEngine(metaclass=ABCMeta):
         raise NotImplementedError
 
 
+class ImportStatementMap(metaclass=ABCMeta):
+
+    @abstractmethod
+    def __getitem__(self, name: str) -> Optional[SingleImport]:
+        raise NotImplementedError
+
+
 @dataclass(frozen=True)
 class Fixer:
 
-    config: ImportConfig
+    import_stmt_map: ImportStatementMap
     lint_engine: LintEngine
 
     def _fix_lines(
@@ -66,10 +72,7 @@ class Fixer:
         # Constructing not-None single import list
         imports_to_add: List[SingleImport] = []
         for undefined_name in undefined_names:
-            single_import = self.config.import_d.get(
-                undefined_name,
-                None,
-            )
+            single_import = self.import_stmt_map[undefined_name]
             if single_import is None:
                 continue
             imports_to_add.append(single_import)
