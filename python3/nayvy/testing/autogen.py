@@ -22,7 +22,9 @@ class ReactiveTestModule:
     _loader: ModuleLoader
 
     def __refresh(self) -> None:
-        self.mod = self._loader.load_module_from_lines(self.lines)
+        mod = self._loader.load_module_from_lines(self.lines)
+        if mod is not None:
+            self.mod = mod
         return
 
     @classmethod

@@ -7,5 +7,5 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf **/.mypy_cache
-	rm -rf **/__pycache__
+	rm -rf ./**/.mypy_cache/
+	rm -rf ./**/__pycache__/

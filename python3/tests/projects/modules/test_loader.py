@@ -30,7 +30,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
             'package/main.py'
         )
         loader = SyntacticModuleLoader()
-        module = loader.load_module_from_path(module_path)
+        module = loader.load_module_from_path(str(module_path))
 
         assert module is not None
 
@@ -112,7 +112,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
             'package/subpackage/sub_main.py'
         )
         loader = SyntacticModuleLoader()
-        module = loader.load_module_from_path(module_path)
+        module = loader.load_module_from_path(str(module_path))
 
         assert module is not None
 

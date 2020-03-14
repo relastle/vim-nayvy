@@ -5,7 +5,7 @@ import click
 from click_help_colors import HelpColorsGroup, HelpColorsCommand
 
 from nayvy.projects.path import ProjectImportHelper
-from nayvy.modules.loader import SyntacticModuleLoader
+from nayvy.projects.modules.loader import SyntacticModuleLoader
 
 CONTEXT_SETTINGS = dict(
     help_option_names=['-h', '--help'],
@@ -58,7 +58,7 @@ def lint(
 
 @nayvy_sub_command
 @click.argument('python_script_path', nargs=1)
-def list_project_importable_objects(
+def list_imports(
     python_script_path: str,
 ) -> None:
     """ List all project importable object into script.
@@ -72,10 +72,10 @@ def list_project_importable_objects(
         return
 
     for name, single_import in project_import_helper.items():
-        '{}:{}'.format(
+        print('{}:{}'.format(
             single_import.name,
             single_import.statement,
-        )
+        ))
     return
 
 
