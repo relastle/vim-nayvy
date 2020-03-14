@@ -4,8 +4,9 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from pydra.projects.path import (
-    ModulePath, mod_relpath,
+    ModulePath,
     ProjectImportHelper,
+    mod_relpath
 )
 from pydra.projects.modules.loader import SyntacticModuleLoader
 from pydra.projects.modules.models import Class, Module, Function
@@ -136,9 +137,13 @@ class TestProjectImportHelper(unittest.TestCase):
                 'main.py'
             ))
         assert actual is not None
-        actual['sub_top_level_function1'] == SingleImport(
+        # Can access to subpackage's function
+        assert actual['sub_top_level_function1'] == SingleImport(
             'sub_top_level_function1',
             'from .subpackage.sub_main import sub_top_level_function1',
             2,
         )
+
+        # Cannot access to function defined in self
+        assert actual['top_level_function1'] is None
         return

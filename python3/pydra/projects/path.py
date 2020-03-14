@@ -1,7 +1,7 @@
-
 from typing import List, Optional
 from os.path import abspath, relpath
 from dataclasses import dataclass
+import glob
 
 from . import get_pyproject_root
 from .modules.loader import ModuleLoader
@@ -92,11 +92,8 @@ class ProjectImportHelper(ImportStatementMap):
 
     current_modpath: ModulePath
     all_modpaths: List[ModulePath]
-    prefers_relative: bool
 
     def _make_stmt_relative(self, modpath_target: ModulePath) -> str:
-        if not self.prefers_relative:
-            return modpath_target.mod_path
         return mod_relpath(
             modpath_target.mod_path,
             self.current_modpath.mod_path,
@@ -128,8 +125,27 @@ class ProjectImportHelper(ImportStatementMap):
         )
         if current_modpath is None:
             return None
+        pyproject_root = get_pyproject_root(filepath)
+        assert pyproject_root is not None
+        all_python_script_paths = glob.glob(
+            '{}/**/*.py'.format(pyproject_root),
+            recursive=True,
+        )
+        maybe_all_modpaths = [
+            ModulePath.of_filepath(
+                loader,
+                _filepath,
+            ) for _filepath in all_python_script_paths
+        ]
+        all_modpaths: List[ModulePath] = []
+        for modpath in maybe_all_modpaths:
+            if modpath is None:
+                continue
+            if modpath.mod_path == current_modpath.mod_path:
+                continue
+            all_modpaths.append(modpath)
+
         return ProjectImportHelper(
             current_modpath,
-            [],
-            True,
+            all_modpaths,
         )
