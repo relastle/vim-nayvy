@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from pydra.importing.import_sentence import ImportAsPart, ImportSentence
+from pydra.importing.import_statement import ImportAsPart, ImportStatement
 
 
 class TestImportAsPart(unittest.TestCase):
@@ -21,11 +21,11 @@ class TestImportAsPart(unittest.TestCase):
         return
 
 
-class TestImportSentence(unittest.TestCase):
+class TestImportStatement(unittest.TestCase):
 
     def test_of(self) -> None:
         # just import
-        res = ImportSentence.of('import tensorflow as tf')
+        res = ImportStatement.of('import tensorflow as tf')
         assert res is not None
         assert res.from_what == ''
         assert len(res.import_as_parts) == 1
@@ -33,7 +33,7 @@ class TestImportSentence(unittest.TestCase):
         assert res.import_as_parts[0].as_what == 'tf'
 
         # from import
-        res = ImportSentence.of('from typing import Dict, List, Optional')
+        res = ImportStatement.of('from typing import Dict, List, Optional')
         assert res is not None
         assert res.from_what == 'typing'
         assert len(res.import_as_parts) == 3
@@ -41,7 +41,7 @@ class TestImportSentence(unittest.TestCase):
         assert res.import_as_parts[2].as_what == ''
 
         # complex pattern
-        res = ImportSentence.of('from   typing  import (  Dict, List, Optional,  ) ')  # noqa
+        res = ImportStatement.of('from   typing  import (  Dict, List, Optional,  ) ')  # noqa
         assert res is not None
         assert res.from_what == 'typing'
         assert len(res.import_as_parts) == 3
@@ -50,43 +50,43 @@ class TestImportSentence(unittest.TestCase):
 
     def test_merge(self) -> None:
         # merge if from_what is the same
-        import_sentence = ImportSentence(
+        import_statement = ImportStatement(
             'hoge',
             [
                     ImportAsPart('AAA', 'a'),
                     ImportAsPart('BBB', 'b'),
             ],
         )
-        target = ImportSentence(
+        target = ImportStatement(
             'hoge',
             [
                 ImportAsPart('BBB', 'b'),
                 ImportAsPart('CCC', 'c'),
             ]
         )
-        import_sentence.merge(target)
-        assert len(import_sentence.import_as_parts) == 3
+        import_statement.merge(target)
+        assert len(import_statement.import_as_parts) == 3
 
         # not merge if from_what is not the same
-        import_sentence = ImportSentence(
+        import_statement = ImportStatement(
             'hoge',
             [
                     ImportAsPart('AAA', 'a'),
                     ImportAsPart('BBB', 'b'),
             ],
         )
-        target = ImportSentence(
+        target = ImportStatement(
             'fuga',
             [
                 ImportAsPart('BBB', 'b'),
                 ImportAsPart('CCC', 'c'),
             ]
         )
-        import_sentence.merge(target)
-        assert len(import_sentence.import_as_parts) == 2
+        import_statement.merge(target)
+        assert len(import_statement.import_as_parts) == 2
 
     def test_removed(self) -> None:
-        import_sentence = ImportSentence(
+        import_statement = ImportStatement(
             'hoge',
             [
                     ImportAsPart('AAA', 'a'),
@@ -96,7 +96,7 @@ class TestImportSentence(unittest.TestCase):
         )
 
         # remove as-imported name
-        removed = import_sentence.removed('hoge.AAA as a')
+        removed = import_statement.removed('hoge.AAA as a')
         assert removed is not None
 
         # remove no-as-import name
@@ -113,22 +113,22 @@ class TestImportSentence(unittest.TestCase):
         return
 
     def test_merge_list(self) -> None:
-        import_sentences = [
-            ImportSentence(
+        import_statements = [
+            ImportStatement(
                 'hoge',
                 [
                     ImportAsPart('AAA', 'a'),
                     ImportAsPart('BBB', 'b'),
                 ]
             ),
-            ImportSentence(
+            ImportStatement(
                 'fuga',
                 [
                     ImportAsPart('AAA', 'a'),
                     ImportAsPart('BBB', 'b'),
                 ]
             ),
-            ImportSentence(
+            ImportStatement(
                 'hoge',
                 [
                     ImportAsPart('CCC', 'c'),
@@ -136,9 +136,9 @@ class TestImportSentence(unittest.TestCase):
                 ]
             ),
         ]
-        actuals = ImportSentence.merge_list(import_sentences)
+        actuals = ImportStatement.merge_list(import_statements)
         expecteds = [
-            ImportSentence(
+            ImportStatement(
                 'hoge',
                 [
                     ImportAsPart('AAA', 'a'),
@@ -147,7 +147,7 @@ class TestImportSentence(unittest.TestCase):
                     ImportAsPart('DDD', 'd'),
                 ]
             ),
-            ImportSentence(
+            ImportStatement(
                 'fuga',
                 [
                     ImportAsPart('AAA', 'a'),
@@ -179,35 +179,35 @@ class TestImportSentence(unittest.TestCase):
             '# multi-line comment 2',
             'import tensorflow as tf',
         ]
-        actuals = ImportSentence.of_lines(lines)
-        expecteds: List[ImportSentence] = [
-            ImportSentence(
+        actuals = ImportStatement.of_lines(lines)
+        expecteds: List[ImportStatement] = [
+            ImportStatement(
                 '',
                 [
                     ImportAsPart('os', '', 'tailing comment'),
                 ],
             ),
-            ImportSentence(
+            ImportStatement(
                 '',
                 [
                     ImportAsPart('sys', '', 'comment above'),
                 ],
             ),
-            ImportSentence(
+            ImportStatement(
                 'pprint',
                 [
                     ImportAsPart('pprint', 'pp'),
                     ImportAsPart('pformat', ''),
                 ],
             ),
-            ImportSentence(
+            ImportStatement(
                 'typing',
                 [
                     ImportAsPart('List', 'L', 'tailing comment 1'),
                     ImportAsPart('Dict', 'D', 'tailing comment 2'),
                 ],
             ),
-            ImportSentence(
+            ImportStatement(
                 '',
                 [
                     ImportAsPart('tensorflow', 'tf',
@@ -229,7 +229,7 @@ class TestImportSentence(unittest.TestCase):
         return
 
     def test_repr(self) -> None:
-        import_sentence = ImportSentence(
+        import_statement = ImportStatement(
             'hoge',
             [
                 ImportAsPart('Hoge', 'hoge'),
@@ -237,6 +237,6 @@ class TestImportSentence(unittest.TestCase):
             ],
         )
         assert (
-            str(import_sentence) ==
+            str(import_statement) ==
             'from hoge import Fuga as fuga, Hoge as hoge'
         )

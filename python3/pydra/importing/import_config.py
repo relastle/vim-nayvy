@@ -2,14 +2,14 @@ from typing import Dict, Optional, List
 import os
 from dataclasses import dataclass
 
-from .import_sentence import ImportSentence
+from .import_statement import ImportStatement
 
 
 @dataclass(frozen=True)
 class SingleImport:
 
     name: str
-    sentence: str
+    statement: str
     level: int
 
 
@@ -55,14 +55,14 @@ class ImportConfig:
 
         import_d: Dict[str, SingleImport] = {}
         for block_i, block in enumerate(blocks):
-            import_sentences = ImportSentence.of_lines(block)
-            if import_sentences is None:
+            import_statements = ImportStatement.of_lines(block)
+            if import_statements is None:
                 return None
-            for import_sentence in import_sentences:
-                for import_as_part in import_sentence.import_as_parts:
+            for import_statement in import_statements:
+                for import_as_part in import_statement.import_as_parts:
                     single_import = SingleImport(
                         import_as_part.name,
-                        import_sentence.get_single_sentence(
+                        import_statement.get_single_statement(
                             import_as_part,
                         ),
                         block_i,

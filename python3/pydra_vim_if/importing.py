@@ -61,6 +61,6 @@ def pydra_list_imports() -> List[str]:
     return [
         '{}:{}'.format(
             single_import.name,
-            single_import.sentence,
+            single_import.statement,
         ) for name, single_import in config.import_d.items()
     ]

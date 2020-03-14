@@ -73,9 +73,9 @@ class ImportAsPart:
         )
 
 
-class ImportSentence:
+class ImportStatement:
 
-    FROM_IMPORT_SENTENCE_RE = r'from +(?P<from>[\w\.]+) +import +(?P<other>.*)'
+    FROM_IMPORT_STATEMENT_RE = r'from +(?P<from>[\w\.]+) +import +(?P<other>.*)'
 
     @property
     def from_what(self) -> str:
@@ -95,7 +95,7 @@ class ImportSentence:
         return
 
     @classmethod
-    def of(cls, s: str) -> Optional['ImportSentence']:
+    def of(cls, s: str) -> Optional['ImportStatement']:
         s = s.replace('(', '').replace(')', '')
         s = s.strip()
         s = s.strip(',')
@@ -103,11 +103,11 @@ class ImportSentence:
             import_as_part = ImportAsPart.of(s.replace('import ', ''))
             if import_as_part is None:
                 return None
-            return ImportSentence(
+            return ImportStatement(
                 '',
                 [import_as_part],
             )
-        m = re.match(cls.FROM_IMPORT_SENTENCE_RE, s)
+        m = re.match(cls.FROM_IMPORT_STATEMENT_RE, s)
         if m is None:
             return None
 
@@ -119,23 +119,23 @@ class ImportSentence:
             if import_as_part is None:
                 return None
             import_as_parts.append(import_as_part)
-        return ImportSentence(
+        return ImportStatement(
             from_what,
             import_as_parts,
         )
 
-    def merge(self, import_sentence: 'ImportSentence') -> bool:
-        ''' merge import_sentence to self if possible
+    def merge(self, import_statement: 'ImportStatement') -> bool:
+        ''' merge import_statement to self if possible
         '''
-        if str(self) == str(import_sentence):
+        if str(self) == str(import_statement):
             # is completely same, assume that merged successfully
             return True
 
         if self.from_what == '':
-            # if no-from sentence, merge is impossible
+            # if no-from statement, merge is impossible
             return False
 
-        if not self.from_what == import_sentence.from_what:
+        if not self.from_what == import_statement.from_what:
             return False
 
         self_import_as_part_strs = [
@@ -143,17 +143,17 @@ class ImportSentence:
             for import_as_part in self.import_as_parts
         ]
 
-        for import_as_part in import_sentence.import_as_parts:
+        for import_as_part in import_statement.import_as_parts:
             if str(import_as_part) not in self_import_as_part_strs:
                 self.import_as_parts.append(import_as_part)
         return True
 
-    def removed(self, import_name: str) -> Optional['ImportSentence']:
+    def removed(self, import_name: str) -> Optional['ImportStatement']:
         if self.from_what == '':
             if self._import_as_parts[0].import_name == import_name:
                 return None
             else:
-                return ImportSentence(
+                return ImportStatement(
                     self.from_what,
                     self.import_as_parts,
                 )
@@ -166,12 +166,12 @@ class ImportSentence:
                 res_import_as_parts.append(import_as_part)
         if not res_import_as_parts:
             return None
-        return ImportSentence(
+        return ImportStatement(
             self.from_what,
             res_import_as_parts,
         )
 
-    def get_single_sentence(
+    def get_single_statement(
         self,
         import_as_part: ImportAsPart,
     ) -> str:
@@ -226,52 +226,52 @@ class ImportSentence:
     @classmethod
     def merge_list(
         cls,
-        import_sentences: List['ImportSentence'],
-    ) -> List['ImportSentence']:
-        ''' Merge multiple import_sentences
+        import_statements: List['ImportStatement'],
+    ) -> List['ImportStatement']:
+        ''' Merge multiple import_statements
 
-        if some ImportSentence objects share `from_what`,
+        if some ImportStatement objects share `from_what`,
         they are merged correctly
         '''
-        merged_import_sentences: List['ImportSentence'] = []
-        for import_sentence in import_sentences:
-            for merged in merged_import_sentences:
-                merge_success = merged.merge(import_sentence)
+        merged_import_statements: List['ImportStatement'] = []
+        for import_statement in import_statements:
+            for merged in merged_import_statements:
+                merge_success = merged.merge(import_statement)
                 if merge_success:
                     break
             else:
-                merged_import_sentences.append(import_sentence)
-        return merged_import_sentences
+                merged_import_statements.append(import_statement)
+        return merged_import_statements
 
     @classmethod
     def get_removed_lst(
         cls,
-        import_sentences: List['ImportSentence'],
+        import_statements: List['ImportStatement'],
         import_names: List[str],
-    ) -> List['ImportSentence']:
-        ''' Remove certain name import from import_sentences
+    ) -> List['ImportStatement']:
+        ''' Remove certain name import from import_statements
         '''
         for name in import_names:
-            import_sentences = [
+            import_statements = [
                 maybe for maybe in
                 (
-                    import_sentence.removed(name)
-                    for import_sentence in import_sentences
+                    import_statement.removed(name)
+                    for import_statement in import_statements
                 )
                 if maybe is not None
             ]
-        return import_sentences
+        return import_statements
 
     @classmethod
     def of_lines(
         cls,
         lines: List[str],
-    ) -> Optional[List['ImportSentence']]:
+    ) -> Optional[List['ImportStatement']]:
         '''
-        Create list of `ImportSentence` List
+        Create list of `ImportStatement` List
         from lines( real python code)
         '''
-        import_sentence_lines = []
+        import_statement_lines = []
         line_coutinuous = False
         line_tmp = ''
         comment_tmp = ''
@@ -312,13 +312,13 @@ class ImportSentence:
                 # illegal
                 return None
             elif excessive_open_paren == 0:
-                # when import sentence is completed
+                # when import statement is completed
                 # with the number of open parenthesis 0
                 line_completed = '{}{}'.format(
                     line_tmp + line,
                     '# ' + comment_tmp if comment_tmp else '',
                 )
-                import_sentence_lines.append(
+                import_statement_lines.append(
                     line_completed
                 )
                 line_coutinuous = False
@@ -337,9 +337,9 @@ class ImportSentence:
                 line_coutinuous = True
                 line_tmp += line
         # Construct return value
-        import_sentences = []
-        for line in import_sentence_lines:
-            import_sentence = ImportSentence.of(line)
-            if import_sentence is not None:
-                import_sentences.append(import_sentence)
-        return import_sentences
+        import_statements = []
+        for line in import_statement_lines:
+            import_statement = ImportStatement.of(line)
+            if import_statement is not None:
+                import_statements.append(import_statement)
+        return import_statements

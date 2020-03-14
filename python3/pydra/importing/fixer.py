@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
 from .import_config import ImportConfig, SingleImport
-from .import_sentence import ImportSentence
+from .import_statement import ImportStatement
 
 
 class LintEngine(metaclass=ABCMeta):
@@ -46,21 +46,21 @@ class Fixer:
         # get import blocks
         begin_end_indices = get_import_block_indices(lines)
 
-        # get import_sentences for each block
-        maybe_import_sentences_lst = [
-            ImportSentence.of_lines(lines[begin_index:end_index])
+        # get import_statements for each block
+        maybe_import_statements_lst = [
+            ImportStatement.of_lines(lines[begin_index:end_index])
             for begin_index, end_index in begin_end_indices
         ]
 
-        import_sentences_lst = []
-        for maybe in maybe_import_sentences_lst:
+        import_statements_lst = []
+        for maybe in maybe_import_statements_lst:
             if maybe is not None:
-                import_sentences_lst.append(maybe)
+                import_statements_lst.append(maybe)
 
-        # remove unused names from import_sentences
-        removed_import_sentences_lst = [
-            ImportSentence.get_removed_lst(import_sentences, unused_imports)
-            for import_sentences in import_sentences_lst
+        # remove unused names from import_statements
+        removed_import_statements_lst = [
+            ImportStatement.get_removed_lst(import_statements, unused_imports)
+            for import_statements in import_statements_lst
         ]
 
         # Constructing not-None single import list
@@ -77,22 +77,22 @@ class Fixer:
         # sort by import block level
         imports_to_add = sorted(imports_to_add, key=lambda x: x.level)
 
-        # constructing import import sentences
+        # constructing import import statements
         for import_to_add in imports_to_add:
-            import_sentence_to_add = ImportSentence.of(import_to_add.sentence)
-            if import_sentence_to_add is None:
+            import_statement_to_add = ImportStatement.of(import_to_add.statement)
+            if import_statement_to_add is None:
                 continue
-            if len(removed_import_sentences_lst) <= import_to_add.level:
-                removed_import_sentences_lst.append([import_sentence_to_add])
+            if len(removed_import_statements_lst) <= import_to_add.level:
+                removed_import_statements_lst.append([import_statement_to_add])
             else:
-                removed_import_sentences_lst[import_to_add.level].append(
-                    import_sentence_to_add
+                removed_import_statements_lst[import_to_add.level].append(
+                    import_statement_to_add
                 )
 
         # Merget the imports
-        merged_import_sentences = [
-            ImportSentence.merge_list(removed_import_sentences)
-            for removed_import_sentences in removed_import_sentences_lst
+        merged_import_statements = [
+            ImportStatement.merge_list(removed_import_statements)
+            for removed_import_statements in removed_import_statements_lst
         ]
 
         # constructing resulting lines
@@ -107,12 +107,12 @@ class Fixer:
             res_lines += lines[:begin_end_indices[0][0]]
 
         # add organized import blocks
-        for i, merged_import_sentence in enumerate(
-            merged_import_sentences
+        for i, merged_import_statement in enumerate(
+            merged_import_statements
         ):
-            for import_sentence in merged_import_sentence:
-                res_lines += import_sentence.to_lines()
-            if i < len(merged_import_sentences) - 1:
+            for import_statement in merged_import_statement:
+                res_lines += import_statement.to_lines()
+            if i < len(merged_import_statements) - 1:
                 res_lines.append('')
 
         # add lines after import as it is

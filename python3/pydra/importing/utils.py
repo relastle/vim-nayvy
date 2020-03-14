@@ -31,11 +31,11 @@ def get_first_line_num(lines: List[str]) -> int:
     return i + 1
 
 
-def already_exists(sentence: str, lines: List[str]) -> bool:
+def already_exists(statement: str, lines: List[str]) -> bool:
     '''
-    Check if sentence is in lines
+    Check if statement is in lines
     '''
-    return any(sentence in line.strip() for line in lines)
+    return any(statement in line.strip() for line in lines)
 
 
 def is_import_related_line(line: str) -> bool:
@@ -90,9 +90,9 @@ def get_import_block_indices(lines: List[str]) -> List[Tuple[int, int]]:
 def find_target_line_num(level: int, lines: List[str]) -> int:
     """
     Find next line index to
-    last import sentence of gien block level.
+    last import statement of gien block level.
     In other words, this function returns
-    where another additional import sentence to be appneded.
+    where another additional import statement to be appneded.
 
     Note: it changes lines destructively.
     """
@@ -111,7 +111,7 @@ def find_target_line_num(level: int, lines: List[str]) -> int:
         return target_line
     else:
         # New import block is needed.
-        # So create new block and add new import sentence
+        # So create new block and add new import statement
         target_line = import_block_indices[-1][1]
         lines[target_line:target_line] = ['']
         return target_line + 1

@@ -25,7 +25,7 @@ function! pydra#ale_fixer(buffer) abort
   return py3eval(l:py_expr)
 endfunction
 
-" sink function for multiple selected import sentence
+" sink function for multiple selected import statement
 function! pydra#sink_multiple_imports(list) abort
   let l:names = map(a:list, {index, line -> split(line, ":")[0]})
   let l:py_expr = 'pydra_import(' . string(l:names) . ')'
