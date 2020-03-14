@@ -2,8 +2,8 @@ import unittest
 from os.path import dirname
 from pathlib import Path
 
-from prussian.projects.modules.loader import SyntacticModuleLoader
-from prussian.projects.modules.models import (
+from nayvy.projects.modules.loader import SyntacticModuleLoader
+from nayvy.projects.modules.models import (
     Class,
     Function,
     FuncDeclType

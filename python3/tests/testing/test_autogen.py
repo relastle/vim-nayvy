@@ -4,8 +4,8 @@ from typing import List
 from os.path import dirname
 from pathlib import Path
 
-from prussian.testing.autogen import AutoGenerator, ReactiveTestModule
-from prussian.projects.modules.loader import SyntacticModuleLoader
+from nayvy.testing.autogen import AutoGenerator, ReactiveTestModule
+from nayvy.projects.modules.loader import SyntacticModuleLoader
 
 
 class TestReactiveTestModule(unittest.TestCase):

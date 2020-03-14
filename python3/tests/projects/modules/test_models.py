@@ -1,6 +1,6 @@
 import unittest
 
-from prussian.projects.modules.models import (
+from nayvy.projects.modules.models import (
     Class,
     Module,
     Function,

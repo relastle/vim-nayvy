@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from prussian.importing.import_statement import ImportAsPart, ImportStatement
+from nayvy.importing.import_statement import ImportAsPart, ImportStatement
 
 
 class TestImportAsPart(unittest.TestCase):

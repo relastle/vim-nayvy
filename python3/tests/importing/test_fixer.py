@@ -1,8 +1,8 @@
 import unittest
 from typing import List, Tuple
 
-from prussian.importing.fixer import Fixer, LintEngine
-from prussian.importing.import_config import ImportConfig, SingleImport
+from nayvy.importing.fixer import Fixer, LintEngine
+from nayvy.importing.import_config import ImportConfig, SingleImport
 
 
 class LintEngineMock(LintEngine):

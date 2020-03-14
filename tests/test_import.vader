@@ -4,7 +4,7 @@ Given python (simple undefined import):
   pp(a)
 
 Execute:
-  PrussianImports
+  NayvyImports
 
 Expect python (Remove unused and add undefined):
   from pprint import pprint as pp
@@ -24,7 +24,7 @@ Given python (an unused import and an undefined name):
   pp(a)
 
 Execute:
-  PrussianImports
+  NayvyImports
 
 Expect python (Remove unused and add undefined):
   #!/usr/bin/env python3
@@ -54,7 +54,7 @@ Given python (Duplicated undefined name):
       pass
 
 Execute:
-  PrussianImports
+  NayvyImports
 
 Expect python (Single import is added):
   #!/usr/bin/env python3
@@ -83,7 +83,7 @@ Given python (Non-configured import):
   print(unconfigured_name)
 
 Execute:
-  PrussianImports
+  NayvyImports
 
 Expect python (Nothing happned):
   #!/usr/bin/env python3
@@ -108,7 +108,7 @@ Given python (Three blocks import):
   print(hoge())
 
 Execute:
-  PrussianImports
+  NayvyImports
 
 Expect python (All are imported correctly):
   #!/usr/bin/env python3
@@ -143,7 +143,7 @@ Given python (Commented import):
   sys.exit(1)
 
 Execute:
-  PrussianImports
+  NayvyImports
 
 Expect python (All are imported correctly):
   #!/usr/bin/env python3

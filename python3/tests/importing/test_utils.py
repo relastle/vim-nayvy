@@ -1,6 +1,6 @@
 import unittest
 
-from prussian.importing.utils import (
+from nayvy.importing.utils import (
     get_first_line_num,
     get_import_block_indices,
     find_target_line_num,

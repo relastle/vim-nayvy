@@ -2,20 +2,20 @@ import sys
 from typing import List, Optional
 
 import vim  # noqa
-from prussian.importing.fixer import Fixer
-from prussian.importing.pyflakes import PyflakesEngine
-from prussian.importing.import_config import ImportConfig
+from nayvy.importing.fixer import Fixer
+from nayvy.importing.pyflakes import PyflakesEngine
+from nayvy.importing.import_config import ImportConfig
 
 
 def init_config() -> Optional[ImportConfig]:
     config = ImportConfig.init()
     if config is None:
-        print('cannot load prussian config file', file=sys.stderr)
+        print('cannot load nayvy config file', file=sys.stderr)
         return None
     return config
 
 
-def prussian_fix_lines(lines: List[str]) -> List[str]:
+def nayvy_fix_lines(lines: List[str]) -> List[str]:
     config = init_config()
     if config is None:
         return lines
@@ -24,24 +24,24 @@ def prussian_fix_lines(lines: List[str]) -> List[str]:
     return fixed_lines
 
 
-def prussian_auto_imports() -> None:
+def nayvy_auto_imports() -> None:
     '''
     Automatically
     - import for undefined names
     - remove unused imports
     '''
     lines = vim.current.buffer[:]
-    fixed_lines = prussian_fix_lines(lines)
+    fixed_lines = nayvy_fix_lines(lines)
     vim.current.buffer[:] = fixed_lines
     return
 
 
-def prussian_get_fixed_lines(buffer_nr: int) -> List[str]:
+def nayvy_get_fixed_lines(buffer_nr: int) -> List[str]:
     lines = vim.buffers[buffer_nr][:]
-    return prussian_fix_lines(lines)
+    return nayvy_fix_lines(lines)
 
 
-def prussian_import(names: List[str]) -> None:
+def nayvy_import(names: List[str]) -> None:
     config = init_config()
     if config is None:
         return None
@@ -52,7 +52,7 @@ def prussian_import(names: List[str]) -> None:
     return
 
 
-def prussian_list_imports() -> List[str]:
+def nayvy_list_imports() -> List[str]:
     ''' List all available imports
     '''
     config = init_config()

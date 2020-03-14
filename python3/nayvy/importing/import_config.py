@@ -1,4 +1,4 @@
-from typing import Dict, Optional, List
+from typing import List, Optional, Generator, Tuple, Any, Dict
 import os
 
 from .import_statement import ImportStatement, SingleImport
@@ -18,6 +18,10 @@ class ImportConfig(ImportStatementMap):
     def __getitem__(self, name: str) -> Optional[SingleImport]:
         return self._import_d.get(name, None)
 
+    def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
+        for k, v in self._import_d.items():
+            yield (k, v)
+
     @classmethod
     def init(cls) -> Optional['ImportConfig']:
         xdg_root = os.getenv(
@@ -26,10 +30,10 @@ class ImportConfig(ImportStatementMap):
                 os.environ['HOME']
             )
         )
-        prussian_import_config_path = '{}/prussian/import_config.prussian'.format(
+        nayvy_import_config_path = '{}/nayvy/import_config.nayvy'.format(
             xdg_root,
         )
-        return cls._of_config_py(prussian_import_config_path)
+        return cls._of_config_py(nayvy_import_config_path)
 
     @classmethod
     def _of_config_py(cls, config_path: str) -> Optional['ImportConfig']:

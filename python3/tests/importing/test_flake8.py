@@ -1,6 +1,6 @@
 import unittest
 
-from prussian.importing.flake8 import Flake8Result
+from nayvy.importing.flake8 import Flake8Result
 
 
 class TestFlake8Result(unittest.TestCase):

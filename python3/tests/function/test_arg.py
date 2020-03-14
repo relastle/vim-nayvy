@@ -1,6 +1,6 @@
 import unittest
 
-from prussian.function.arg import Arg
+from nayvy.function.arg import Arg
 
 
 class TestArg(unittest.TestCase):

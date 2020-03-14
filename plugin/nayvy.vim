@@ -1,4 +1,4 @@
-" plugin/prussian.vim
+" plugin/nayvy.vim
 " Copyright (c) 2020 Hiroki Konishi <relastle@gmail.com>
 "
 " Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,20 +19,20 @@
 " OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 " SOFTWARE.
 
-if exists('loaded_plugin_vim_prussian') || &compatible
+if exists('loaded_plugin_vim_nayvy') || &compatible
     finish
 endif
-let loaded_plugin_vim_prussian=1
+let loaded_plugin_vim_nayvy=1
 
 "---------------------------------------
 " Imports
 "---------------------------------------
-command! PrussianImports call prussian#imports()
+command! NayvyImports call nayvy#imports()
 
 "---------------------------------------
 " Testing
 "---------------------------------------
-command! PrussianImportFZF call prussian#import_fzf()
-command! PrussianTouchUnitTestFile call prussian#touch_unittest_file()
-command! PrussianJumpToTestOrGenerate call prussian#jump_to_test_or_generate()
-command! PrussianMakeUnitTestFZF call prussian#make_unittest_fzf()
+command! NayvyImportFZF call nayvy#import_fzf()
+command! NayvyTouchUnitTestFile call nayvy#touch_unittest_file()
+command! NayvyJumpToTestOrGenerate call nayvy#jump_to_test_or_generate()
+command! NayvyMakeUnitTestFZF call nayvy#make_unittest_fzf()

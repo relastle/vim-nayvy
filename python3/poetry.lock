@@ -21,8 +21,8 @@ click = ">=7.0"
 dev = ["pytest"]
 
 [metadata]
-content-hash = "a144137729f2b38fa0750c9947386b625e34f9eff0355141a5d65f30f61ee0a5"
-python-versions = "^3.6"
+content-hash = "c238d2b1abc3f001970aeb9034a5185f1bc949ecc267b7d48984f1c232280a5a"
+python-versions = "^3.7"
 
 [metadata.files]
 click = [

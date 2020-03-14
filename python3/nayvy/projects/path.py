@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Generator, Tuple, Any
 from os.path import abspath, relpath
 from dataclasses import dataclass
 import glob
@@ -62,8 +62,8 @@ def mod_relpath(target_modpath: str, base_modpath: str) -> str:
 
     i.g.
         Args:
-            `target_modpath`: prussian.importing.import_statement
-            `base_modpath`: prussian.projects.path
+            `target_modpath`: nayvy.importing.import_statement
+            `base_modpath`: nayvy.projects.path
         Returns:
             ..importing.import_statement
     """
@@ -112,6 +112,15 @@ class ProjectImportHelper(ImportStatementMap):
                     2,  # project level
                 )
         return None
+
+    def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
+        for modpath in self.all_modpaths:
+            for name in modpath.mod.class_map.keys():
+                single_import = self[name]
+                if single_import is None:
+                    continue
+                else:
+                    yield (name, single_import)
 
     @classmethod
     def of_filepath(

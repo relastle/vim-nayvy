@@ -4,7 +4,7 @@ Fix the python lines of code dependent on Linter result
 
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Generator, Any
 from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
@@ -36,6 +36,10 @@ class ImportStatementMap(metaclass=ABCMeta):
 
     @abstractmethod
     def __getitem__(self, name: str) -> Optional[SingleImport]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
         raise NotImplementedError
 
 

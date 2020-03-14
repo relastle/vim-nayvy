@@ -3,8 +3,8 @@ from os.path import dirname
 from pathlib import Path
 from dataclasses import dataclass
 
-from prussian.projects.modules.loader import ModuleLoader
-from prussian.projects.modules.models import Module
+from nayvy.projects.modules.loader import ModuleLoader
+from nayvy.projects.modules.models import Module
 from .path import impl_path_to_test_path
 
 

@@ -3,11 +3,11 @@ from typing import List
 
 import vim  # noqa
 
-from prussian.testing.autogen import AutoGenerator
-from prussian.projects.modules.loader import SyntacticModuleLoader
+from nayvy.testing.autogen import AutoGenerator
+from nayvy.projects.modules.loader import SyntacticModuleLoader
 
 
-def prussian_auto_touch_test(filepath: str) -> None:
+def nayvy_auto_touch_test(filepath: str) -> None:
     """ Vim interface for touch unittest script.
     """
     auto_generator = AutoGenerator(SyntacticModuleLoader())
@@ -22,7 +22,7 @@ def prussian_auto_touch_test(filepath: str) -> None:
     return
 
 
-def prussian_jump_to_test_or_generate(
+def nayvy_jump_to_test_or_generate(
     filepath: str,
     func_name: str,
 ) -> None:
@@ -75,7 +75,7 @@ def prussian_jump_to_test_or_generate(
     return
 
 
-def prussian_list_untested_functions() -> List[str]:
+def nayvy_list_untested_functions() -> List[str]:
     """ Vim interface for implementing not-tested functions
     """
     filepath = vim.eval('expand("%")')

@@ -3,14 +3,14 @@ from os.path import dirname
 from pathlib import Path
 from dataclasses import dataclass
 
-from prussian.projects.path import (
+from nayvy.projects.path import (
     ModulePath,
     ProjectImportHelper,
     mod_relpath
 )
-from prussian.projects.modules.loader import SyntacticModuleLoader
-from prussian.projects.modules.models import Class, Module, Function
-from prussian.importing.import_statement import SingleImport
+from nayvy.projects.modules.loader import SyntacticModuleLoader
+from nayvy.projects.modules.models import Class, Module, Function
+from nayvy.importing.import_statement import SingleImport
 
 
 class Test(unittest.TestCase):
