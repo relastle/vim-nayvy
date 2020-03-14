@@ -133,6 +133,9 @@ class TestAutoGenerator(unittest.TestCase):
     def test_get_added_test_lines(self) -> None:
         """ Simple integration test of `get_added_test_lines`
         """
+        # -------------------------------------
+        # New test will be created
+        # -------------------------------------
         given_impl_module_lines = [
             'class Hoge:',
             '',
@@ -162,3 +165,28 @@ class TestAutoGenerator(unittest.TestCase):
             '    def test_hoge(self) -> None:',
             '        return',
         ]
+
+        # -------------------------------------
+        # Nothing will happed
+        # -------------------------------------
+        given_impl_module_lines = [
+            'class Hoge:',
+            '',
+            '    def hoge(self) -> None:',
+            '        return',
+        ]
+
+        given_test_module_lines = [
+            'class TestHoge(unittest.TestCase):',
+            '',
+            '    def test_hoge(self) -> None:',
+            '        return',
+        ]
+
+        actual_lines = self.target.get_added_test_lines(
+            'hoge',
+            given_impl_module_lines,
+            given_test_module_lines,
+        )
+
+        assert actual_lines is None

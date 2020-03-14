@@ -28,11 +28,11 @@ let loaded_plugin_vim_nayvy=1
 " Imports
 "---------------------------------------
 command! NayvyImports call nayvy#imports()
+command! NayvyImportFZF call nayvy#import_fzf()
 
 "---------------------------------------
 " Testing
 "---------------------------------------
-command! NayvyImportFZF call nayvy#import_fzf()
 command! NayvyTouchUnitTestFile call nayvy#touch_unittest_file()
 command! NayvyJumpToTestOrGenerate call nayvy#jump_to_test_or_generate()
 command! NayvyMakeUnitTestFZF call nayvy#make_unittest_fzf()

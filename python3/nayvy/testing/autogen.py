@@ -127,6 +127,10 @@ class AutoGenerator:
             if f'test_{func_name}' in _class.function_map:
                 defined_class_name = class_name
 
+        if not defined_class_name:
+            # Maybe already exists.
+            return None
+
         react_test_mod.add_func(
             defined_class_name,
             f'test_{func_name}',

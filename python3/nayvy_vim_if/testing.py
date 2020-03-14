@@ -1,8 +1,8 @@
 import sys
 from typing import List
+from os.path import basename
 
 import vim  # noqa
-
 from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 
@@ -28,6 +28,10 @@ def nayvy_jump_to_test_or_generate(
 ) -> None:
     """ Vim interface for jump of generate unittest.
     """
+    # check if alredy in test file
+    if basename(filepath).startswith('test_'):
+        print('You are already in test script.', file=sys.stderr)
+        return
     auto_generator = AutoGenerator(SyntacticModuleLoader())
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
@@ -56,11 +60,11 @@ def nayvy_jump_to_test_or_generate(
     # open test in split buffer
     vim.command(f'vs {test_path}')
 
-    if lines is None:
-        return None
-
-    # change lines
-    vim.current.buffer[:] = lines
+    if lines is not None:
+        # change lines
+        vim.current.buffer[:] = lines
+    else:
+        lines = test_module_lines
 
     # search lines
     row: int

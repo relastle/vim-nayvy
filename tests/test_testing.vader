@@ -18,4 +18,3 @@ Expect python (Test script was genenrated):
 
       def test_hoge(self) -> None:
           return
-===============================================================================
