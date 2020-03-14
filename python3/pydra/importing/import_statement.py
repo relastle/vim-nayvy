@@ -1,5 +1,6 @@
 import re
 from typing import List, Optional
+from dataclasses import dataclass
 
 
 class ImportAsPart:
@@ -343,3 +344,11 @@ class ImportStatement:
             if import_statement is not None:
                 import_statements.append(import_statement)
         return import_statements
+
+
+@dataclass(frozen=True)
+class SingleImport:
+
+    name: str
+    statement: str
+    level: int

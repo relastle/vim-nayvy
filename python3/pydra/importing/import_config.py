@@ -1,16 +1,7 @@
 from typing import Dict, Optional, List
 import os
-from dataclasses import dataclass
 
-from .import_statement import ImportStatement
-
-
-@dataclass(frozen=True)
-class SingleImport:
-
-    name: str
-    statement: str
-    level: int
+from .import_statement import ImportStatement, SingleImport
 
 
 class ImportConfig:

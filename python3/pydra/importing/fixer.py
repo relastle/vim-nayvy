@@ -8,8 +8,8 @@ from typing import List, Tuple
 from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
-from .import_config import ImportConfig, SingleImport
-from .import_statement import ImportStatement
+from .import_config import ImportConfig
+from .import_statement import ImportStatement, SingleImport
 
 
 class LintEngine(metaclass=ABCMeta):
