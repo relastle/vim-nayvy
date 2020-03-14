@@ -1,5 +1,5 @@
 from typing import List, Optional
-from os.path import exists, dirname
+from os.path import exists, dirname, abspath
 
 
 def _get_root(
@@ -10,7 +10,7 @@ def _get_root(
     """ get project root defined by `indicator`
     for a given file (directory) path
     """
-    tmp_path = filepath
+    tmp_path = abspath(filepath)
     lookup_n = 0
     while (tmp_path):
         if parents_max_lookup_n and lookup_n > parents_max_lookup_n:
