@@ -87,11 +87,8 @@ def list_imports(
         print('Failed to load project', file=sys.stderr)
         return
 
-    for name, single_import in project_import_helper.items():
-        print('{}:{}'.format(
-            single_import.name,
-            single_import.statement,
-        ))
+    for _, single_import in project_import_helper.items():
+        print(single_import.to_line(color=True))
     return
 
 

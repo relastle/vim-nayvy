@@ -2,6 +2,8 @@ import re
 from typing import List, Optional
 from dataclasses import dataclass
 
+from ..utils.colors import Color
+
 
 class ImportAsPart:
 
@@ -352,3 +354,19 @@ class SingleImport:
     name: str
     statement: str
     level: int
+
+    def to_line(self, color: bool = False) -> str:
+        """ Convert object to line selected by fzf
+        """
+        if color:
+            return '{}{}{} : {}'.format(
+                Color.GREEN,
+                self.name,
+                Color.RESET,
+                self.statement,
+            )
+        else:
+            return '{} : {}'.format(
+                self.name,
+                self.statement,
+            )

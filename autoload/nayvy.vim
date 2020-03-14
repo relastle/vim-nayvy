@@ -27,7 +27,7 @@ endfunction
 
 " sink function for multiple selected import statement
 function! nayvy#sink_multiple_imports(list) abort
-  let l:names = map(a:list, {index, line -> split(line, ":")[0]})
+  let l:names = map(a:list, {index, line -> split(line, " : ")[0]})
   let l:py_expr = 'nayvy_import(' . string(l:names) . ')'
   call py3eval(l:py_expr)
 endfunction

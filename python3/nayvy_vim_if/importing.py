@@ -98,8 +98,6 @@ def nayvy_list_imports() -> List[str]:
     if stmt_map is None:
         return []
     return [
-        '{}:{}'.format(
-            single_import.name,
-            single_import.statement,
-        ) for name, single_import in stmt_map.items()
+        single_import.to_line(color=True)
+        for _, single_import in stmt_map.items()
     ]

@@ -1,7 +1,11 @@
 import unittest
 from typing import List
 
-from nayvy.importing.import_statement import ImportAsPart, ImportStatement
+from nayvy.importing.import_statement import (
+    ImportAsPart,
+    SingleImport,
+    ImportStatement
+)
 
 
 class TestImportAsPart(unittest.TestCase):
@@ -53,8 +57,8 @@ class TestImportStatement(unittest.TestCase):
         import_statement = ImportStatement(
             'hoge',
             [
-                    ImportAsPart('AAA', 'a'),
-                    ImportAsPart('BBB', 'b'),
+                ImportAsPart('AAA', 'a'),
+                ImportAsPart('BBB', 'b'),
             ],
         )
         target = ImportStatement(
@@ -71,8 +75,8 @@ class TestImportStatement(unittest.TestCase):
         import_statement = ImportStatement(
             'hoge',
             [
-                    ImportAsPart('AAA', 'a'),
-                    ImportAsPart('BBB', 'b'),
+                ImportAsPart('AAA', 'a'),
+                ImportAsPart('BBB', 'b'),
             ],
         )
         target = ImportStatement(
@@ -89,9 +93,9 @@ class TestImportStatement(unittest.TestCase):
         import_statement = ImportStatement(
             'hoge',
             [
-                    ImportAsPart('AAA', 'a'),
-                    ImportAsPart('BBB', 'b'),
-                    ImportAsPart('c', ''),
+                ImportAsPart('AAA', 'a'),
+                ImportAsPart('BBB', 'b'),
+                ImportAsPart('c', ''),
             ],
         )
 
@@ -240,3 +244,18 @@ class TestImportStatement(unittest.TestCase):
             str(import_statement) ==
             'from hoge import Fuga as fuga, Hoge as hoge'
         )
+
+
+class TestSingleImport(unittest.TestCase):
+
+    def test_to_line(self) -> None:
+        single_import = SingleImport(
+            'hoge',
+            'from .Hoge import hoge',
+            0,
+        )
+        assert (
+            single_import.to_line() ==
+            'hoge : from .Hoge import hoge'
+        )
+        return
