@@ -28,13 +28,13 @@ def panic(message: str) -> None:
     **DEFAULT_COLOR_OPTIONS,  # type: ignore
 )
 def cli() -> None:
-    """ Tmux automation CLI.
+    """ Pydra: Enhancing python code editting environment
     """
     return
 
 
 def pydra_sub_command(f: Any) -> Any:
-    """ pydra's default subcommand decorator
+    """ Pydra's default subcommand decorator
     """
     return cli.command(
         cls=HelpColorsCommand,
