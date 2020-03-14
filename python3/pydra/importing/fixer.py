@@ -5,6 +5,7 @@ Fix the python lines of code dependent on Linter result
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
 from typing import List, Tuple
+from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
 from .import_config import ImportConfig, SingleImport
@@ -26,24 +27,11 @@ class LintEngine(metaclass=ABCMeta):
         raise NotImplementedError
 
 
+@dataclass(frozen=True)
 class Fixer:
 
-    @property
-    def config(self) -> ImportConfig:
-        return self._config
-
-    @property
-    def lint_engine(self) -> LintEngine:
-        return self._lint_engine
-
-    def __init__(
-        self,
-        config: ImportConfig,
-        lint_engnie: LintEngine,
-    ) -> None:
-        self._config = config
-        self._lint_engine = lint_engnie
-        return
+    config: ImportConfig
+    lint_engine: LintEngine
 
     def _fix_lines(
         self,
