@@ -6,7 +6,7 @@ authors = ["Hiroki Konishi <relastle@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 click-help-colors = "^0.7"
 click = "^7.1.1"
 
