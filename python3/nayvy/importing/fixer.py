@@ -4,11 +4,11 @@ Fix the python lines of code dependent on Linter result
 
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
-from typing import List, Tuple, Optional, Generator, Any
+from typing import Any, List, Tuple, Optional, Generator
 from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
-from .import_statement import ImportStatement, SingleImport
+from .import_statement import SingleImport, ImportStatement
 
 
 class LintEngine(metaclass=ABCMeta):
@@ -92,7 +92,8 @@ class Fixer:
 
         # constructing import import statements
         for import_to_add in imports_to_add:
-            import_statement_to_add = ImportStatement.of(import_to_add.statement)
+            import_statement_to_add = ImportStatement.of(
+                import_to_add.statement)
             if import_statement_to_add is None:
                 continue
             if len(removed_import_statements_lst) <= import_to_add.level:
