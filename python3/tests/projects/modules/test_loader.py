@@ -116,6 +116,8 @@ class TestSyntacticModuleLoader(unittest.TestCase):
 
         assert module is not None
 
+        print(module.to_json())
+
         # Assertion of top level functions
         assert (
             module.function_map['sub_top_level_function1'] ==
@@ -133,12 +135,12 @@ class TestSyntacticModuleLoader(unittest.TestCase):
             vars(Class(
                 'SubTopLevelClass1',
                 13,
-                23,
+                32,
                 {
                     'instance_method1': Function(
                         'instance_method1',
-                        15,
-                        23,
+                        24,
+                        32,
                         FuncDeclType.INSTANCE,
                     ),
                 },

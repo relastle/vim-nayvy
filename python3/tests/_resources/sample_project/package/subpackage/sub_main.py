@@ -13,6 +13,15 @@ def sub_top_level_function1(
 
 class SubTopLevelClass1:
 
+    class InnerClass1:
+        """ This class should be ignored in `importing` context
+        """
+
+        def inner_instance_method1(self) -> None:
+            """
+            """
+            return
+
     def instance_method1(
         self, hoge: int,
     ) -> None:

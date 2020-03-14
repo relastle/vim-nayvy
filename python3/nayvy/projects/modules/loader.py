@@ -4,6 +4,8 @@ from typing import List, Optional
 
 from .models import Class, Module, Function, FuncDeclType
 
+PYTHON_STANDARD_INDENT = 4
+
 
 def is_dunder(func_name: str) -> bool:
     return (
@@ -188,6 +190,9 @@ class SyntacticModuleLoader(ModuleLoader):
             begin: int,
             indent: int,
         ) -> bool:
+            if self.buf_class_name:
+                # if there already exists buffered class
+                return False
             m = re.match(self.CLASS_DECL_RE, line)
             if m is None:
                 return False
@@ -203,6 +208,12 @@ class SyntacticModuleLoader(ModuleLoader):
             begin: int,
             indent: int,
         ) -> bool:
+            if self.buf_func_name:
+                # if there already exists buffered function
+                return False
+            if indent != self.buf_class_indent + PYTHON_STANDARD_INDENT:
+                # inappropriate indent as instance method
+                return False
             m = re.match(self.INSTANCE_FUNC_DECL_RE, line)
             if m is None:
                 return False
@@ -221,6 +232,12 @@ class SyntacticModuleLoader(ModuleLoader):
             begin: int,
             indent: int,
         ) -> bool:
+            if self.buf_func_name:
+                # if there already exists buffered function
+                return False
+            if indent != self.buf_class_indent + PYTHON_STANDARD_INDENT:
+                # inappropriate indent as class method
+                return False
             m = re.match(self.CLASS_FUNC_DECL_RE, line)
             if m is None:
                 return False
@@ -239,6 +256,8 @@ class SyntacticModuleLoader(ModuleLoader):
             begin: int,
             indent: int,
         ) -> bool:
+            if self.buf_func_name:
+                return False
             m = re.match(self.FUNCTION_DECL_RE, line)
             if m is None:
                 return False

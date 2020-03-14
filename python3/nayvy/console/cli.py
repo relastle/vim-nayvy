@@ -5,8 +5,7 @@ import click
 from click_help_colors import HelpColorsGroup, HelpColorsCommand
 
 from nayvy.projects.path import ProjectImportHelper
-from nayvy.projects.modules.models import Module
-from nayvy.projects.modules.loader import SyntacticModuleLoader
+from ..projects.modules.loader import SyntacticModuleLoader
 
 CONTEXT_SETTINGS = dict(
     help_option_names=['-h', '--help'],
