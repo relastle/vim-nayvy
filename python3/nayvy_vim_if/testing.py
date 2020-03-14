@@ -1,5 +1,5 @@
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from os.path import basename
 
 import vim  # noqa
@@ -7,9 +7,13 @@ from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 
 
-def nayvy_auto_touch_test(filepath: str) -> None:
+def nayvy_auto_touch_test() -> None:
     """ Vim interface for touch unittest script.
     """
+    filepath = vim.eval('expand("%")')
+    if basename(filepath).startswith('test_'):
+        print('You are already in test script.', file=sys.stderr)
+        return
     auto_generator = AutoGenerator(SyntacticModuleLoader())
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
@@ -22,12 +26,10 @@ def nayvy_auto_touch_test(filepath: str) -> None:
     return
 
 
-def nayvy_jump_to_test_or_generate(
-    filepath: str,
-    func_name: str,
-) -> None:
+def nayvy_jump_to_test_or_generate(func_name: str,) -> None:
     """ Vim interface for jump of generate unittest.
     """
+    filepath = vim.eval('expand("%")')
     # check if alredy in test file
     if basename(filepath).startswith('test_'):
         print('You are already in test script.', file=sys.stderr)
@@ -79,12 +81,15 @@ def nayvy_jump_to_test_or_generate(
     return
 
 
-def nayvy_list_tested_and_untested_functions() -> Tuple[List[str], List[str]]:
+def nayvy_list_tested_and_untested_functions() -> Optional[Tuple[List[str], List[str]]]:
     """ Vim interface for listing up
     - Already tested function
     - Non-tested function
     """
     filepath = vim.eval('expand("%")')
+    if basename(filepath).startswith('test_'):
+        print('You are already in test script.', file=sys.stderr)
+        return None
     lines = vim.current.buffer[:]
     loader = SyntacticModuleLoader()
     auto_generator = AutoGenerator(loader)
