@@ -1,6 +1,6 @@
 
 
-def top_level_function1(
+def sub_top_level_function1(
     hoge: int,
     fuga: str,
 ) -> None:
@@ -11,7 +11,7 @@ def top_level_function1(
     return
 
 
-class TopLevelClass1:
+class SubTopLevelClass1:
 
     def instance_method1(
         self, hoge: int,

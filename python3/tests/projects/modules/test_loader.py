@@ -118,9 +118,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
 
         # Assertion of top level functions
         assert (
-            module.function_map['top_level_function1'] ==
+            module.function_map['sub_top_level_function1'] ==
             Function(
-                'top_level_function1',
+                'sub_top_level_function1',
                 2,
                 11,
                 FuncDeclType.TOP_LEVEL,
@@ -129,9 +129,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
 
         # Assertion of class methods
         assert (
-            vars(module.class_map['TopLevelClass1']) ==
+            vars(module.class_map['SubTopLevelClass1']) ==
             vars(Class(
-                'TopLevelClass1',
+                'SubTopLevelClass1',
                 13,
                 23,
                 {
