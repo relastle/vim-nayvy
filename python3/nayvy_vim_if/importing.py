@@ -1,25 +1,62 @@
 import sys
-from typing import List, Optional
+from typing import List, Optional, Tuple, Any, Generator
+from dataclasses import dataclass
 
 import vim  # noqa
-from nayvy.importing.fixer import Fixer
+from nayvy.importing.fixer import Fixer, ImportStatementMap
+from nayvy.importing.import_statement import SingleImport
 from nayvy.importing.pyflakes import PyflakesEngine
 from nayvy.importing.import_config import ImportConfig
+from nayvy.projects.modules.loader import SyntacticModuleLoader
+from nayvy.projects.path import ProjectImportHelper
 
 
-def init_config() -> Optional[ImportConfig]:
+@dataclass(frozen=True)
+class IntegratedMap(ImportStatementMap):
+
+    import_config: ImportConfig
+    project_import_helper: ProjectImportHelper
+
+    def __getitem__(self, name: str) -> Optional[SingleImport]:
+        single_import = self.import_config[name]
+        if single_import is not None:
+            return single_import
+        single_import = self.project_import_helper[name]
+        if single_import is not None:
+            return single_import
+        return None
+
+    def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
+        for k, v in self.import_config.items():
+            yield k, v
+
+        for k, v in self.project_import_helper.items():
+            yield k, v
+
+
+def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
     config = ImportConfig.init()
     if config is None:
         print('cannot load nayvy config file', file=sys.stderr)
         return None
-    return config
+    project_import_helper = ProjectImportHelper.of_filepath(
+        SyntacticModuleLoader(),
+        filepath,
+    )
+    if project_import_helper is None:
+        return config
+    return IntegratedMap(
+        config,
+        project_import_helper,
+    )
 
 
 def nayvy_fix_lines(lines: List[str]) -> List[str]:
-    config = init_config()
-    if config is None:
+    filepath = vim.eval('expand("%")')
+    stmt_map = init_import_stmt_map(filepath)
+    if stmt_map is None:
         return lines
-    fixer = Fixer(config, PyflakesEngine())
+    fixer = Fixer(stmt_map, PyflakesEngine())
     fixed_lines = fixer.fix_lines(lines)
     return fixed_lines
 
@@ -42,10 +79,11 @@ def nayvy_get_fixed_lines(buffer_nr: int) -> List[str]:
 
 
 def nayvy_import(names: List[str]) -> None:
-    config = init_config()
-    if config is None:
+    filepath = vim.eval('expand("%")')
+    stmt_map = init_import_stmt_map(filepath)
+    if stmt_map is None:
         return None
-    fixer = Fixer(config, PyflakesEngine())
+    fixer = Fixer(stmt_map, PyflakesEngine())
     lines = vim.current.buffer[:]
     fixed_lines = fixer.add_imports(lines, names)
     vim.current.buffer[:] = fixed_lines
@@ -55,12 +93,13 @@ def nayvy_import(names: List[str]) -> None:
 def nayvy_list_imports() -> List[str]:
     ''' List all available imports
     '''
-    config = init_config()
-    if config is None:
+    filepath = vim.eval('expand("%")')
+    stmt_map = init_import_stmt_map(filepath)
+    if stmt_map is None:
         return []
     return [
         '{}:{}'.format(
             single_import.name,
             single_import.statement,
-        ) for name, single_import in config.import_d.items()
+        ) for name, single_import in stmt_map.items()
     ]

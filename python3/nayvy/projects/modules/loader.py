@@ -322,8 +322,11 @@ class SyntacticModuleLoader(ModuleLoader):
         self,
         module_filepath: str,
     ) -> Optional[Module]:
-        with open(module_filepath) as f:
-            lines = f.readlines()
+        try:
+            with open(module_filepath) as f:
+                lines = f.readlines()
+        except Exception:
+            return None
         return self.load_module_from_lines(lines)
 
     def load_module_from_lines(
