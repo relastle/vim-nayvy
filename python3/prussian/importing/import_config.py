@@ -26,10 +26,10 @@ class ImportConfig(ImportStatementMap):
                 os.environ['HOME']
             )
         )
-        pydra_import_config_path = '{}/pydra/import_config.pydra'.format(
+        prussian_import_config_path = '{}/prussian/import_config.prussian'.format(
             xdg_root,
         )
-        return cls._of_config_py(pydra_import_config_path)
+        return cls._of_config_py(prussian_import_config_path)
 
     @classmethod
     def _of_config_py(cls, config_path: str) -> Optional['ImportConfig']:

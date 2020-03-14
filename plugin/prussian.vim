@@ -1,4 +1,4 @@
-" plugin/pydra.vim
+" plugin/prussian.vim
 " Copyright (c) 2020 Hiroki Konishi <relastle@gmail.com>
 "
 " Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,20 +19,20 @@
 " OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 " SOFTWARE.
 
-if exists('loaded_plugin_vim_pydra') || &compatible
+if exists('loaded_plugin_vim_prussian') || &compatible
     finish
 endif
-let loaded_plugin_vim_pydra=1
+let loaded_plugin_vim_prussian=1
 
 "---------------------------------------
 " Imports
 "---------------------------------------
-command! PydraImports call pydra#imports()
+command! PrussianImports call prussian#imports()
 
 "---------------------------------------
 " Testing
 "---------------------------------------
-command! PydraImportFZF call pydra#import_fzf()
-command! PydraTouchUnitTestFile call pydra#touch_unittest_file()
-command! PydraJumpToTestOrGenerate call pydra#jump_to_test_or_generate()
-command! PydraMakeUnitTestFZF call pydra#make_unittest_fzf()
+command! PrussianImportFZF call prussian#import_fzf()
+command! PrussianTouchUnitTestFile call prussian#touch_unittest_file()
+command! PrussianJumpToTestOrGenerate call prussian#jump_to_test_or_generate()
+command! PrussianMakeUnitTestFZF call prussian#make_unittest_fzf()

@@ -1,5 +1,5 @@
 ---
-name: pydra-scenario
+name: prussian-scenario
 description: Demonstration of autoimport and typed snippet
 steps:
 
@@ -16,7 +16,7 @@ steps:
   - job: do
     description: launch nvim with tmp buffer
     props:
-      keystrokes: nvim pydra_demo.py<CR>
+      keystrokes: nvim prussian_demo.py<CR>
       key-interval-ms: 40
 
   - job: sleep
@@ -33,13 +33,13 @@ steps:
   - job: do
     description: class-snippet
     props:
-      keystrokes: 'o<CR>class<C-j>SampleClass<C-j>, first_member: int, second_member: str<C-j>This is a sample class for pydra demonstration<C-j><CR><C-[>'
+      keystrokes: 'o<CR>class<C-j>SampleClass<C-j>, first_member: int, second_member: str<C-j>This is a sample class for prussian demonstration<C-j><CR><C-[>'
       key-interval-ms: 50
 
   - job: do
     description: AutoImport
     props:
-      keystrokes: 'o<CR>def function_with_type_hint(self) -> Optional[int]:<CR>if self._a > 0:<CR>return 0<CR>else:<CR>return None<C-[>:PydraImports<CR>'
+      keystrokes: 'o<CR>def function_with_type_hint(self) -> Optional[int]:<CR>if self._a > 0:<CR>return 0<CR>else:<CR>return None<C-[>:PrussianImports<CR>'
       key-interval-ms: 50
 
   - job: sleep
@@ -50,7 +50,7 @@ steps:
   - job: do
     description: main-snippet
     props:
-      keystrokes: 'Go<CR><BS><BS>main<C-j>#This is a snippet for main boiler-plate<CR>sample = SampleClass()<CR>_ = sample.function_with_type_hint()<CR># Please enjoy pydra-vim!!'
+      keystrokes: 'Go<CR><BS><BS>main<C-j>#This is a snippet for main boiler-plate<CR>sample = SampleClass()<CR>_ = sample.function_with_type_hint()<CR># Please enjoy prussian-vim!!'
       key-interval-ms: 50
 
   - job: sleep

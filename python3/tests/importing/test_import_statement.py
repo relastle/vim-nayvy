@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from pydra.importing.import_statement import ImportAsPart, ImportStatement
+from prussian.importing.import_statement import ImportAsPart, ImportStatement
 
 
 class TestImportAsPart(unittest.TestCase):

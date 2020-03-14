@@ -1,6 +1,6 @@
 import unittest
 
-from pydra.function.arg import Arg
+from prussian.function.arg import Arg
 
 
 class TestArg(unittest.TestCase):

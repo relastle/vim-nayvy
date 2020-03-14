@@ -3,7 +3,7 @@ import unittest
 from os.path import dirname
 from pathlib import Path
 
-from pydra.projects import (
+from prussian.projects import (
     get_git_root,
     get_pyproject_root,
 )

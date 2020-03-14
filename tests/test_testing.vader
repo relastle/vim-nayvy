@@ -5,7 +5,7 @@ Given python (simple python code):
 Execute:
   e ./vader_workspace/package/main.py
   norm gg0jjww
-  PydraJumpToTestOrGenerate
+  PrussianJumpToTestOrGenerate
 
 Expect python (Test script was genenrated):
   import unittest

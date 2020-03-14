@@ -3,7 +3,7 @@ from typing import Optional
 from os.path import abspath, relpath
 from pathlib import Path
 
-from pydra.projects import get_pyproject_root
+from prussian.projects import get_pyproject_root
 
 
 def impl_path_to_test_path(impl_path: str) -> Optional[str]:

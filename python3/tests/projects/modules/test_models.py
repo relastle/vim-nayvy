@@ -1,6 +1,6 @@
 import unittest
 
-from pydra.projects.modules.models import (
+from prussian.projects.modules.models import (
     Class,
     Module,
     Function,

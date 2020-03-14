@@ -4,8 +4,8 @@ from typing import List
 from os.path import dirname
 from pathlib import Path
 
-from pydra.testing.autogen import AutoGenerator, ReactiveTestModule
-from pydra.projects.modules.loader import SyntacticModuleLoader
+from prussian.testing.autogen import AutoGenerator, ReactiveTestModule
+from prussian.projects.modules.loader import SyntacticModuleLoader
 
 
 class TestReactiveTestModule(unittest.TestCase):

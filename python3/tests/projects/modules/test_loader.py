@@ -2,8 +2,8 @@ import unittest
 from os.path import dirname
 from pathlib import Path
 
-from pydra.projects.modules.loader import SyntacticModuleLoader
-from pydra.projects.modules.models import (
+from prussian.projects.modules.loader import SyntacticModuleLoader
+from prussian.projects.modules.models import (
     Class,
     Function,
     FuncDeclType

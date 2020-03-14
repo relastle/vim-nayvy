@@ -62,8 +62,8 @@ def mod_relpath(target_modpath: str, base_modpath: str) -> str:
 
     i.g.
         Args:
-            `target_modpath`: pydra.importing.import_statement
-            `base_modpath`: pydra.projects.path
+            `target_modpath`: prussian.importing.import_statement
+            `base_modpath`: prussian.projects.path
         Returns:
             ..importing.import_statement
     """

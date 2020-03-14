@@ -1,6 +1,6 @@
 import unittest
 
-from pydra.importing.pyflakes import PyflakesResult
+from prussian.importing.pyflakes import PyflakesResult
 
 
 class TestFlake8Result(unittest.TestCase):

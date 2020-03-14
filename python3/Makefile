@@ -2,7 +2,7 @@
 test:
 	flake8 .
 	mypy .
-	coverage run --omit='./pydra_vim_if/*,./tests/**/*' --source=. -m pytest -vv --durations=10
+	coverage run --omit='./prussian_vim_if/*,./tests/**/*' --source=. -m pytest -vv --durations=10
 	coverage report -m
 
 .PHONY: clean

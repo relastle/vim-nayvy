@@ -2,7 +2,7 @@ import unittest
 from os.path import abspath, dirname
 from pathlib import Path
 
-from pydra.testing.path import (
+from prussian.testing.path import (
     impl_path_to_test_path,
     # workaround for ignoring
     test_path_to_impl_path as tst_path_to_impl_path,

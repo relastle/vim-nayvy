@@ -28,13 +28,13 @@ def panic(message: str) -> None:
     **DEFAULT_COLOR_OPTIONS,  # type: ignore
 )
 def cli() -> None:
-    """ Pydra: Enhancing python code editting environment
+    """ Prussian: Enhancing python code editting environment
     """
     return
 
 
-def pydra_sub_command(f: Any) -> Any:
-    """ Pydra's default subcommand decorator
+def prussian_sub_command(f: Any) -> Any:
+    """ Prussian's default subcommand decorator
     """
     return cli.command(
         cls=HelpColorsCommand,
@@ -43,12 +43,12 @@ def pydra_sub_command(f: Any) -> Any:
     )(f)
 
 
-@pydra_sub_command
+@prussian_sub_command
 @click.argument('python_script_path', nargs=1)
 def lint(
     python_script_path: str,
 ) -> None:
-    """ Run lint of pydra.
+    """ Run lint of prussian.
     """
     return
 

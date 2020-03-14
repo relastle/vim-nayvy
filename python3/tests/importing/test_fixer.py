@@ -1,8 +1,8 @@
 import unittest
 from typing import List, Tuple
 
-from pydra.importing.fixer import Fixer, LintEngine
-from pydra.importing.import_config import ImportConfig, SingleImport
+from prussian.importing.fixer import Fixer, LintEngine
+from prussian.importing.import_config import ImportConfig, SingleImport
 
 
 class LintEngineMock(LintEngine):
