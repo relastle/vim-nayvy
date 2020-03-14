@@ -1,9 +1,17 @@
 """
 `Module` for organizing attiributes defined in a module
 """
-from enum import Enum, auto
-from typing import Any, Dict, Tuple, Generator, List
-from dataclasses import dataclass
+import json
+from enum import Enum
+from typing import Any, Dict, List, Tuple, Generator
+from dataclasses import asdict, dataclass, is_dataclass
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o: Any) -> Any:
+        if is_dataclass(o):
+            return asdict(o)
+        return super().default(o)
 
 
 def __is_dunder(attr_name: str) -> bool:
@@ -24,12 +32,12 @@ def attr_iter(attr: Any) -> Generator[Tuple[str, Any], None, None]:
         yield (inner_attr_name, inner_attr)
 
 
-class FuncDeclType(Enum):
+class FuncDeclType(str, Enum):
 
-    NO_SET = auto()
-    TOP_LEVEL = auto()
-    CLASS = auto()
-    INSTANCE = auto()
+    NO_SET = 'Not set'
+    TOP_LEVEL = 'Top level function'
+    CLASS = 'Class method'
+    INSTANCE = 'Instance method'
 
 
 @dataclass(frozen=True)
@@ -181,3 +189,6 @@ class Module:
                 f'{c.name}::{f.name}' for f in c.function_map.values()
             ]
         return res_lines
+
+    def to_json(self) -> str:
+        return json.dumps(self, cls=JSONEncoder, indent=2)
