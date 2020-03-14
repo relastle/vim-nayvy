@@ -12,6 +12,10 @@ from .import_statement import ImportStatement, SingleImport
 
 
 class LintEngine(metaclass=ABCMeta):
+    """
+    Interface for make linting engine such as Pyflakes and flake8
+    abstract.
+    """
 
     @abstractmethod
     def get_cmd_piped(self) -> str:
@@ -27,6 +31,8 @@ class LintEngine(metaclass=ABCMeta):
 
 
 class ImportStatementMap(metaclass=ABCMeta):
+    """ Interface for providing import statement mapping.
+    """
 
     @abstractmethod
     def __getitem__(self, name: str) -> Optional[SingleImport]:
