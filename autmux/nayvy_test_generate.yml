@@ -35,11 +35,38 @@ steps:
       key-interval-ms: 50
 
   - job: do
-    description: AutoImport
+    description: NayvyTestGenerate
     props:
       keystrokes:
         - ':NayvyTestGenerate'
       key-interval-ms: 50
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 500
+
+  - job: do
+    description: write_description
+    props:
+      keystrokes:
+        - ':q!'
+        - 'Go'
+        - '<C-w># or we can implement multiple test functions using FZF by :NayvyTestGenerateFZF'
+        - '<ESC>'
+      key-interval-ms: 50
+
+  - job: do
+    description: NayvyImportFZF
+    props:
+      keystrokes: ':NayvyTestGenerateFZF<CR>'
+      key-interval-ms: 50
+
+  - job: do
+    description: NayvyImportFZF select
+    props:
+      keystrokes: '<Tab><Tab><Tab><CR>'
+      key-interval-ms: 600
 
   - job: sleep
     description: Sleep
