@@ -31,7 +31,7 @@ def panic(message: str) -> None:
     **DEFAULT_COLOR_OPTIONS,  # type: ignore
 )
 def cli() -> None:
-    """ Nayvy: Enhancing python code editting environment
+    """ Nayvy: Enriching python coding.
     """
     return
 

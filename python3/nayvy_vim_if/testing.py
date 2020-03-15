@@ -3,7 +3,7 @@ from os.path import basename
 
 import vim  # noqa
 
-from .utils import error
+from .utils import error, warning
 from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 
@@ -47,7 +47,8 @@ def nayvy_jump_to_test_or_generate() -> None:
 
     func_name = impl_mod.get_function(vim.current.window.cursor[0]-1)
     if func_name is None:
-        error('The cursor is probably outside the function.')
+        warning('The cursor is probably outside the function.')
+        vim.command(f'vs {test_path}')
         return
 
     # load test file lines.

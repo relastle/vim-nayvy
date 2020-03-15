@@ -50,12 +50,6 @@ endfunction
 "---------------------------------------
 " Testing
 "---------------------------------------
-function! nayvy#touch_unittest_file() abort
-  let l:py_expr = 'nayvy_auto_touch_test()'
-  call py3eval(l:py_expr)
-endfunction
-
-
 function! nayvy#jump_to_test_or_generate() abort
   let l:py_expr = 'nayvy_jump_to_test_or_generate()'
   call py3eval(l:py_expr)
