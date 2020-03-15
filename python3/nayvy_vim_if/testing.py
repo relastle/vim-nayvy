@@ -1,5 +1,6 @@
 from typing import List, Tuple, Optional
 from os.path import basename
+from pprint import pformat
 
 import vim  # noqa
 
@@ -26,7 +27,7 @@ def nayvy_auto_touch_test() -> None:
 
 def nayvy_test_generate_multiple(fzf_selected_lines: List[str]) -> None:
     func_names = [
-        line.split('::')[1].strip().lstrip('test-')
+        line.split('::')[1].strip().lstrip('test_')
         for line in fzf_selected_lines
     ]
     return nayvy_test_generate(func_names)
