@@ -57,7 +57,8 @@ endfunction
 
 " sink function for multiple selected untested functions
 function! nayvy#sink_multiple_functions(list) abort
-  " TODO:
+  let l:py_expr = 'nayvy_test_generate(' . string(a:list) .')'
+  call py3eval(l:py_expr)
 endfunction
 
 " list all functions that are not tested in a `test_{}` manner
