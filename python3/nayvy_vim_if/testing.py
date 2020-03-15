@@ -24,7 +24,7 @@ def nayvy_auto_touch_test() -> None:
     return
 
 
-def nayvy_jump_to_test_or_generate() -> None:
+def nayvy_test_generate() -> None:
     """ Vim interface for jump of generate unittest.
     """
     filepath = vim.eval('expand("%")')

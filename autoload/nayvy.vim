@@ -50,8 +50,8 @@ endfunction
 "---------------------------------------
 " Testing
 "---------------------------------------
-function! nayvy#jump_to_test_or_generate() abort
-  let l:py_expr = 'nayvy_jump_to_test_or_generate()'
+function! nayvy#test_generate() abort
+  let l:py_expr = 'nayvy_test_generate()'
   call py3eval(l:py_expr)
 endfunction
 
@@ -65,7 +65,7 @@ function! nayvy#nayvy_list_tested_and_untested_functions() abort
   return py3eval('nayvy_list_tested_and_untested_functions()')
 endfunction
 
-function! nayvy#make_unittest_fzf() abort
+function! nayvy#test_generate_fzf() abort
   let l:function_lsts = nayvy#nayvy_list_tested_and_untested_functions()
   let l:tested_functions = l:function_lsts[0]
   let l:untedted_functions = l:function_lsts[1]
