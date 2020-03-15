@@ -1,0 +1,56 @@
+---
+name: nayvy-scenario
+description: Demonstration of NayvyImportFzf
+steps:
+
+  - job: tmux_exec
+    description: hide status line
+    props:
+      command: set status off
+
+  - job: sleep
+    description: Sleep for recording
+    props:
+      sleep-ms: 1000
+
+  - job: send
+    description: launch nvim with tmp buffer
+    props:
+      chars: nvim ./nayvy_demo_project/package/mod.py
+
+  - job: sleep
+    description: Sleep for launching neovim
+    props:
+      sleep-ms: 2000
+
+  - job: do
+    description: write description
+    props:
+      keystrokes:
+        - 'I# I will show you how NayvyImportFZF works'
+        - '# try :NayvyImportFZF'
+        -  '<ESC>'
+      key-interval-ms: 50
+
+  - job: do
+    description: NayvyImportFZF
+    props:
+      keystrokes:
+        - ':NayvyImportFZF'
+      key-interval-ms: 50
+
+  - job: do
+    description: select in fzf
+    props:
+      keystrokes: 'typing<Tab><Tab><Tab><C-w>numpy<Tab><C-w>tensorflow<Tab><C-w>top_level<Tab><CR>'
+      key-interval-ms: 200
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 1000
+
+  - job: tmux_exec
+    description: restore status line
+    props:
+      command: set status on
