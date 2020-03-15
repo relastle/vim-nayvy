@@ -26,6 +26,23 @@ Plug 'relastle/vim-nayvy'
 Please refer [doc](./doc/vim-nayvy.txt) for full documentation.
 Some demonstrations are shown here.
 
+
+### NayvyImports
+
+![nayvy_imports](https://user-images.githubusercontent.com/6816040/76696704-9576a480-66d1-11ea-9561-b08914e263f4.gif)
+
+### NayvyImportFZF
+
+![nayvy_import_fzf](https://user-images.githubusercontent.com/6816040/76696705-9ad3ef00-66d1-11ea-9d7c-cf62b7f597c0.gif)
+
+### NayvyTestGenerate
+
+:construction:
+
+### NayvyTestGenerateFZF
+
+:construction:
+
 ## Feature roadmap
 
 - [x] Auto imports (add and remove) based on pre-defined rules.

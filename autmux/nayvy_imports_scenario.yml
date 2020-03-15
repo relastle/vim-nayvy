@@ -3,10 +3,10 @@ name: nayvy-scenario
 description: Demonstration of autoimport and typed snippet
 steps:
 
-  # - job: tmux_exec
-  #   description: hide status line
-  #   props:
-  #     command: set status off
+  - job: tmux_exec
+    description: hide status line
+    props:
+      command: set status off
 
   - job: sleep
     description: Sleep for recording
