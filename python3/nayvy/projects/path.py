@@ -115,6 +115,13 @@ class ProjectImportHelper(ImportStatementMap):
 
     def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
         for modpath in self.all_modpaths:
+            for name in modpath.mod.function_map.keys():
+                single_import = self[name]
+                if single_import is None:
+                    continue
+                else:
+                    yield (name, single_import)
+
             for name in modpath.mod.class_map.keys():
                 single_import = self[name]
                 if single_import is None:
