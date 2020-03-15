@@ -26,7 +26,6 @@ Plug 'relastle/vim-nayvy'
 Please refer [doc](./doc/vim-nayvy.txt) for full documentation.
 Some demonstrations are shown here.
 
-
 ## Feature roadmap
 
 - [x] Auto imports (add and remove) based on pre-defined rules.
