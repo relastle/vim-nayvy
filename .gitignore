@@ -1,6 +1,6 @@
 .DS_Store
-./_vader.vim
-./_ultisnips
+_vader.vim/
+_ultisnips/
 
 test-reports
 

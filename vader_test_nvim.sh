@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [[ ! -e ./_vader.vim ]]; then
-    git clone https://github.com/junegunn/vader.vim ./ _vader.vim
+    git clone https://github.com/junegunn/vader.vim ./_vader.vim
 fi
 
 if [[ ! -e ./_ultisnips ]]; then

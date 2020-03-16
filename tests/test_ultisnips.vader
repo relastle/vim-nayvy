@@ -12,5 +12,4 @@ Do (Expand snippet and jump):
 
 Expect python (test snippet was expanded):
   from pprint import pprint as pp
-
   pp(hoge)
