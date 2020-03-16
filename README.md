@@ -13,7 +13,7 @@ Enriching python coding.
 </p>
 
 
-## Installation
+## 1. Installation
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
@@ -21,29 +21,29 @@ Using [vim-plug](https://github.com/junegunn/vim-plug)
 Plug 'relastle/vim-nayvy'
 ```
 
-## Usage
+## 2. Usage
+
+### 2.1 Commands
 
 Please refer [doc](./doc/vim-nayvy.txt) for full documentation.
 Some demonstrations are shown here.
 
 
-### NayvyImports
+#### NayvyImports
 
 ![nayvy_imports](https://user-images.githubusercontent.com/6816040/76696704-9576a480-66d1-11ea-9561-b08914e263f4.gif)
 
-### NayvyImportFZF
+#### NayvyImportFZF
 
 ![nayvy_import_fzf](https://user-images.githubusercontent.com/6816040/76696705-9ad3ef00-66d1-11ea-9d7c-cf62b7f597c0.gif)
 
-### NayvyTestGenerate
+#### NayvyTestGenerate & NayvyTestGenerateFZF
 
-:construction:
+![nayvy_test_generate](https://user-images.githubusercontent.com/6816040/76715742-f608ee80-6770-11ea-9f8e-d156292c48d6.gif)
 
-### NayvyTestGenerateFZF
+### 2.2 Use with other plugin.
 
-:construction:
-
-## Feature roadmap
+## 3. Feature roadmap
 
 - [x] Auto imports (add and remove) based on pre-defined rules.
 - [x] Importing multiple modules using [fzf](https://github.com/junegunn/fzf).
@@ -52,7 +52,7 @@ Some demonstrations are shown here.
 - [x] Generating test functions using [fzf](https://github.com/junegunn/fzf).
 - [x] Providing some domain objects useful in creating [ultisnips](https://github.com/SirVer/ultisnips) snippets.
 
-## Philosophy
+## 4. Philosophy
 
 Most python code parsing algorithms of `vim-nayvy` is not strict, and it contains some heuristics
 ( In other words, it is not based on AST, or hierarchical module structure).
@@ -63,15 +63,15 @@ Some code actions (such as implementing test function and jumping) should be exe
 when python code in current buffer is incomplete (cannot parsed via AST, or unimportable by `importlib`).
 
 Now, it is the era of [LSP](https://microsoft.github.io/language-server-protocol).
-I do not think prividing aid for code completioon is demanded, cause I personally think code completion
-is one of the most powerful and stable features privided by LSP.
+I do not think prividing aid for code completion via non-LSP plugin is demanded,
+as I personally think code completion is one of the most powerful and stable features privided by LSP.
 Thus, the main aim of `vim-nayvy` is providing a little bit utility functions :smile:
 
 
-## Note
+## 5. Note
 
 :construction: Please note that any destructive change (backward incompatible) can be done without any announcement.
 
-## [LICENSE](./LICENSE)
+## 6. [LICENSE](./LICENSE)
 
 MIT
