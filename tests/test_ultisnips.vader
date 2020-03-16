@@ -1,0 +1,16 @@
+===============================================================================
+
+Before:
+  let g:UltiSnipsExpandTrigger="<tab>"
+  let g:UltiSnipsJumpForwardTrigger="<tab>"
+
+Given python (Test: postfix completion and auto import):
+  hoge.pp
+
+Do (Expand snippet and jump):
+  A\<tab>\<Esc>
+
+Expect python (test snippet was expanded):
+  from pprint import pprint as pp
+
+  pp(hoge)

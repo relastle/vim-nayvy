@@ -1,0 +1,7 @@
+post_expand "auto_import('from pprint import pprint as pp', 0)"
+snippet '((\S|\.)+)\.pp' "pprint postfix completion" r
+`!p
+var_name = match.group(1)
+snip.rv = "pp(" + var_name + ")"
+`
+endsnippet
