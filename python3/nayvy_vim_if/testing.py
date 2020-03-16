@@ -1,12 +1,10 @@
 from typing import List, Tuple, Optional
 from os.path import basename
-from pprint import pformat
 
 import vim  # noqa
-
-from .utils import error, warning
 from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
+from .utils import error, warning
 
 
 def nayvy_auto_touch_test() -> None:
