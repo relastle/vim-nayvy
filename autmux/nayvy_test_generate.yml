@@ -28,7 +28,7 @@ steps:
     props:
       keystrokes:
         - 'Go'
-        - '<C-w># Here we want to implement test fot `cls_method`.'
+        - '<C-w># Here we want to implement test for `cls_method`.'
         - '# so move cursor to inside `cls_method` and execute :NayvyTestGenerate'
         - '<ESC>'
         - '/def cls_method'
