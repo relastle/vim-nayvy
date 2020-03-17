@@ -4,8 +4,8 @@ Enriching python coding.
 
 <p align="center">
 <a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/v/nayvy?color=%23032794"/></a>
-<a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/l/nayvy?color=032794"/></a>
 <a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/pyversions/nayvy?color=032794"/></a>
+<a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/l/nayvy?color=032794"/></a>
 </p>
 
 <p align="center">
@@ -42,6 +42,72 @@ Some demonstrations are shown here.
 ![nayvy_test_generate](https://user-images.githubusercontent.com/6816040/76715742-f608ee80-6770-11ea-9f8e-d156292c48d6.gif)
 
 ### 2.2 Use with other plugin.
+
+#### [ALE](https://github.com/dense-analysis/ale)
+
+[ALE](https://github.com/dense-analysis/ale), Asynchronous Lint Engine, is one of the SOTA plugins of Vim.
+Even though LSP is becoming more and more popular, the plugin provides brilliant features,
+including great abstraction against code fixer.
+
+Thus, vim-nayvy provides code fixer funciton `nayvy#ale_ficer`.
+
+Vim script Below is a example of using `nayvy#ale_fixer` with
+[autopep8](https://github.com/hhatto/autopep8) and [isort](https://github.com/timothycrosley/isort).
+
+```vim
+let g:ale_fixers = {
+      \ 'python': ['nayvy#ale_fixer', 'autopep8', 'isort'],
+      \ }
+
+" or if you already defined `g:ale_fixer`, write
+let g:ale_fixers['python'] = ['nayvy#ale_fixer', 'autopep8', 'isort']
+```
+
+And here is demonstrations.
+
+![ale_fixer](https://user-images.githubusercontent.com/6816040/76823820-ac93ce80-6858-11ea-9a76-9c3b81b1b4e0.gif)
+
+#### [ultisnips](https://github.com/SirVer/ultisnips)
+
+
+`vim-nayvy` provides `auto_import` function used with UltiSnips' snippet.
+UltiSnips provides `post_expand` trigger for each single snippet,
+which executes prerefined command when the snippet is expanded.
+
+The snippet fragment below import `auto_import` function from `nayvy`,
+and defines pretty print post fix completion that add import statement
+`from pprint import pprint as pp` if not exists.
+
+```
+global !p
+from nayvy_vim_if.ultisnips import (
+	auto_import,
+)
+endglobal
+
+post_expand "auto_import(snip, 'from pprint import pprint as pp', 0)"
+snippet '((\S|\.)+)\.pp' "pprint postfix completion" r
+`!p
+var_name = match.group(1)
+snip.rv = "pp(" + var_name + ")"
+`
+endsnippet
+```
+(The sample snippet is [here](./UltiSnips/python.snippets) and tested with a [vader script](./tests/test_ultisnips.vader))
+
+Note that three arguments of `auto_import` are
+- Snip object of UltiSnips. you should always pass `snip`
+- Import statement string
+- The import level
+    - 0: Standard library imports.
+    - 1: Related third party imports.
+    - 2: Local application/library specific imports.
+
+(cf. https://www.python.org/dev/peps/pep-0008/#imports)
+
+And here is demonstrations.
+
+![ultisnips_demo](https://user-images.githubusercontent.com/6816040/76824986-00ec7d80-685c-11ea-8945-d7386b3f620f.gif)
 
 ## 3. Feature roadmap
 
