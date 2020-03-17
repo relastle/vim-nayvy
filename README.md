@@ -53,7 +53,7 @@ For configuration, see [here](https://github.com/relastle/vim-nayvy/tree/develop
 Even though LSP is becoming more and more popular, the plugin provides brilliant features,
 including great abstraction against code fixer.
 
-Thus, vim-nayvy provides code fixer funciton `nayvy#ale_ficer`.
+Thus, vim-nayvy provides code fixer funciton `nayvy#ale_fixer`.
 
 Vim script Below is a example of using `nayvy#ale_fixer` with
 [autopep8](https://github.com/hhatto/autopep8) and [isort](https://github.com/timothycrosley/isort).
