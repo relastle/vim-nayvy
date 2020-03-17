@@ -136,7 +136,10 @@ Thus, the main aim of `vim-nayvy` is providing a little bit utility functions :s
 
 ## 5. Note
 
-:construction: Please note that any destructive change (backward incompatible) can be done without any announcement.
+#### :construction:
+
+- Please note that any destructive change (backward incompatible) can be done without any announcement.
+- This plugin is in a very early stage of development. Feel free to report problemcs and feature requests, or make PRs.
 
 ## 6. [LICENSE](./LICENSE)
 
