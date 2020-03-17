@@ -6,6 +6,7 @@
 <a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/v/nayvy?color=%23032794"/></a>
 <a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/pyversions/nayvy?color=032794"/></a>
 <a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/l/nayvy?color=032794"/></a>
+<a href="https://github.com/relastle/vim-nayvy/releases"><img src="https://img.shields.io/github/v/tag/relastle/vim-nayvy?color=032794"/></a>
 </p>
 
 <p align="center">
