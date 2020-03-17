@@ -21,18 +21,18 @@ jobs:
         poetry_version: 1.0.3
         working_directory: ./python3
         args: run coverage run --omit='./nayvy_vim_if/*,./tests/**/*' --source=. -m pytest -vv --durations=10
-    - name: coverage report
+    - name: create coverage xml
       uses: abatilo/actions-poetry@v1.5.0
       with:
         python_version: 3.7.6
         poetry_version: 1.0.3
         working_directory: ./python3
-        args: run coverage report -m
+        args: run coverage xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./python3/.coverage
+        file: ./python3/coverage.xml
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: true
