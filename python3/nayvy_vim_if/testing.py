@@ -2,10 +2,9 @@ from typing import List, Tuple, Optional
 from os.path import basename
 
 import vim  # noqa
-
-from .utils import error
 from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
+from .utils import error, warning
 
 
 def nayvy_auto_touch_test() -> None:
@@ -24,7 +23,15 @@ def nayvy_auto_touch_test() -> None:
     return
 
 
-def nayvy_jump_to_test_or_generate() -> None:
+def nayvy_test_generate_multiple(fzf_selected_lines: List[str]) -> None:
+    func_names = [
+        line.split('::')[1].strip().lstrip('test_')
+        for line in fzf_selected_lines
+    ]
+    return nayvy_test_generate(func_names)
+
+
+def nayvy_test_generate(func_names: List[str] = []) -> None:
     """ Vim interface for jump of generate unittest.
     """
     filepath = vim.eval('expand("%")')
@@ -45,10 +52,13 @@ def nayvy_jump_to_test_or_generate() -> None:
         error('Please check the current buffer is valid')
         return
 
-    func_name = impl_mod.get_function(vim.current.window.cursor[0]-1)
-    if func_name is None:
-        error('The cursor is probably outside the function.')
-        return
+    if func_names == []:
+        func_name = impl_mod.get_function(vim.current.window.cursor[0]-1)
+        if func_name is None:
+            warning('The cursor is probably outside the function.')
+            vim.command(f'vs {test_path}')
+            return
+        func_names = [func_name]
 
     # load test file lines.
     with open(test_path) as f:
@@ -56,26 +66,28 @@ def nayvy_jump_to_test_or_generate() -> None:
             line.strip('\n') for line in f.readlines()
         ]
 
-    lines = auto_generator.get_added_test_lines(
-        func_name,
-        impl_module_lines,
-        test_module_lines,
-    )
+    for func_name in func_names:
+        tmp = auto_generator.get_added_test_lines(
+            func_name,
+            impl_module_lines,
+            test_module_lines,
+        )
+        if tmp is not None:
+            test_module_lines = tmp
 
     # open test in split buffer
     vim.command(f'vs {test_path}')
 
-    if lines is not None:
+    if test_module_lines is not None:
         # change lines
-        vim.current.buffer[:] = lines
+        vim.current.buffer[:] = test_module_lines
     else:
-        lines = test_module_lines
         print('Test function already exists')
 
     # search lines
     row: int
     column: int
-    for i, line in enumerate(lines):
+    for i, line in enumerate(test_module_lines):
         needle = f'def test_{func_name}'
         if needle in line:
             vim.current.window.cursor = (

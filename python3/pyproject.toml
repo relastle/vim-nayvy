@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "nayvy"
 version = "0.0.1"
-description = "Enhancing python code editting environment"
+description = "Enriching python coding."
 authors = ["Hiroki Konishi <relastle@gmail.com>"]
 license = "MIT"
 

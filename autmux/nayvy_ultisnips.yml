@@ -1,0 +1,64 @@
+---
+name: nayvy-scenario
+description: Demonstration of autoimport and typed snippet
+steps:
+
+  - job: tmux_exec
+    description: hide status line
+    props:
+      command: set status off
+
+  - job: sleep
+    description: Sleep for recording
+    props:
+      sleep-ms: 1000
+
+  - job: send
+    description: launch nvim with tmp buffer
+    props:
+      chars: nvim ./nayvy_demo_project/package/tmp.py
+
+  - job: sleep
+    description: Sleep for launching neovim
+    props:
+      sleep-ms: 2000
+
+  - job: do
+    description: write_python_code
+    props:
+      keystrokes:
+        - 'i'
+        - ''
+        - 'a = "hello world"'
+        - 'b = [1, 2, 3, 4, 5]'
+      key-interval-ms: 50
+
+  - job: do
+    description: 1st_expansion
+    props:
+      keystrokes:
+        - ''
+        - 'a.pp<C-j>'
+      key-interval-ms: 200
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 1000
+
+  - job: do
+    description: 1nd_expansion
+    props:
+      keystrokes:
+        - 'b.pp<C-j>'
+      key-interval-ms: 200
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 4000
+
+  - job: tmux_exec
+    description: restore status line
+    props:
+      command: set status on

@@ -1,0 +1,52 @@
+---
+name: nayvy-scenario
+description: Demonstration of autoimport and typed snippet
+steps:
+
+  - job: tmux_exec
+    description: hide status line
+    props:
+      command: set status off
+
+  - job: sleep
+    description: Sleep for recording
+    props:
+      sleep-ms: 1000
+
+  - job: send
+    description: launch nvim with tmp buffer
+    props:
+      chars: nvim ./nayvy_demo_project/package/incomplete_imports.py
+
+  - job: sleep
+    description: Sleep for launching neovim
+    props:
+      sleep-ms: 2000
+
+  - job: do
+    description: write_description
+    props:
+      keystrokes:
+        - ':ALELint'
+        - 'Go'
+        - '<C-w># As you can see, there are many importing problems in this buffer.'
+        - '# So execute :NayvyImports<ESC>'
+      key-interval-ms: 50
+
+  - job: do
+    description: AutoImport
+    props:
+      keystrokes:
+        - ':NayvyImports'
+        - ':ALELint'
+      key-interval-ms: 50
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 4000
+
+  - job: tmux_exec
+    description: restore status line
+    props:
+      command: set status on

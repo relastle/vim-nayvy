@@ -33,6 +33,5 @@ command! NayvyImportFZF call nayvy#import_fzf()
 "---------------------------------------
 " Testing
 "---------------------------------------
-command! NayvyTouchUnitTestFile call nayvy#touch_unittest_file()
-command! NayvyJumpToTestOrGenerate call nayvy#jump_to_test_or_generate()
-command! NayvyMakeUnitTestFZF call nayvy#make_unittest_fzf()
+command! NayvyTestGenerate call nayvy#test_generate()
+command! NayvyTestGenerateFZF call nayvy#test_generate_fzf()

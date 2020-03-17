@@ -1,0 +1,73 @@
+*vim-nayvy.txt*	vim-nayvy	Last change: Mar 15, 2020
+VIM-NAYVY - TABLE OF CONTENTS
+
+==============================================================================
+INTRODUCTION                                            *vim-nayvy-introduction*
+
+https://github.com/relastle/vim-nayvy
+
+:new_moon: A python development environment for Vim :snake:
+
+
+==============================================================================
+INSTALLATION                                            *vim-nayvy-installation*
+
+Using vim-plug (https://github.com/junegunn/vim-plug)
+
+- 1. Add `Plug 'relastle/vim-nayvy'` to .vimrc
+- 2. Run `:PlugInstall`
+
+==============================================================================
+COMMANDS                                                    *vim-nayvy-commands*
+
+
+IMPORTS                                                      *vim-nayvy-imports*
+-------
+
+|NayvyImports|                                                     *:NayvyImports*
+
+The |NayvyImports| command resolve current buffer's undefined name and
+unused imports.
+
+It requires pyflakes command executable.
+
+
+|NayvyImportFZF|                                                 *:NayvyImportFZF*
+
+The |NayvyImportFZF| command imports multiple import statement into current
+buffer using FZF interface.
+
+It requires that fzf(https://github.com/junegunn/fzf) is bundled.
+>
+TESTS
+*vim-nayvy-tests* -----
+
+|NayvyTestGenerate|                                           *:NayvyTestGenerate*
+
+The |NayvyTestGenerate| command generate test script for the current opened
+python script. If the cursor is outside the function body, the command only
+touches test script and open it in split window. If the cursor is inside the
+function body, it generate test function in test script. If there already
+exists the test function, it just jumps into it.
+
+The generated file path is as follows.
+>
+    python implementation file: /path/to/python_project/package/mod.py
+    python test file          : /path/to/python_project/tests/test_mod.py
+>
+
+|NayvyTestGenerateFZF|                                     *:NayvyTestGenerateFZF*
+
+The |NayvyTestGenerateFZF| command generate multiple test functions selected
+by fzf interface. The generated test function names and test script path is
+defined in the same way as |NayvyTestGenerate|.
+
+It requires that fzf(https://github.com/junegunn/fzf) is bundled.
+
+==============================================================================
+LICENSE                                                      *vim-nayvy-license*
+
+MIT
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
