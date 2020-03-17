@@ -11,6 +11,7 @@
 
 <p align="center">
 <a href="https://github.com/relastle/vim-nayvy/actions"><img src="https://github.com/relastle/vim-nayvy/workflows/pythontests/badge.svg"/></a>
+<a href="https://codecov.io/gh/relastle/vim-nayvy"><img src="https://codecov.io/gh/relastle/vim-nayvy/branch/master/graph/badge.svg" /></a>
 </p>
 
 
