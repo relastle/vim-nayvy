@@ -33,9 +33,13 @@ Some demonstrations are shown here.
 
 ![nayvy_imports](https://user-images.githubusercontent.com/6816040/76696704-9576a480-66d1-11ea-9561-b08914e263f4.gif)
 
+For configuration, see [here](https://github.com/relastle/vim-nayvy/tree/develop#31-importing-configuration).
+
 #### NayvyImportFZF
 
 ![nayvy_import_fzf](https://user-images.githubusercontent.com/6816040/76696705-9ad3ef00-66d1-11ea-9d7c-cf62b7f597c0.gif)
+
+For configuration, see [here](https://github.com/relastle/vim-nayvy/tree/develop#31-importing-configuration).
 
 #### NayvyTestGenerate & NayvyTestGenerateFZF
 
@@ -68,7 +72,6 @@ And here is demonstrations.
 ![ale_fixer](https://user-images.githubusercontent.com/6816040/76823820-ac93ce80-6858-11ea-9a76-9c3b81b1b4e0.gif)
 
 #### 2.2.2 [ultisnips](https://github.com/SirVer/ultisnips)
-
 
 `vim-nayvy` provides `auto_import` function used with UltiSnips' snippet.
 UltiSnips provides `post_expand` trigger for each single snippet,
