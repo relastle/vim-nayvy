@@ -1,6 +1,6 @@
-# vim-nayvy
+<h1 align="center">vim-nayvy</h1>
 
-Enriching python coding.
+<p align="center">Enriching python coding.</p>
 
 <p align="center">
 <a href="https://pypi.org/project/nayvy/"><img src="https://img.shields.io/pypi/v/nayvy?color=%23032794"/></a>
@@ -43,7 +43,7 @@ Some demonstrations are shown here.
 
 ### 2.2 Use with other plugin.
 
-#### [ALE](https://github.com/dense-analysis/ale)
+#### 2.2.1 [ALE](https://github.com/dense-analysis/ale)
 
 [ALE](https://github.com/dense-analysis/ale), Asynchronous Lint Engine, is one of the SOTA plugins of Vim.
 Even though LSP is becoming more and more popular, the plugin provides brilliant features,
@@ -67,7 +67,7 @@ And here is demonstrations.
 
 ![ale_fixer](https://user-images.githubusercontent.com/6816040/76823820-ac93ce80-6858-11ea-9a76-9c3b81b1b4e0.gif)
 
-#### [ultisnips](https://github.com/SirVer/ultisnips)
+#### 2.2.2 [ultisnips](https://github.com/SirVer/ultisnips)
 
 
 `vim-nayvy` provides `auto_import` function used with UltiSnips' snippet.
