@@ -109,7 +109,35 @@ And here is demonstrations.
 
 ![ultisnips_demo](https://user-images.githubusercontent.com/6816040/76824986-00ec7d80-685c-11ea-8945-d7386b3f620f.gif)
 
-## 3. Feature roadmap
+## 3. Configurations
+
+### 3.1 Importing configuration
+
+Nayvy detects import statement should be used by looking into
+`$XDG_CONFIG_PATH/nayvy/import_config.nayvy`.
+(if $XDG_CONFIG_PATH is not set, `~/.config/nayvy/import_config.nayvy`)
+
+In the file, you can write any python import statements like this.
+
+```python
+from typing import List, Optional
+from pprint import pprint as pp
+import sys
+import os
+
+import numpy as np
+
+from .hoge import HogeHogeHoge as hoge
+```
+
+Line breaks seperating python import blocks are important,
+cause nayvy determines the line where a statement inserted by it.
+
+My own setting is [here](https://gist.github.com/relastle/130f942699f8270c9fec587acbf80f30).
+Feel free to copy and paste and use it.
+
+
+## 4. Feature roadmap
 
 - [x] Auto imports (add and remove) based on pre-defined rules.
 - [x] Importing multiple modules using [fzf](https://github.com/junegunn/fzf).
@@ -117,8 +145,10 @@ And here is demonstrations.
 - [x] Auto generating or jump to test function.
 - [x] Generating test functions using [fzf](https://github.com/junegunn/fzf).
 - [x] Providing some domain objects useful in creating [ultisnips](https://github.com/SirVer/ultisnips) snippets.
+- [ ] Make auto generated Test template configurable. (Now unittest, standard library, is supported)
+- [ ] Utility function of converting function arguments to docstring (for UltiSnips).
 
-## 4. Philosophy
+## 5. Philosophy
 
 Most python code parsing algorithms of `vim-nayvy` is not strict, and it contains some heuristics
 ( In other words, it is not based on AST, or hierarchical module structure).
@@ -134,13 +164,13 @@ as I personally think code completion is one of the most powerful and stable fea
 Thus, the main aim of `vim-nayvy` is providing a little bit utility functions :smile:
 
 
-## 5. Note
+## 6. Note
 
 #### :construction:
 
 - Please note that any destructive change (backward incompatible) can be done without any announcement.
 - This plugin is in a very early stage of development. Feel free to report problemcs and feature requests, or make PRs.
 
-## 6. [LICENSE](./LICENSE)
+## 7. [LICENSE](./LICENSE)
 
 MIT
