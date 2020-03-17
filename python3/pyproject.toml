@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nayvy"
-version = "0.0.1"
+version = "0.1.0"
 description = "Enriching python coding."
 authors = ["Hiroki Konishi <relastle@gmail.com>"]
 license = "MIT"
