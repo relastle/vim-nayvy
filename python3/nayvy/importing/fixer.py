@@ -136,7 +136,7 @@ class Fixer:
             res_lines += lines[begin_end_indices[-1][1]:]
         return res_lines
 
-    def fix_lines(self, lines: List[str]) -> List[str]:
+    def fix_lines(self, lines: List[str]) -> Optional[List[str]]:
         lint_job = sp.run(
             self.lint_engine.get_cmd_piped(),
             shell=True,
@@ -152,6 +152,11 @@ class Fixer:
         unused_imports, undefined_names = self.lint_engine.parse_output(
             lint_output,
         )
+
+        if not undefined_names and not undefined_names:
+            # If there is no problem, return None
+            # for prevent vim from updating buffer.
+            return None
 
         fixed_lines = self._fix_lines(
             lines,
@@ -174,6 +179,8 @@ class Fixer:
             lines = [line.strip() for line in f.readlines()]
 
         fixed_lines = self.fix_lines(lines)
+        if fixed_lines is None:
+            return None
 
         for fixed_line in fixed_lines:
             print(fixed_line)

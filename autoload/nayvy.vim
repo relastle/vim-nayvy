@@ -22,7 +22,11 @@ endfunction
 
 function! nayvy#ale_fixer(buffer) abort
   let l:py_expr = 'nayvy_get_fixed_lines(' . string(a:buffer) . ')'
-  return py3eval(l:py_expr)
+  let l:res = py3eval(l:py_expr)
+  if empty(l:res)
+    return 0
+  endif
+  return l:res
 endfunction
 
 " sink function for multiple selected import statement

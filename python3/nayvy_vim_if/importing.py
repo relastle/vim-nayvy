@@ -57,7 +57,7 @@ def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
     )
 
 
-def nayvy_fix_lines(lines: List[str]) -> List[str]:
+def nayvy_fix_lines(lines: List[str]) -> Optional[List[str]]:
     filepath = vim.eval('expand("%")')
     stmt_map = init_import_stmt_map(filepath)
     if stmt_map is None:
@@ -75,11 +75,17 @@ def nayvy_auto_imports() -> None:
     '''
     lines = vim.current.buffer[:]
     fixed_lines = nayvy_fix_lines(lines)
-    vim.current.buffer[:] = fixed_lines
+    if fixed_lines:
+        # update only if fixed_lines is not None
+        vim.current.buffer[:] = fixed_lines
     return
 
 
-def nayvy_get_fixed_lines(buffer_nr: int) -> List[str]:
+def nayvy_get_fixed_lines(buffer_nr: int) -> Optional[List[str]]:
+    """ Get fixed lines of importing fixed.
+
+    Used mainly as the fixer of ALE.
+    """
     lines = vim.buffers[buffer_nr][:]
     return nayvy_fix_lines(lines)
 
