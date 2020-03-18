@@ -1,5 +1,11 @@
 name: pythontests
-on: push
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   pytest:
@@ -29,6 +35,7 @@ jobs:
         working_directory: ./python3
         args: run coverage xml
     - name: Upload coverage to Codecov
+      if: github.event.pull_request.merged == true
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
