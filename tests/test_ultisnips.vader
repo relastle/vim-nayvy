@@ -13,3 +13,24 @@ Do (Expand snippet and jump):
 Expect python (test snippet was expanded):
   from pprint import pprint as pp
   pp(hoge)
+
+===============================================================================
+
+Given python (Test: postfix completion and auto import):
+  List
+  Dict
+
+Do (Expand snippet and jump):
+  ggA\<tab>\<Esc>
+  jA\<tab>\<Esc>
+
+Expect python (test snippet was expanded):
+  from typing import List
+  from typing import Dict
+  List
+  Dict
+
+" Expect python (test snippet was expanded): TODO
+"   from typing import (List, Dict)
+"   List
+"   Dict
