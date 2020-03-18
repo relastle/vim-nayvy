@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-if [[ ! -e ./vader.vim ]]; then
-    git clone https://github.com/junegunn/_vader.vim
+if [[ ! -e ./_vader.vim ]]; then
+    git clone https://github.com/junegunn/vader.vim ./_vader.vim
 fi
 
-if [[ ! -e ./ultisnips ]]; then
-    git clone https://github.com/SirVer/_ultisnips
+if [[ ! -e ./_ultisnips ]]; then
+    git clone https://github.com/SirVer/ultisnips ./_ultisnips
 fi
 
 XDG_CONFIG_HOME="$(pwd)/configs"
