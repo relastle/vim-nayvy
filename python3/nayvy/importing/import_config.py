@@ -1,8 +1,10 @@
-from typing import List, Optional, Generator, Tuple, Any, Dict
 import os
+from typing import Any, Dict, List, Tuple, Optional, Generator
+from os.path import dirname
+from pathlib import Path
 
-from .import_statement import ImportStatement, SingleImport
 from .fixer import ImportStatementMap
+from .import_statement import SingleImport, ImportStatement
 
 
 class ImportConfig(ImportStatementMap):
@@ -33,24 +35,25 @@ class ImportConfig(ImportStatementMap):
         nayvy_import_config_path = '{}/nayvy/import_config.nayvy'.format(
             xdg_root,
         )
-        return cls._of_config_py(nayvy_import_config_path)
+        custom_config = cls._of_config_py(nayvy_import_config_path)
+        if custom_config is not None:
+            return custom_config
+        return cls._of_default()
 
     @classmethod
-    def _of_config_py(cls, config_path: str) -> Optional['ImportConfig']:
-        if not os.path.exists(config_path):
-            return None
-
+    def _of_lines(cls, lines: List[str]) -> Optional['ImportConfig']:
+        """ Construct nayvy import object from lines (content of nayvy config file)
+        """
         blocks: List[List[str]] = []
         tmp_block: List[str] = []
-        with open(config_path) as f:
-            for line in f:
-                if line.strip() == '':
-                    blocks.append(tmp_block)
-                    tmp_block = []
-                else:
-                    tmp_block.append(line.strip())
-            if tmp_block:
+        for line in lines:
+            if line.strip() == '':
                 blocks.append(tmp_block)
+                tmp_block = []
+            else:
+                tmp_block.append(line.strip())
+        if tmp_block:
+            blocks.append(tmp_block)
 
         import_d: Dict[str, SingleImport] = {}
         for block_i, block in enumerate(blocks):
@@ -68,3 +71,28 @@ class ImportConfig(ImportStatementMap):
                     )
                     import_d[single_import.name] = single_import
         return ImportConfig(import_d)
+
+    @classmethod
+    def _of_default(cls) -> Optional['ImportConfig']:
+        """
+        Construct ImportConfig object using default nayvy configuration
+        prepared in a project.
+        """
+        path = str(
+            Path(dirname(__file__)) /
+            'default_import_config.nayvy'
+        )
+        with open(path) as f:
+            lines = f.readlines()
+        return cls._of_lines(lines)
+
+    @classmethod
+    def _of_config_py(cls, config_path: str) -> Optional['ImportConfig']:
+        """ Construct nayvy import config from a given path.
+        """
+        if not os.path.exists(config_path):
+            return None
+
+        with open(config_path) as f:
+            lines = f.readlines()
+        return cls._of_lines(lines)
