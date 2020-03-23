@@ -23,17 +23,17 @@ def buf2lines(buf: Iterable[str]) -> List[str]:
     return lines
 
 
-def auto_import(snip: Any, sentence: str, level: int) -> None:
+def auto_import(snip: Any, statement: str, level: int) -> None:
     """ Hookable funciton for auto-importing when snippet expansion
     """
     lines = buf2lines(snip.buffer)
     # すでにimportされているかチェックする
-    if already_exists(sentence, lines):
+    if already_exists(statement, lines):
         return
     target_line = find_target_line_num(level, lines)
 
     # どこにimport文を挿入するべきかわからなかった場合は何もしない
     if target_line < 0:
         return
-    snip.buffer[target_line:target_line] = [sentence]
+    snip.buffer[target_line:target_line] = [statement]
     return
