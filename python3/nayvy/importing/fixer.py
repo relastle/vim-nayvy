@@ -103,7 +103,7 @@ class Fixer:
                     import_statement_to_add
                 )
 
-        # Merget the imports
+        # Merge the imports
         merged_import_statements = [
             ImportStatement.merge_list(removed_import_statements)
             for removed_import_statements in removed_import_statements_lst

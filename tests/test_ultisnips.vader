@@ -25,12 +25,6 @@ Do (Expand snippet and jump):
   jA\<tab>\<Esc>
 
 Expect python (test snippet was expanded):
-  from typing import List
-  from typing import Dict
+  from typing import Dict, List
   List
   Dict
-
-" Expect python (test snippet was expanded): TODO
-"   from typing import (List, Dict)
-"   List
-"   Dict
