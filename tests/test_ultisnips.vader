@@ -2,7 +2,7 @@
 
 Before:
   let g:UltiSnipsExpandTrigger="<tab>"
-  let g:UltiSnipsJumpForwardTrigger="<tab>"
+  let g:UltiSnipsExpandTrigger="<tab>"
 
 Given python (Test: postfix completion and auto import):
   hoge.pp
