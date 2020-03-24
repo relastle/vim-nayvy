@@ -2,7 +2,7 @@
 
 Before:
   let g:UltiSnipsExpandTrigger="<tab>"
-  let g:UltiSnipsJumpForwardTrigger="<tab>"
+  let g:UltiSnipsExpandTrigger="<tab>"
 
 Given python (Test: postfix completion and auto import):
   hoge.pp
@@ -13,3 +13,18 @@ Do (Expand snippet and jump):
 Expect python (test snippet was expanded):
   from pprint import pprint as pp
   pp(hoge)
+
+===============================================================================
+
+Given python (Test: postfix completion and auto import):
+  List
+  Dict
+
+Do (Expand snippet and jump):
+  ggA\<tab>\<Esc>
+  jA\<tab>\<Esc>
+
+Expect python (test snippet was expanded):
+  from typing import Dict, List
+  List
+  Dict

@@ -350,6 +350,13 @@ class ImportStatement:
 
 @dataclass(frozen=True)
 class SingleImport:
+    """ Domain object for representing import statement list.
+
+    It includes the following information
+    - name: for what name is introduced to python's toplevel namespace.
+    - statement: just a string import statement to be inserted to buffer.
+    - level: import level. ( 0/1/2 ).
+    """
 
     name: str
     statement: str

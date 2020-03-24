@@ -14,6 +14,7 @@ filetype off
 set rtp+=$(pwd)/_vader.vim
 set rtp+=$(pwd)/_ultisnips
 set rtp+=$(pwd)
+let g:UltiSnipsSnippetDirectories = ['__UltiSnips']
 filetype plugin indent on
 syntax enable
 EOF

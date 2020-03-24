@@ -11,3 +11,13 @@ var_name = match.group(1)
 snip.rv = "pp(" + var_name + ")"
 `
 endsnippet
+
+post_expand "auto_import(snip, 'from typing import List', 0)"
+snippet List "List" w
+List
+endsnippet
+
+post_expand "auto_import(snip, 'from typing import Dict', 0)"
+snippet Dict "Dict" w
+Dict
+endsnippet
