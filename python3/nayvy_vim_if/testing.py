@@ -1,4 +1,5 @@
 from typing import List, Tuple, Optional
+from os.path import exists, abspath
 from dataclasses import dataclass
 
 import vim  # noqa
@@ -50,7 +51,7 @@ def get_impl_and_test_paths(filepath: str) -> Optional[Tuple[str, str]]:
     """ check if filepath is a test script and return `impl` and `test` path
     """
     if is_test_path(filepath):
-        test_path = filepath
+        test_path = abspath(filepath)
         maybe_impl_path = test_path_to_impl_path(filepath)
         if maybe_impl_path is None:
             return None
@@ -59,7 +60,7 @@ def get_impl_and_test_paths(filepath: str) -> Optional[Tuple[str, str]]:
             test_path,
         )
     else:
-        impl_path = filepath
+        impl_path = abspath(filepath)
         maybe_test_path = impl_path_to_test_path(filepath)
         if maybe_test_path is None:
             return None
@@ -76,6 +77,8 @@ def get_latest_lines(filepath: str) -> List[str]:
     """
     win = VimWin.find_win(filepath)
     if not win:
+        if not exists(filepath):
+            return []
         with open(filepath) as f:
             lines = [
                 line.strip('\n') for line in f.readlines()
@@ -126,6 +129,7 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
         return
 
     impl_path, test_path = impl_test_paths
+    auto_generator.touch_test_file(test_path)
     impl_module_lines = get_latest_lines(impl_path)
     test_module_lines = get_latest_lines(test_path)
 
@@ -135,18 +139,22 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
             error('Please check the current buffer is valid')
             return
         # if `func_names` is not given, infer it as nearest function
-        func_name = impl_mod.get_nearest_function(vim.current.window.cursor[0]-1)
+        func_name = impl_mod.get_nearest_function(
+            vim.current.window.cursor[0]-1)
         if func_name is None:
             error('The cursor is probably outside the function.')
             return
         func_names = [func_name]
 
+    updated_test_module_lines = test_module_lines
     for func_name in func_names:
-        updated_test_module_lines = auto_generator.get_added_test_lines(
+        may_updated_test_module_lines = auto_generator.get_added_test_lines(
             func_name,
             impl_module_lines,
-            test_module_lines,
+            updated_test_module_lines,
         )
+        if may_updated_test_module_lines:
+            updated_test_module_lines = may_updated_test_module_lines
 
     test_win = VimWin.find_win(test_path)
     # open test script
