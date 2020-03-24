@@ -1,9 +1,15 @@
 import glob
 from typing import Optional
-from os.path import abspath, relpath
+from os.path import abspath, relpath, basename
 from pathlib import Path
 
 from nayvy.projects import get_pyproject_root
+
+
+def is_test_path(filepath: str) -> bool:
+    """ Check if a given filepath is a test one.
+    """
+    return basename(filepath).startswith('test_')
 
 
 def impl_path_to_test_path(impl_path: str) -> Optional[str]:

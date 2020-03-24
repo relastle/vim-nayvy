@@ -225,7 +225,7 @@ class Module:
             },
         )
 
-    def get_function(self, line_index: int) -> Optional[str]:
+    def get_nearest_function(self, line_index: int) -> Optional[str]:
         """ Get the name offunction that is wrapping `line_index`
         """
         # Loop over top level functions.

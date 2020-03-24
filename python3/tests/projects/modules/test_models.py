@@ -100,14 +100,14 @@ class TestModule(unittest.TestCase):
             },
         ))
 
-    def test_get_function(self) -> None:
+    def test_get_nearest_function(self) -> None:
         # begin corner case
-        assert self.m1.get_function(0) is None
-        assert self.m1.get_function(1) == 'a'
+        assert self.m1.get_nearest_function(0) is None
+        assert self.m1.get_nearest_function(1) == 'a'
 
         # end corner case
-        assert self.m1.get_function(19) == 'a'
-        assert self.m1.get_function(20) is None
+        assert self.m1.get_nearest_function(19) == 'a'
+        assert self.m1.get_nearest_function(20) is None
 
     def test_to_func_list_lines(self) -> None:
         assert self.m1.to_func_list_lines() == [
