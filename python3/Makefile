@@ -1,7 +1,7 @@
 .PHONY: test
 test:
-	flake8 .
-	mypy .
+	flake8 ./nayvy ./tests
+	mypy ./nayvy ./tests
 	coverage run --omit='./nayvy_vim_if/*,./tests/**/*' --source=. -m pytest -vv --durations=10
 	coverage report -m
 

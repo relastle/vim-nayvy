@@ -46,6 +46,7 @@ class Function:
     """
 
     name: str
+    docstring: str
     line_begin: int
     line_end: int
     func_decl_type: FuncDeclType
@@ -53,6 +54,7 @@ class Function:
     def to_test(self) -> 'Function':
         return Function(
             name=f'test_{self.name}',
+            docstring='',
             line_begin=-1,
             line_end=-1,
             func_decl_type=FuncDeclType.INSTANCE,
@@ -64,6 +66,7 @@ class Function:
         """
         return Function(
             name=name,
+            docstring='',
             line_begin=-1,
             line_end=-1,
             func_decl_type=FuncDeclType.NO_SET,

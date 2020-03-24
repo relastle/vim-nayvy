@@ -13,18 +13,20 @@ class TestModule(unittest.TestCase):
     def setUp(self) -> None:
         self.m1 = Module(
             function_map={
-                'a': Function('a', 1, 10, FuncDeclType.TOP_LEVEL),
+                'a': Function('a', '', 1, 10, FuncDeclType.TOP_LEVEL),
             },
             class_map={
                 'C': Class('C', 12, 30, {
                     'a': Function(
                         'a',
+                        '',
                         13,
                         20,
                         FuncDeclType.INSTANCE,
                     ),
                     'b': Function(
                         'b',
+                        '',
                         21,
                         30,
                         FuncDeclType.INSTANCE,
@@ -38,6 +40,7 @@ class TestModule(unittest.TestCase):
                 'C': Class('C', -1, -1, {
                     'a': Function(
                         'a',
+                        '',
                         -1,
                         -1,
                         FuncDeclType.INSTANCE,
@@ -72,12 +75,14 @@ class TestModule(unittest.TestCase):
                     {
                         'test_a': Function(
                             'test_a',
+                            '',
                             -1,
                             -1,
                             FuncDeclType.INSTANCE,
                         ),
                         'test_b': Function(
                             'test_b',
+                            '',
                             -1,
                             -1,
                             FuncDeclType.INSTANCE,
@@ -91,6 +96,7 @@ class TestModule(unittest.TestCase):
                     {
                         'test_a': Function(
                             'test_a',
+                            '',
                             -1,
                             -1,
                             FuncDeclType.INSTANCE,

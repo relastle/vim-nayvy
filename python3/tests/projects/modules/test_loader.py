@@ -39,6 +39,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
             module.function_map['top_level_function1'] ==
             Function(
                 'top_level_function1',
+                '',
                 1,
                 3,
                 FuncDeclType.TOP_LEVEL,
@@ -55,18 +56,21 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 {
                     'instance_method1': Function(
                         'instance_method1',
+                        '',
                         10,
                         12,
                         FuncDeclType.INSTANCE,
                     ),
                     'class_method1': Function(
                         'class_method1',
+                        '',
                         14,
                         16,
                         FuncDeclType.CLASS,
                     ),
                     'instance_method2': Function(
                         'instance_method2',
+                        '',
                         17,
                         19,
                         FuncDeclType.INSTANCE,
@@ -84,18 +88,21 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 {
                     'instance_method3': Function(
                         'instance_method3',
+                        '',
                         30,
                         32,
                         FuncDeclType.INSTANCE,
                     ),
                     'class_method2': Function(
                         'class_method2',
+                        '',
                         34,
                         36,
                         FuncDeclType.CLASS,
                     ),
                     'instance_method4': Function(
                         'instance_method4',
+                        '',
                         37,
                         39,
                         FuncDeclType.INSTANCE,
@@ -123,6 +130,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
             module.function_map['sub_top_level_function1'] ==
             Function(
                 'sub_top_level_function1',
+                '',
                 2,
                 11,
                 FuncDeclType.TOP_LEVEL,
@@ -139,6 +147,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 {
                     'instance_method1': Function(
                         'instance_method1',
+                        '',
                         24,
                         32,
                         FuncDeclType.INSTANCE,
