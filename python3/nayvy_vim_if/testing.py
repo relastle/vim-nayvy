@@ -25,9 +25,9 @@ class VimWin:
         wins = vim.eval('getwininfo()')
         return [
             VimWin(
-                win['tabnr'],
-                win['winnr'],
-                win['bufnr'],
+                int(win['tabnr']),
+                int(win['winnr']),
+                int(win['bufnr']),
                 vim.eval('expand("{}{}{}")'.format(
                     '#',
                     win['bufnr'],
@@ -130,10 +130,10 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
         if not test_win:
             vim.command(f'vs {test_path}')
         else:
-            vim.execute('{} tabnext'.format(
+            vim.command('{} tabnext'.format(
                 test_win.tabnr
             ))
-            vim.execute('{} wincmd w'.format(
+            vim.command('{} wincmd w'.format(
                 test_win.winnr
             ))
 
