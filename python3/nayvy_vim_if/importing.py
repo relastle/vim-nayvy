@@ -28,10 +28,10 @@ class IntegratedMap(ImportStatementMap):
         return None
 
     def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
-        for k, v in self.import_config.items():
+        for k, v in self.project_import_helper.items():
             yield k, v
 
-        for k, v in self.project_import_helper.items():
+        for k, v in self.import_config.items():
             yield k, v
 
 

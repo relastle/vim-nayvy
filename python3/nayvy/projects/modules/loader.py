@@ -52,11 +52,15 @@ class SyntacticParser:
     buf_class_name: str
     buf_class_begin: int
     buf_class_indent: int
+    buf_class_docstring: str
 
     buf_func_name: str
     buf_func_begin: int
     buf_func_decl_type: FuncDeclType
     buf_func_indent: int
+    buf_func_docstring: str
+
+    buf_in_docstring: bool
 
     buf_empty_line_num: int
 
@@ -67,12 +71,14 @@ class SyntacticParser:
         self.buf_class_name = ''
         self.buf_class_begin = 0
         self.buf_class_indent = 0
+        self.buf_class_docstring = ''
 
     def _clean_buf_func(self) -> None:
         self.buf_func_name = ''
         self.buf_func_begin = 0
         self.buf_func_indent = 0
         self.buf_func_decl_type = FuncDeclType.TOP_LEVEL
+        self.buf_func_docstring = ''
         return
 
     def __init__(self) -> None:
@@ -88,6 +94,8 @@ class SyntacticParser:
 
         self._clean_buf_class()
         self._clean_buf_func()
+
+        self.buf_in_docstring = False
 
         self.buf_empty_line_num = 0
 
@@ -124,6 +132,31 @@ class SyntacticParser:
             return False
         return True
 
+    def _check_docstring(self, line: str) -> None:
+        # Starts of docstring
+        if not self.buf_in_docstring and line.lstrip().startswith('"""'):
+            if self.buf_func_name:
+                self.buf_func_docstring = line.replace('"""', '').lstrip()
+                self.buf_in_docstring = True
+            elif self.buf_class_name:
+                self.buf_class_docstring = line.replace('"""', '').lstrip()
+                self.buf_in_docstring = True
+            else:
+                self.buf_in_docstring = True
+            return
+
+        # Ends of docstring
+        if self.buf_in_docstring and line.rstrip().endswith('"""'):
+            self.buf_in_docstring = False
+            return
+
+        if self.buf_in_docstring:
+            if self.buf_func_name:
+                self.buf_func_docstring += line.lstrip()
+            elif self.buf_class_name:
+                self.buf_class_docstring += line.lstrip()
+            return
+
     def _check_closure(self) -> None:
         """ proccess related to change of indent
         """
@@ -141,7 +174,7 @@ class SyntacticParser:
             # append
             self.res_top_level_function.append(Function(
                 name=self.buf_func_name,
-                docstring='',
+                docstring=self.buf_func_docstring,
                 line_begin=self.buf_func_begin,
                 line_end=self.processed_line_num - self.buf_empty_line_num,
                 func_decl_type=self.buf_func_decl_type,
@@ -156,7 +189,7 @@ class SyntacticParser:
             # append
             self.buf_functions.append(Function(
                 name=self.buf_func_name,
-                docstring='',
+                docstring=self.buf_func_docstring,
                 line_begin=self.buf_func_begin,
                 line_end=self.processed_line_num - self.buf_empty_line_num,
                 func_decl_type=self.buf_func_decl_type,
@@ -287,6 +320,8 @@ class SyntacticParser:
             not self._ends_multi_line_buffer(line)
         ):
             return
+
+        self._check_docstring(line)
 
         self._check_closure()
 

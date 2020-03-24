@@ -130,7 +130,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
             module.function_map['sub_top_level_function1'] ==
             Function(
                 'sub_top_level_function1',
-                '',
+                'Top level function.\nsignature is multilined.\n',
                 2,
                 11,
                 FuncDeclType.TOP_LEVEL,
@@ -147,7 +147,7 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 {
                     'instance_method1': Function(
                         'instance_method1',
-                        '',
+                        'Instance method.\nsignature is multilined.\n',
                         24,
                         32,
                         FuncDeclType.INSTANCE,

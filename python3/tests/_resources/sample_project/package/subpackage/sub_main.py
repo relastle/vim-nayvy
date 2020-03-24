@@ -25,7 +25,7 @@ class SubTopLevelClass1:
     def instance_method1(
         self, hoge: int,
     ) -> None:
-        """ Instance method
+        """ Instance method.
 
         signature is multilined.
         """
