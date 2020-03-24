@@ -1,7 +1,7 @@
-from typing import List, Optional, Generator, Tuple, Any
+import glob
+from typing import Any, Dict, List, Tuple, Optional, Generator
 from os.path import abspath, relpath
 from dataclasses import dataclass
-import glob
 
 from . import get_pyproject_root
 from .modules.loader import ModuleLoader
@@ -92,42 +92,59 @@ class ProjectImportHelper(ImportStatementMap):
 
     current_modpath: ModulePath
     all_modpaths: List[ModulePath]
+    _import_stmt_map: Dict[str, SingleImport]
 
-    def _make_stmt_relative(self, modpath_target: ModulePath) -> str:
-        return mod_relpath(
-            modpath_target.mod_path,
-            self.current_modpath.mod_path,
+    # Override
+    def __getitem__(self, name: str) -> Optional[SingleImport]:
+        return self._import_stmt_map.get(name, None)
+
+    # Override
+    def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
+        return (
+            (k, v) for k, v in self._import_stmt_map.items()
         )
 
-    def __getitem__(self, name: str) -> Optional[SingleImport]:
-        for modpath in self.all_modpaths:
-            stmt = modpath.get_import(name)
-            if stmt is not None:
-                return SingleImport(
-                    name,
-                    'from {} import {}'.format(
-                        self._make_stmt_relative(modpath),
-                        name,
-                    ),
-                    2,  # project level
-                )
-        return None
+    @classmethod
+    def make_stmt_relative(
+        cls,
+        modpath: ModulePath,
+        modpath_target: ModulePath,
+    ) -> str:
+        return mod_relpath(
+            modpath_target.mod_path,
+            modpath.mod_path,
+        )
 
-    def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
-        for modpath in self.all_modpaths:
+    @classmethod
+    def _add_stmt(
+        cls,
+        stmt_map: Dict[str, SingleImport],
+        current_modpath: ModulePath,
+        modpath: ModulePath,
+        name: str,
+    ) -> None:
+        stmt_map[name] = SingleImport(
+            name,
+            'from {} import {}'.format(
+                cls.make_stmt_relative(current_modpath, modpath),
+                name,
+            ),
+            2,  # project level
+        )
+
+    @classmethod
+    def make_map(
+        cls,
+        current_modpath: ModulePath,
+        all_modpaths: List[ModulePath],
+    ) -> Dict[str, SingleImport]:
+        import_stmt_map: Dict[str, SingleImport] = {}
+        for modpath in all_modpaths:
             for name in modpath.mod.function_map.keys():
-                single_import = self[name]
-                if single_import is None:
-                    continue
-                else:
-                    yield (name, single_import)
-
+                cls._add_stmt(import_stmt_map, current_modpath, modpath, name)
             for name in modpath.mod.class_map.keys():
-                single_import = self[name]
-                if single_import is None:
-                    continue
-                else:
-                    yield (name, single_import)
+                cls._add_stmt(import_stmt_map, current_modpath, modpath, name)
+        return import_stmt_map
 
     @classmethod
     def of_filepath(
@@ -160,8 +177,10 @@ class ProjectImportHelper(ImportStatementMap):
             if modpath.mod_path == current_modpath.mod_path:
                 continue
             all_modpaths.append(modpath)
+        stmt_map = cls.make_map(current_modpath, all_modpaths)
 
         return ProjectImportHelper(
             current_modpath,
             all_modpaths,
+            stmt_map,
         )
