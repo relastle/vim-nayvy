@@ -153,7 +153,7 @@ class Fixer:
             lint_output,
         )
 
-        if not undefined_names and not undefined_names:
+        if not unused_imports and not undefined_names:
             # If there is no problem, return None
             # for prevent vim from updating buffer.
             return None

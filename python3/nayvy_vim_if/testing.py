@@ -129,7 +129,7 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
         return
 
     impl_path, test_path = impl_test_paths
-    auto_generator.touch_test_file(test_path)
+    auto_generator.touch_test_file(impl_path)
     impl_module_lines = get_latest_lines(impl_path)
     test_module_lines = get_latest_lines(test_path)
 
