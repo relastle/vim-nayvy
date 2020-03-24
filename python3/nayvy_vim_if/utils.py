@@ -1,6 +1,16 @@
 import sys
 
 
+def info(msg: str) -> None:
+    print(
+        '{} {}'.format(
+            '[nayvy: INFO]',
+            msg,
+        ),
+        file=sys.stdout,
+    )
+
+
 def error(msg: str) -> None:
     print(
         '{} {}'.format(

@@ -101,7 +101,7 @@ class AutoGenerator:
         """ Add testing attribute for a given `func_name`.
 
         If target testing function is already defined,
-        it returns lines no-changed.
+        it returns None
         """
         impl_mod = self.module_loader.load_module_from_lines(impl_module_lines)
         if impl_mod is None:
