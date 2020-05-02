@@ -1,6 +1,6 @@
 import glob
-from typing import Any, Dict, List, Tuple, Optional, Generator
-from os.path import abspath, relpath
+from typing import Any, Dict, Generator, List, Optional, Tuple
+from os.path import abspath, dirname, relpath
 from dataclasses import dataclass
 
 from . import get_pyproject_root
@@ -8,6 +8,19 @@ from .modules.loader import ModuleLoader
 from .modules.models import Module
 from ..importing.fixer import ImportStatementMap
 from ..importing.import_statement import SingleImport
+
+
+def get_pyproject_root_wrapper(
+    filepath: str,
+    requires_in_pyproject: bool = True,
+) -> Optional[str]:
+    if requires_in_pyproject:
+        pyproject_root = get_pyproject_root(filepath)
+        if pyproject_root is None:
+            return None
+    else:
+        pyproject_root = dirname(filepath)
+    return pyproject_root
 
 
 @dataclass(frozen=True)
@@ -36,15 +49,12 @@ class ModulePath:
         cls,
         loader: ModuleLoader,
         filepath: str,
+        pyproject_root: str,
     ) -> Optional['ModulePath']:
         """ Constructing ModulePath object from script filepath.
         """
         mod = loader.load_module_from_path(filepath)
         if mod is None:
-            return None
-
-        pyproject_root = get_pyproject_root(filepath)
-        if pyproject_root is None:
             return None
 
         rel_path = relpath(
@@ -151,15 +161,22 @@ class ProjectImportHelper(ImportStatementMap):
         cls,
         loader: ModuleLoader,
         filepath: str,
+        requires_in_pyproject: bool = True,
     ) -> Optional['ProjectImportHelper']:
+        pyproject_root = get_pyproject_root_wrapper(
+            filepath,
+            requires_in_pyproject,
+        )
+        if pyproject_root is None:
+            return None
+
         current_modpath = ModulePath.of_filepath(
             loader,
             filepath,
+            pyproject_root,
         )
         if current_modpath is None:
             return None
-        pyproject_root = get_pyproject_root(filepath)
-        assert pyproject_root is not None
         all_python_script_paths = glob.glob(
             '{}/**/*.py'.format(pyproject_root),
             recursive=True,
@@ -168,6 +185,7 @@ class ProjectImportHelper(ImportStatementMap):
             ModulePath.of_filepath(
                 loader,
                 _filepath,
+                pyproject_root,
             ) for _filepath in all_python_script_paths
         ]
         all_modpaths: List[ModulePath] = []

@@ -166,7 +166,7 @@ Execute:
   e ./vader_workspace/non_project/test_main.py
   NayvyImports
 
-Expect python (Automatically import relative target test functioon):
+Expect python (Automatically import relative target test function):
   import unittest
 
   from main import target_function
@@ -175,4 +175,4 @@ Expect python (Automatically import relative target test functioon):
   class Test(unittest.TestCase):
 
       def test_target_function(self) -> None:
-          target_functioon(10, 'a')
+          target_function(10, 'a')

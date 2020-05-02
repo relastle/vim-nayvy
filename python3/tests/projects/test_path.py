@@ -75,6 +75,7 @@ class TestModulePath(unittest.TestCase):
         actual = ModulePath.of_filepath(
             SyntacticModuleLoader(),
             given,
+            str(self.sample_project_path),
         )
         assert actual is not None
         assert actual.mod_path == 'package.subpackage.sub_main'

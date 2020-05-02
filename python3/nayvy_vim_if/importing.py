@@ -1,5 +1,6 @@
-from typing import List, Optional, Tuple, Any, Generator
+from typing import Any, Generator, List, Optional, Tuple
 from dataclasses import dataclass
+from pprint import pformat
 
 import vim  # noqa
 
@@ -43,6 +44,7 @@ def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
     project_import_helper = ProjectImportHelper.of_filepath(
         SyntacticModuleLoader(),
         filepath,
+        requires_in_pyproject=False,
     )
     if project_import_helper is None:
         warning(
