@@ -157,3 +157,22 @@ Expect python (All are imported correctly):
 
   os.getenv('HOME', '')
   sys.exit(1)
+
+===============================================================================
+
+Given python (non project-initiated python test code):
+
+Execute:
+  e ./vader_workspace/non_project/test_main.py
+  NayvyImports
+
+Expect python (Automatically import relative target test functioon):
+  import unittest
+
+  from main import target_function
+
+
+  class Test(unittest.TestCase):
+
+      def test_target_function(self) -> None:
+          target_functioon(10, 'a')
