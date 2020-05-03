@@ -19,7 +19,7 @@ def get_pyproject_root_wrapper(
         if requires_in_pyproject:
             return None
         else:
-            pyproject_root = dirname(filepath)
+            pyproject_root = dirname(abspath(filepath))
     return pyproject_root
 
 
