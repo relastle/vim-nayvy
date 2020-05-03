@@ -1,5 +1,5 @@
 import glob
-from typing import Any, Dict, Generator, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple, Optional, Generator
 from os.path import abspath, dirname, relpath
 from dataclasses import dataclass
 
@@ -14,12 +14,12 @@ def get_pyproject_root_wrapper(
     filepath: str,
     requires_in_pyproject: bool = True,
 ) -> Optional[str]:
-    if requires_in_pyproject:
-        pyproject_root = get_pyproject_root(filepath)
-        if pyproject_root is None:
+    pyproject_root = get_pyproject_root(filepath)
+    if pyproject_root is None:
+        if requires_in_pyproject:
             return None
-    else:
-        pyproject_root = dirname(filepath)
+        else:
+            pyproject_root = dirname(filepath)
     return pyproject_root
 
 
