@@ -1,13 +1,16 @@
 import glob
-from typing import Any, Dict, List, Tuple, Optional, Generator
-from os.path import abspath, dirname, relpath
+import shutil
+import subprocess as sp
 from dataclasses import dataclass
+from os.path import abspath, dirname, relpath
+from typing import Any, Dict, Generator, List, Optional, Tuple
+from pprint import pformat
 
+from ..importing.fixer import ImportStatementMap
+from ..importing.import_statement import SingleImport
 from . import get_pyproject_root
 from .modules.loader import ModuleLoader
 from .modules.models import Module
-from ..importing.fixer import ImportStatementMap
-from ..importing.import_statement import SingleImport
 
 
 def get_pyproject_root_wrapper(
@@ -68,7 +71,7 @@ class ModulePath:
 
 
 def mod_relpath(target_modpath: str, base_modpath: str) -> str:
-    """ get relative path to `target_modpath` from `base_modpath`
+    """ Get relative path to `target_modpath` from `base_modpath`
 
     i.g.
         Args:
@@ -93,6 +96,41 @@ def mod_relpath(target_modpath: str, base_modpath: str) -> str:
         '.' * (len(base_path_elms) - common_elm_num) +
         '.'.join(target_path_elms[common_elm_num:])
     )
+
+
+def find_all_pythno_paths(root: str) -> List[str]:
+    """
+    Get all '.py' suffixed paths under `root`.
+    The strategy is as follows
+    - `fd`
+    - `rg --files`
+    - `python's glob.glob function`
+    """
+    # fd
+    fd_executable = shutil.which('fd')
+    if fd_executable:
+        output = sp.run(
+            f'{fd_executable} .py$ {root}',
+            shell=True,
+            stdout=sp.PIPE,
+        ).stdout.decode('utf-8')
+        return output.split('\n')
+
+    # rg
+    rg_executable = shutil.which('rg')
+    if rg_executable:
+        output = sp.run(
+            f'{rg_executable} --files {root} | grep -e .py$',
+            shell=True,
+            stdout=sp.PIPE,
+        ).stdout.decode('utf-8')
+        return output.split('\n')
+
+    all_python_script_paths = glob.glob(
+        '{}/**/*.py'.format(root),
+        recursive=True,
+    )
+    return all_python_script_paths
 
 
 @dataclass
@@ -177,10 +215,7 @@ class ProjectImportHelper(ImportStatementMap):
         )
         if current_modpath is None:
             return None
-        all_python_script_paths = glob.glob(
-            '{}/**/*.py'.format(pyproject_root),
-            recursive=True,
-        )
+        all_python_script_paths = find_all_pythno_paths(pyproject_root)
         maybe_all_modpaths = [
             ModulePath.of_filepath(
                 loader,
