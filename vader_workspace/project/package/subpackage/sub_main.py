@@ -5,3 +5,7 @@ class SubClass1:
 
 class SubClass2:
     pass
+
+
+async def async_function() -> None:
+    return

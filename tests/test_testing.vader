@@ -3,7 +3,7 @@
 Given python (simple python code):
 
 Execute:
-  e ./vader_workspace/project/package/main.py
+  e ./vader_workspace/project/package/main2.py
   norm gg0jjww
   NayvyTestGenerate
 

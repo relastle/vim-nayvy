@@ -9,8 +9,9 @@ class Hoge:
 
 
 def main() -> None:
-    sub_class_1 = SubClass1()
+    sub_class_1 = SubClass1()  # Missing import of class
     pp(sub_class_1)
+    async_function()  # Missing import of async def function
     return
 
 

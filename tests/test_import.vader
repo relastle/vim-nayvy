@@ -176,3 +176,37 @@ Expect python (Automatically import relative target test function):
 
       def test_target_function(self) -> None:
           target_function(10, 'a')
+
+===============================================================================
+
+Given python (Project-initiated python test code):
+
+Execute:
+  e ./vader_workspace/project/package/main.py
+  NayvyImports
+
+Expect python (Automatically import relative target test function):
+  from pprint import pprint as pp
+
+  from .subpackage.sub_main import SubClass1
+
+  from .subpackage.sub_main import async_function
+  class Hoge:
+
+      def hoge(self) -> None:
+          pass
+
+      @classmethod
+      def fuga(cls) -> None:
+          pass
+
+
+  def main() -> None:
+      sub_class_1 = SubClass1()  # Missing import of class
+      pp(sub_class_1)
+      async_function()  # Missing import of async def function
+      return
+
+
+  if __name__ == '__main__':
+      main()

@@ -36,7 +36,7 @@ class SyntacticParser:
     CLASS_DECL_RE = r'^ *class +(?P<class_name>\w+)'
     INSTANCE_FUNC_DECL_RE = r'^ *def +(?P<function_name>\w+)\(self.*\)'
     CLASS_FUNC_DECL_RE = r'^ *def +(?P<function_name>\w+)\(cls.*\)'
-    FUNCTION_DECL_RE = r'^ *def +(?P<function_name>\w+)\(.*\)'
+    FUNCTION_DECL_RE = r'^ *(async *){0,1}def +(?P<function_name>\w+)\(.*\)'
 
     res_top_level_function: List[Function]
     res_classes: List[Class]
