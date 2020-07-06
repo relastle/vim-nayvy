@@ -13,7 +13,7 @@ class ImportConfig(ImportStatementMap):
     def import_d(self) -> Dict[str, SingleImport]:
         return self._import_d
 
-    def __init__(self, import_d:  Dict[str, SingleImport]) -> None:
+    def __init__(self, import_d: Dict[str, SingleImport]) -> None:
         self._import_d = import_d
         return
 

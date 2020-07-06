@@ -34,8 +34,8 @@ class ModuleLoader(metaclass=ABCMeta):
 class SyntacticParser:
 
     CLASS_DECL_RE = r'^ *class +(?P<class_name>\w+)'
-    INSTANCE_FUNC_DECL_RE = r'^ *def +(?P<function_name>\w+)\(self.*\)'
-    CLASS_FUNC_DECL_RE = r'^ *def +(?P<function_name>\w+)\(cls.*\)'
+    INSTANCE_FUNC_DECL_RE = r'^ *(async *){0,1}def +(?P<function_name>\w+)\(self.*\)'
+    CLASS_FUNC_DECL_RE = r'^ *(async *){0,1}def +(?P<function_name>\w+)\(cls.*\)'
     FUNCTION_DECL_RE = r'^ *(async *){0,1}def +(?P<function_name>\w+)\(.*\)'
 
     res_top_level_function: List[Function]
@@ -108,7 +108,8 @@ class SyntacticParser:
     def _starts_multi_line_buffer(self, line: str) -> bool:
         if (
             not line.lstrip().startswith('class') and
-            not line.lstrip().startswith('def')
+            not line.lstrip().startswith('def') and
+            not line.lstrip().startswith('async def')
         ):
             return False
 
