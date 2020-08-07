@@ -22,7 +22,7 @@ class VimWin:
     abs_path: str
 
     def get_lines(self) -> List[str]:
-        return vim.buffers[self.bufnr][:]
+        return vim.buffers[self.bufnr][:]  # type: ignore
 
     @classmethod
     def get_list(cls) -> List['VimWin']:
@@ -139,8 +139,7 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
             error('Please check the current buffer is valid')
             return
         # if `func_names` is not given, infer it as nearest function
-        func_name = impl_mod.get_nearest_function(
-            vim.current.window.cursor[0]-1)
+        func_name = impl_mod.get_nearest_function(vim.current.window.cursor[0] - 1)
         if func_name is None:
             error('The cursor is probably outside the function.')
             return

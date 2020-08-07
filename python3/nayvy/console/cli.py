@@ -4,7 +4,10 @@ from typing import Any
 import click
 from click_help_colors import HelpColorsGroup, HelpColorsCommand
 
-from nayvy.projects.path import ProjectImportHelper
+from nayvy.projects.path import (
+    ProjectImportHelperBuilder,
+    ImportPathFormat,
+)
 from ..projects.modules.loader import SyntacticModuleLoader
 
 CONTEXT_SETTINGS = dict(
@@ -79,15 +82,18 @@ def list_imports(
 ) -> None:
     """ List all project importable object into script.
     """
-    project_import_helper = ProjectImportHelper.of_filepath(
-        SyntacticModuleLoader(),
+    project_import_helper_builder = ProjectImportHelperBuilder(
         python_script_path,
+        SyntacticModuleLoader(),
+        ImportPathFormat.ALL_ABSOLUTE,
+        False,
     )
-    if project_import_helper is None:
+    helper = project_import_helper_builder.build()
+    if helper is None:
         print('Failed to load project', file=sys.stderr)
         return
 
-    for _, single_import in project_import_helper.items():
+    for _, single_import in helper.items():
         print(single_import.to_line(color=True))
     return
 

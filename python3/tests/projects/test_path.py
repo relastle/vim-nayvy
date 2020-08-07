@@ -5,7 +5,8 @@ from dataclasses import dataclass
 
 from nayvy.projects.path import (
     ModulePath,
-    ProjectImportHelper,
+    ImportPathFormat,
+    ProjectImportHelperBuilder,
     mod_relpath
 )
 from nayvy.projects.modules.loader import SyntacticModuleLoader
@@ -22,36 +23,104 @@ class Test(unittest.TestCase):
             description: str
             target_modpath: str
             base_modpath: str
+            import_path_format: ImportPathFormat
             expected: str
 
         for case in [
+            # ALL_RELATIVE
             Case(
-                description='same mod path',
+                description='[ALL_RELATIVE] same mod path',
                 target_modpath='package.module',
                 base_modpath='package.module',
+                import_path_format=ImportPathFormat.ALL_RELATIVE,
                 expected='.',
             ),
             Case(
-                description='mod in the same package',
+                description='[ALL_RELATIVE] mod in the same package',
                 target_modpath='package.module1',
                 base_modpath='package.module2',
+                import_path_format=ImportPathFormat.ALL_RELATIVE,
                 expected='.module1',
             ),
             Case(
-                description='subpackage mod path',
+                description='[ALL_RELATIVE] subpackage mod path',
                 target_modpath='package.subpackage.module',
                 base_modpath='package.module',
+                import_path_format=ImportPathFormat.ALL_RELATIVE,
                 expected='.subpackage.module',
             ),
             Case(
-                description='different package ',
+                description='[ALL_RELATIVE] different package ',
                 target_modpath='package.subpackage1.module',
                 base_modpath='package.subpackage2.module',
+                import_path_format=ImportPathFormat.ALL_RELATIVE,
                 expected='..subpackage1.module',
+            ),
+            # UNDER_RELATIVE
+            Case(
+                description='[UNDER_RELATIVE] same mod path',
+                target_modpath='package.module',
+                base_modpath='package.module',
+                import_path_format=ImportPathFormat.UNDER_RELATIVE,
+                expected='.',
+            ),
+            Case(
+                description='[UNDER_RELATIVE] mod in the same package',
+                target_modpath='package.module1',
+                base_modpath='package.module2',
+                import_path_format=ImportPathFormat.UNDER_RELATIVE,
+                expected='.module1',
+            ),
+            Case(
+                description='[UNDER_RELATIVE] subpackage mod path',
+                target_modpath='package.subpackage.module',
+                base_modpath='package.module',
+                import_path_format=ImportPathFormat.UNDER_RELATIVE,
+                expected='.subpackage.module',
+            ),
+            Case(
+                description='[UNDER_RELATIVE] different package ',
+                target_modpath='package.subpackage1.module',
+                base_modpath='package.subpackage2.module',
+                import_path_format=ImportPathFormat.UNDER_RELATIVE,
+                expected='package.subpackage1.module',
+            ),
+            # ALL_ABSOLUTE
+            Case(
+                description='[ALL_ABSOLUTE] same mod path',
+                target_modpath='package.module',
+                base_modpath='package.module',
+                import_path_format=ImportPathFormat.ALL_ABSOLUTE,
+                expected='package.module',
+            ),
+            Case(
+                description='[ALL_ABSOLUTE] mod in the same package',
+                target_modpath='package.module1',
+                base_modpath='package.module2',
+                import_path_format=ImportPathFormat.ALL_ABSOLUTE,
+                expected='package.module1',
+            ),
+            Case(
+                description='[ALL_ABSOLUTE] subpackage mod path',
+                target_modpath='package.subpackage.module',
+                base_modpath='package.module',
+                import_path_format=ImportPathFormat.ALL_ABSOLUTE,
+                expected='package.subpackage.module',
+            ),
+            Case(
+                description='[ALL_ABSOLUTE] different package ',
+                target_modpath='package.subpackage1.module',
+                base_modpath='package.subpackage2.module',
+                import_path_format=ImportPathFormat.ALL_ABSOLUTE,
+                expected='package.subpackage1.module',
             ),
         ]:
             self.assertEqual(
-                mod_relpath(case.target_modpath, case.base_modpath),
+                mod_relpath(
+                    case.target_modpath,
+                    case.base_modpath,
+                    case.import_path_format,
+                ),
                 case.expected,
                 case.description,
             )
@@ -130,13 +199,18 @@ class TestProjectImportHelper(unittest.TestCase):
         return
 
     def test___getitem__(self) -> None:
-        actual = ProjectImportHelper.of_filepath(
-            SyntacticModuleLoader(),
+
+        builder = ProjectImportHelperBuilder(
             str(
                 self.sample_project_path /
                 'package' /
                 'main.py'
-            ))
+            ),
+            SyntacticModuleLoader(),
+            ImportPathFormat.ALL_RELATIVE,
+            False,
+        )
+        actual = builder.build()
         assert actual is not None
         # Can access to subpackage's function
         assert actual['sub_top_level_function1'] == SingleImport(

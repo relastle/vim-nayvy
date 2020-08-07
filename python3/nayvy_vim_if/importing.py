@@ -2,7 +2,10 @@ from typing import Any, Dict, List, Tuple, Optional, Generator
 from dataclasses import dataclass
 
 import vim  # noqa
-from nayvy.projects.path import ProjectImportHelper
+from nayvy.projects.path import (
+    ProjectImportHelper,
+    ProjectImportHelperBuilder
+)
 from nayvy.importing.fixer import Fixer, ImportStatementMap
 from nayvy.importing.utils import (
     get_first_line_num,
@@ -16,6 +19,7 @@ from nayvy.importing.import_statement import (
     ImportStatement
 )
 from .utils import error, warning
+from .config import IMPORT_PATH_FORMAT
 
 
 @dataclass(frozen=True)
@@ -46,11 +50,12 @@ def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
     if config is None:
         error('Cannot load nayvy config file')
         return None
-    project_import_helper = ProjectImportHelper.of_filepath(
-        SyntacticModuleLoader(),
-        filepath,
+    project_import_helper = ProjectImportHelperBuilder(
+        current_filepath=filepath,
+        loader=SyntacticModuleLoader(),
+        import_path_format=IMPORT_PATH_FORMAT,
         requires_in_pyproject=False,
-    )
+    ).build()
     if project_import_helper is None:
         warning(
             'cannot load project. '
