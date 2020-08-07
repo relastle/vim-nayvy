@@ -38,7 +38,7 @@ endfunction
 
 " list all available imports by calling python API
 function! nayvy#nayvy_list_imports() abort
-  return py3eval('nayvy_list_imports()')
+  return py3eval('nayvy_list_import_lines_for_fzf()')
 endfunction
 
 " Import using fzf interface

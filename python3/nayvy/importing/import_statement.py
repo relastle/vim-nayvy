@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 
 from ..utils.colors import Color
@@ -77,6 +77,10 @@ class ImportAsPart:
 
 
 class ImportStatement:
+    """
+    Domain object of python's import statement.
+    i.g.) import tensorflow as tf
+    """
 
     FROM_IMPORT_STATEMENT_RE = r'from +(?P<from>[\w\.]+) +import +(?P<other>.*)'
 
@@ -377,3 +381,14 @@ class SingleImport:
                 self.name,
                 self.statement,
             )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert object to dictionary for getting it convertible to
+        vim variable automatically.
+        """
+        return {
+            'name': self.name,
+            'statement': self.statement,
+            'level': self.level,
+        }

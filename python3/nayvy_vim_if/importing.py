@@ -1,16 +1,21 @@
-from typing import Any, Generator, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple, Optional, Generator
 from dataclasses import dataclass
-from pprint import pformat
 
 import vim  # noqa
-
-from .utils import error, warning
+from nayvy.projects.path import ProjectImportHelper
 from nayvy.importing.fixer import Fixer, ImportStatementMap
-from nayvy.importing.import_statement import SingleImport
+from nayvy.importing.utils import (
+    get_first_line_num,
+    get_import_block_indices
+)
 from nayvy.importing.pyflakes import PyflakesEngine
 from nayvy.importing.import_config import ImportConfig
 from nayvy.projects.modules.loader import SyntacticModuleLoader
-from nayvy.projects.path import ProjectImportHelper
+from nayvy.importing.import_statement import (
+    SingleImport,
+    ImportStatement
+)
+from .utils import error, warning
 
 
 @dataclass(frozen=True)
@@ -104,8 +109,82 @@ def nayvy_import(names: List[str]) -> None:
     return
 
 
-def nayvy_list_imports() -> List[str]:
+def nayvy_import_stmt(statement: str, level: int) -> None:
+    lines = vim.current.buffer[:]
+
+    # get import blocks
+    begin_end_indices = get_import_block_indices(lines)
+
+    # get import_statements for each block
+    maybe_import_statements_lst = [
+        ImportStatement.of_lines(lines[begin_index:end_index])
+        for begin_index, end_index in begin_end_indices
+    ]
+
+    import_statements_lst = []
+    for maybe in maybe_import_statements_lst:
+        if maybe is not None:
+            import_statements_lst.append(maybe)
+
+    # Constructing import sentence should be added.
+    import_stmt_to_add = ImportStatement.of(statement)
+    if import_stmt_to_add is None:
+        return None
+
+    # constructing import import statements
+    if len(import_statements_lst) <= level:
+        import_statements_lst.append([import_stmt_to_add])
+    else:
+        import_statements_lst[level].append(import_stmt_to_add)
+
+    # Merge the imports
+    merged_import_statements = [
+        ImportStatement.merge_list(import_statements)
+        for import_statements in import_statements_lst
+    ]
+
+    # Make organized import blocks
+    import_lines: List[str] = []
+    for i, merged_import_statement in enumerate(
+        merged_import_statements
+    ):
+        for import_statement in merged_import_statement:
+            import_lines += import_statement.to_lines()
+        if i < len(merged_import_statements) - 1:
+            import_lines.append('')
+
+    if not begin_end_indices:
+        fitst_line_num = get_first_line_num(lines)
+        vim.current.buffer[fitst_line_num:fitst_line_num] = import_lines
+    else:
+        block_begin_index = begin_end_indices[0][0]
+        block_end_index = begin_end_indices[-1][-1]
+        vim.current.buffer[block_begin_index:block_end_index] = import_lines
+    return
+
+
+def nayvy_list_imports() -> List[Dict[str, Any]]:
     ''' List all available imports
+    '''
+    filepath = vim.eval('expand("%")')
+    stmt_map = init_import_stmt_map(filepath)
+    if stmt_map is None:
+        return []
+    return [
+        single_import.to_dict()
+        for _, single_import in stmt_map.items()
+    ]
+
+
+def nayvy_list_import_lines_for_fzf() -> List[str]:
+    ''' List all available import list for fzf
+
+    The format will be
+    ---
+    <import name> : <import statement>
+
+    i.g.) tf : import tensorflow as tf
+    ---
     '''
     filepath = vim.eval('expand("%")')
     stmt_map = init_import_stmt_map(filepath)
