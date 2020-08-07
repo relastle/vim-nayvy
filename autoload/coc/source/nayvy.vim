@@ -17,7 +17,9 @@ endfunction
 function s:nayvy_single_import_to_item(single_import) abort
   return {
         \ 'word': a:single_import['name'],
+        \ 'menu': '(' . a:single_import['statement'] . ')',
         \ 'info': a:single_import['statement'],
+        \ 'statement': a:single_import['statement'],
         \ 'level': a:single_import['level'],
         \ }
 endfunction
@@ -39,9 +41,10 @@ endfunction
 
 " When completed, import statement should be appended.
 function! coc#source#nayvy#on_complete(item) abort
+  echom 'a:item: ' . string(a:item)
   call py3eval(printf(
         \ 'nayvy_import_stmt(%s, %s)',
-        \ printf('"%s"', a:item['info']),
+        \ printf('"%s"', a:item['statement']),
         \ a:item['level'],
         \ ))
 endfunction
