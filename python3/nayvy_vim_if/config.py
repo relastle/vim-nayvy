@@ -1,11 +1,13 @@
 
 import os
+import sys
 import string
 from enum import Enum
 from typing import Type, TypeVar
 
 import vim  # noqa
 from nayvy.projects.path import ImportPathFormat
+from nayvy.importing.fixer import LinterForFix
 
 BASE_NAME = 'nayvy'
 
@@ -37,7 +39,7 @@ def _from_vim_config(
         try:
             enum = t(env_value)
         except Exception:
-            print(f'[Nayvy Error] Environment Variable {env_variable_name} should be either in {[e.value for e in t]}')  # noqa
+            print(f'[Nayvy Error] Environment Variable {env_variable_name} should be either in {[e.value for e in t]}', file=sys.stderr)  # noqa
             return default
         return enum
 
@@ -47,7 +49,7 @@ def _from_vim_config(
         try:
             enum = t(vim_value)
         except Exception:
-            print(f'[Nayvy Error] Global Variable g:{vim_variable_name} should be either in {[e.value for e in t]}')  # noqa
+            print(f'[Nayvy Error] Global Variable g:{vim_variable_name} should be either in {[e.value for e in t]}', file=sys.stderr)  # noqa
             return default
         return enum
     return default
@@ -67,4 +69,10 @@ IMPORT_PATH_FORMAT = from_vim_config(
     BASE_NAME,
     ImportPathFormat,
     ImportPathFormat.ALL_RELATIVE,
+)
+
+LINTER_FOR_FIX = from_vim_config(
+    BASE_NAME,
+    LinterForFix,
+    LinterForFix.PYFLAKES,
 )

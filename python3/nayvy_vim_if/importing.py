@@ -1,25 +1,19 @@
-from typing import Any, Dict, List, Tuple, Optional, Generator
+from typing import Any, Dict, Generator, List, Optional, Tuple
 from dataclasses import dataclass
 
 import vim  # noqa
-from nayvy.projects.path import (
-    ProjectImportHelper,
-    ProjectImportHelperBuilder
-)
-from nayvy.importing.fixer import Fixer, ImportStatementMap
-from nayvy.importing.utils import (
-    get_first_line_num,
-    get_import_block_indices
-)
+from nayvy.projects.path import ProjectImportHelper, ProjectImportHelperBuilder
+from nayvy.importing.fixer import Fixer, ImportStatementMap, LinterForFix
+from nayvy.importing.utils import get_first_line_num, get_import_block_indices
+from nayvy.importing.flake8 import Flake8Engine
 from nayvy.importing.pyflakes import PyflakesEngine
 from nayvy.importing.import_config import ImportConfig
 from nayvy.projects.modules.loader import SyntacticModuleLoader
-from nayvy.importing.import_statement import (
-    SingleImport,
-    ImportStatement
-)
+from nayvy.importing.import_statement import ImportStatement, SingleImport
 from .utils import error, warning
-from .config import IMPORT_PATH_FORMAT
+from .config import IMPORT_PATH_FORMAT, LINTER_FOR_FIX
+
+from nayvy.importing.fixer import LintEngine
 
 
 @dataclass(frozen=True)
@@ -74,7 +68,12 @@ def nayvy_fix_lines(lines: List[str]) -> Optional[List[str]]:
     stmt_map = init_import_stmt_map(filepath)
     if stmt_map is None:
         return lines
-    fixer = Fixer(stmt_map, PyflakesEngine())
+    linter: LintEngine
+    if LINTER_FOR_FIX == LinterForFix.PYFLAKES:
+        linter = PyflakesEngine()
+    elif LINTER_FOR_FIX == LinterForFix.FLAKE8:
+        linter = Flake8Engine()
+    fixer = Fixer(stmt_map, linter)
     fixed_lines = fixer.fix_lines(lines)
     return fixed_lines
 

@@ -3,12 +3,16 @@ import vim
 from nayvy_vim_if import *
 EOF
 
-let s:nayvy_completion_icon = get(g:, 'nayvy_completion_icon', 'nayvy')
+let s:nayvy_coc_enabled = get(g:, 'nayvy_coc_enabled', 1)
+if !s:nayvy_coc_enabled || &compatible
+    finish
+endif
+let s:nayvy_coc_completion_icon = get(g:, 'nayvy_coc_completion_icon', 'nayvy')
 
 function! coc#source#nayvy#init() abort
   return {
         \ 'priority': 10,
-        \ 'shortcut': s:nayvy_completion_icon,
+        \ 'shortcut': s:nayvy_coc_completion_icon,
         \ 'filetypes': ['python'],
         \ 'triggerCharacters': []
         \}

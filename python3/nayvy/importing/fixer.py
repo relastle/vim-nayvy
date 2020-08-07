@@ -4,11 +4,18 @@ Fix the python lines of code dependent on Linter result
 
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
+from enum import Enum
 from typing import Any, List, Tuple, Optional, Generator
 from dataclasses import dataclass
 
 from .utils import get_first_line_num, get_import_block_indices
 from .import_statement import SingleImport, ImportStatement
+
+
+class LinterForFix(Enum):
+
+    PYFLAKES = 'pyflakes'
+    FLAKE8 = 'flake8'
 
 
 class LintEngine(metaclass=ABCMeta):
