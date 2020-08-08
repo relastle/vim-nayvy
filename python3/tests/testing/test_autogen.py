@@ -93,7 +93,7 @@ class TestAutoGenerator(unittest.TestCase):
 
     def setUp(self) -> None:
         loader = SyntacticModuleLoader()
-        self.target = AutoGenerator(loader)
+        self.target = AutoGenerator(loader, ['setup.py', 'pyproject.toml'])
         self.work_dir = f'{dirname(__file__)}/test_workdir'
         Path(self.work_dir).mkdir(parents=True, exist_ok=True)
         self.__generate_files([

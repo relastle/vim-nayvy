@@ -8,9 +8,11 @@ from nayvy.testing.path import (
     impl_path_to_test_path,
     test_path_to_impl_path
 )
-from nayvy.testing.autogen import AutoGenerator
 from nayvy.projects.modules.loader import SyntacticModuleLoader
+from nayvy.testing.autogen import AutoGenerator
+from nayvy.projects import get_pyproject_root
 from .utils import info, error
+from .config import CONFIG
 
 
 @dataclass(frozen=True)
@@ -50,9 +52,13 @@ class VimWin:
 def get_impl_and_test_paths(filepath: str) -> Optional[Tuple[str, str]]:
     """ check if filepath is a test script and return `impl` and `test` path
     """
+    abs_filepath = abspath(filepath)
+    pyproject_root = get_pyproject_root(abs_filepath, CONFIG.pyproject_root_markers)
+    if pyproject_root is None:
+        return None
     if is_test_path(filepath):
         test_path = abspath(filepath)
-        maybe_impl_path = test_path_to_impl_path(filepath)
+        maybe_impl_path = test_path_to_impl_path(filepath, pyproject_root)
         if maybe_impl_path is None:
             return None
         return (
@@ -61,7 +67,7 @@ def get_impl_and_test_paths(filepath: str) -> Optional[Tuple[str, str]]:
         )
     else:
         impl_path = abspath(filepath)
-        maybe_test_path = impl_path_to_test_path(filepath)
+        maybe_test_path = impl_path_to_test_path(filepath, pyproject_root)
         if maybe_test_path is None:
             return None
         return (
@@ -95,7 +101,10 @@ def nayvy_auto_touch_test() -> None:
     if is_test_path(filepath):
         error('You are already in test script.')
         return
-    auto_generator = AutoGenerator(SyntacticModuleLoader())
+    auto_generator = AutoGenerator(
+        SyntacticModuleLoader(),
+        CONFIG.pyproject_root_markers,
+    )
     test_path = auto_generator.touch_test_file(filepath)
     if test_path is None:
         error('Please check if your python project is created correcty')
@@ -116,7 +125,10 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
     """ Vim interface for jumping or generating unittest.
     """
     loader = SyntacticModuleLoader()
-    auto_generator = AutoGenerator(loader)
+    auto_generator = AutoGenerator(
+        loader,
+        CONFIG.pyproject_root_markers,
+    )
     filepath = vim.eval('expand("%")')
     if not func_names and is_test_path(filepath):
         # Nothing should be done when already in a test buffer

@@ -18,13 +18,14 @@ class Test(unittest.TestCase):
             '_resources' /
             'sample_project'
         )
+        self.pyproject_root = abspath(str(self.sample_project_path))
 
     def test_impl_path_to_test_path(self) -> None:
         assert impl_path_to_test_path(str(
             self.sample_project_path /
             'package' /
             'main.py'
-        )) == abspath(str(
+        ), self.pyproject_root) == abspath(str(
             self.sample_project_path /
             'tests' /
             'test_main.py'
@@ -36,7 +37,7 @@ class Test(unittest.TestCase):
             self.sample_project_path /
             'tests' /
             'test_main.py'
-        )) == abspath(str(
+        ), self.pyproject_root) == abspath(str(
             self.sample_project_path /
             'package' /
             'main.py'

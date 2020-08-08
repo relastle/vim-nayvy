@@ -86,6 +86,7 @@ def list_imports(
         python_script_path,
         SyntacticModuleLoader(),
         ImportPathFormat.ALL_ABSOLUTE,
+        ['setup.py', 'pyproject.toml'],
         False,
     )
     helper = project_import_helper_builder.build()

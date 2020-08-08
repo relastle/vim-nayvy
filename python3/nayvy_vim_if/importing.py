@@ -11,7 +11,7 @@ from nayvy.importing.import_config import ImportConfig
 from nayvy.projects.modules.loader import SyntacticModuleLoader
 from nayvy.importing.import_statement import ImportStatement, SingleImport
 from .utils import error, warning
-from .config import IMPORT_PATH_FORMAT, LINTER_FOR_FIX
+from .config import CONFIG
 
 from nayvy.importing.fixer import LintEngine
 
@@ -47,7 +47,8 @@ def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
     project_import_helper = ProjectImportHelperBuilder(
         current_filepath=filepath,
         loader=SyntacticModuleLoader(),
-        import_path_format=IMPORT_PATH_FORMAT,
+        import_path_format=CONFIG.import_path_format,
+        pyproject_root_markers=CONFIG.pyproject_root_markers,
         requires_in_pyproject=False,
     ).build()
     if project_import_helper is None:
@@ -69,9 +70,9 @@ def nayvy_fix_lines(lines: List[str]) -> Optional[List[str]]:
     if stmt_map is None:
         return lines
     linter: LintEngine
-    if LINTER_FOR_FIX == LinterForFix.PYFLAKES:
+    if CONFIG.linter_for_fix == LinterForFix.PYFLAKES:
         linter = PyflakesEngine()
-    elif LINTER_FOR_FIX == LinterForFix.FLAKE8:
+    elif CONFIG.linter_for_fix == LinterForFix.FLAKE8:
         linter = Flake8Engine()
     fixer = Fixer(stmt_map, linter)
     fixed_lines = fixer.fix_lines(lines)

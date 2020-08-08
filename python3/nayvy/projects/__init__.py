@@ -41,12 +41,13 @@ def get_git_root(
 
 def get_pyproject_root(
     filepath: str,
+    pyproject_root_markers: List[str],
     parents_max_lookup_n: int = 10,
 ) -> Optional[str]:
     """ Get python project root
     """
     return _get_root(
-        ['setup.py', 'pyproject.toml'],
+        pyproject_root_markers,
         filepath,
         parents_max_lookup_n,
     )

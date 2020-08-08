@@ -208,6 +208,7 @@ class TestProjectImportHelper(unittest.TestCase):
             ),
             SyntacticModuleLoader(),
             ImportPathFormat.ALL_RELATIVE,
+            ['setup.py', 'pyproject.toml'],
             False,
         )
         actual = builder.build()

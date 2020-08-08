@@ -42,17 +42,20 @@ class TestClass(unittest.TestCase):
         Path(f'{self.work_dir}/a/b/c').mkdir(parents=True, exist_ok=True)
         assert get_pyproject_root(
             f'{self.work_dir}/a/b/c',
+            ['setup.py', 'pyproject.toml'],
             parents_max_lookup_n=3,
         ) is None
 
         Path(f'{self.work_dir}/a/setup.py').touch()
         assert get_pyproject_root(
             f'{self.work_dir}/a/b/c',
+            ['setup.py', 'pyproject.toml'],
             parents_max_lookup_n=2,
         ) == f'{self.work_dir}/a'
 
         Path(f'{self.work_dir}/a/b/pyproject.toml').touch()
         assert get_pyproject_root(
             self.work_dir + '/a/b/c',
+            ['setup.py', 'pyproject.toml'],
             parents_max_lookup_n=2,
         ) == self.work_dir + '/a/b'

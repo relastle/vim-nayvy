@@ -3,8 +3,6 @@ from typing import Optional
 from os.path import abspath, relpath, basename
 from pathlib import Path
 
-from nayvy.projects import get_pyproject_root
-
 
 def is_test_path(filepath: str) -> bool:
     """ Check if a given filepath is a test one.
@@ -12,15 +10,12 @@ def is_test_path(filepath: str) -> bool:
     return basename(filepath).startswith('test_')
 
 
-def impl_path_to_test_path(impl_path: str) -> Optional[str]:
+def impl_path_to_test_path(impl_path: str, pyproject_root: str) -> Optional[str]:
     """
     Convert implementation module path
     into test path
     """
     impl_abspath = abspath(impl_path)
-    pyproject_root = get_pyproject_root(impl_abspath)
-    if pyproject_root is None:
-        return None
     rel_path = Path(relpath(impl_abspath, pyproject_root))
 
     # test path
@@ -34,15 +29,12 @@ def impl_path_to_test_path(impl_path: str) -> Optional[str]:
     return str(test_path)
 
 
-def test_path_to_impl_path(test_path: str) -> Optional[str]:
+def test_path_to_impl_path(test_path: str, pyproject_root: str) -> Optional[str]:
     """
     Convert test module path
     into implementation module path
     """
     test_abspath = abspath(test_path)
-    pyproject_root = get_pyproject_root(test_abspath)
-    if pyproject_root is None:
-        return None
     rel_path = Path(relpath(test_abspath, pyproject_root))
 
     # flov path where implementation test script will be put.

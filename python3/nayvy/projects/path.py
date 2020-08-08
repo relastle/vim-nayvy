@@ -21,9 +21,10 @@ class ImportPathFormat(Enum):
 
 def get_pyproject_root_wrapper(
     filepath: str,
+    pyproject_root_markers: List[str],
     requires_in_pyproject: bool = True,
 ) -> Optional[str]:
-    pyproject_root = get_pyproject_root(filepath)
+    pyproject_root = get_pyproject_root(filepath, pyproject_root_markers)
     if pyproject_root is None:
         if requires_in_pyproject:
             return None
@@ -176,6 +177,7 @@ class ProjectImportHelperBuilder:
     current_filepath: str
     loader: ModuleLoader
     import_path_format: ImportPathFormat
+    pyproject_root_markers: List[str]
     requires_in_pyproject: bool
 
     def make_stmt_relative(
@@ -221,6 +223,7 @@ class ProjectImportHelperBuilder:
     def build(self) -> Optional[ProjectImportHelper]:
         pyproject_root = get_pyproject_root_wrapper(
             self.current_filepath,
+            self.pyproject_root_markers,
             self.requires_in_pyproject,
         )
         if pyproject_root is None:

@@ -1,10 +1,11 @@
 from typing import List, Optional
-from os.path import dirname
+from os.path import dirname, abspath
 from pathlib import Path
 from dataclasses import dataclass
 
 from nayvy.projects.modules.loader import ModuleLoader
 from nayvy.projects.modules.models import Module
+from nayvy.projects import get_pyproject_root
 from .path import impl_path_to_test_path
 
 
@@ -77,13 +78,20 @@ class AutoGenerator:
     """
 
     module_loader: ModuleLoader
+    pyproject_root_markers: List[str]
 
     def touch_test_file(self, module_filepath: str) -> Optional[str]:
         """ touch the unittest file for module located in `module_filepath`
 
         Touched test file path will be retunred if succeeded.
         """
-        test_path = impl_path_to_test_path(module_filepath)
+        pyproject_root = get_pyproject_root(
+            abspath(module_filepath),
+            self.pyproject_root_markers,
+        )
+        if pyproject_root is None:
+            return None
+        test_path = impl_path_to_test_path(module_filepath, pyproject_root)
         if test_path is None:
             return None
         test_dir = Path(dirname(test_path))
