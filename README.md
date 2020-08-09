@@ -35,13 +35,9 @@ Some demonstrations are shown here.
 
 ![nayvy_imports](https://user-images.githubusercontent.com/6816040/76696704-9576a480-66d1-11ea-9561-b08914e263f4.gif)
 
-For configuration, see [here](https://github.com/relastle/vim-nayvy/tree/develop#31-importing-configuration).
-
 #### NayvyImportFZF
 
 ![nayvy_import_fzf](https://user-images.githubusercontent.com/6816040/76696705-9ad3ef00-66d1-11ea-9d7c-cf62b7f597c0.gif)
-
-For configuration, see [here](https://github.com/relastle/vim-nayvy/tree/develop#31-importing-configuration).
 
 #### NayvyTestGenerate & NayvyTestGenerateFZF
 
@@ -114,9 +110,75 @@ And here is demonstrations.
 
 ![ultisnips_demo](https://user-images.githubusercontent.com/6816040/76824986-00ec7d80-685c-11ea-8945-d7386b3f620f.gif)
 
+#### 2.2.3 [coc.nvim](https://github.com/neoclide/coc.nvim)
+
+This plugins also provide auto-completion of importable items, follewd by auto-importing of the completed items.
+This is thanks to coc's ability to easily creating new coc sources
+[Create custom source · neoclide/coc.nvim Wiki](https://github.com/neoclide/coc.nvim/wiki/Create-custom-source).
+
+![nayvy_coc](https://user-images.githubusercontent.com/6816040/89722514-38371300-da25-11ea-8af3-7b93643d8a46.gif)
+
 ## 3. Configurations
 
-### 3.1 Importing configuration
+### 3.1 Configuration with vim `g:` variable or environment variable.
+
+All configurable settings can be configured through vim script variables and environment variables.
+
+This is because you may set some project-specific settings different from your global vim settings.
+Thus, the priority of load settings is as follows.
+
+```
+Environment variable -> Vim script variable -> Default variable
+```
+
+| Vim Script variable name       | Environment variable name    | Description                                                                                   |
+| ---                            | ---                          | ---                                                                                           |
+| g:nayvy_import_path_format     | NAYVY_IMPORT_PATH_FORMAT     | Define the import statement format when importing the class/function inside the same package. |
+| g:nayvy_linter_for_fix         | NAYVY_LINTER_FOR_FIX         | Define the linter to use when autofixing the missing imports or unused imports.               |
+| g:nayvy_pyproject_root_markers | NAYVY_PYPROJECT_ROOT_MARKERS | Define marker (filenames) indicating the python project root directory.                       |
+| g:nayvy_coc_enabled            | NAYVY_COC_ENABLED            | Define whether coc is enabled (1) or not (0).                                                 |
+| g:nayvy_coc_completion_icon    | NAYVY_COC_COMPLETION_ICON    | Define icon rendered in the completion item fron nayvy coc sources.                           |
+
+#### g:nayvy_import_path_format ($NAYVY_IMPORT_PATH_FORMAT)
+
+- `all_absolute` (Prefer all project classes/functions are imported with ***absolute*** path.)
+- `all_relative` (Prefer all project classes/functions are imported with ***relative*** path.)
+- `under_relative` (Prefer sub-package classes/functions are imported with ***relative*** path and ther other with ***absolute*** path)
+
+#### g:nayvy_linter_for_fix ($NAYVY_LINTER_FOR_FIX)
+
+- `pyflakes`
+- `flake8`
+
+#### g:nayvy_pyproject_root_markers ($NAYVY_PYPROJECT_ROOT_MARKERS)
+
+Example of vim
+
+```vim
+let g:nayvy_pyproject_root_markers = [
+  \ 'pyproject.toml',
+  \ 'setup.py',
+  \ 'setup.cfg',
+  \ 'requirements.txt',
+\ ]
+```
+
+Example of environment variable
+
+```bash
+export NAYVY_PYPROJECT_ROOT_MARKERS='pyproject.toml,setup.py'  # comma-separated format
+```
+
+#### g:nayvy_coc_enabled ($NAYVY_COC_ENABLED)
+
+- 1: enabled
+- 0: disabled
+
+#### g:nayvy_coc_completion_icon ($NAYVY_COC_COMPLETION_ICON)
+
+Please set any string as you like 😄.
+
+### 3.2 Importing configuration
 
 Nayvy detects import statement should be used by looking into
 `$XDG_CONFIG_PATH/nayvy/import_config.nayvy`.
@@ -150,6 +212,7 @@ Feel free to copy and paste and use it.
 - [x] Auto generating or jump to test function.
 - [x] Generating test functions using [fzf](https://github.com/junegunn/fzf).
 - [x] Providing some domain objects useful in creating [ultisnips](https://github.com/SirVer/ultisnips) snippets.
+- [x] Providing coc custom source which can insert import statement automatically.
 - [ ] Make auto generated Test template configurable. (Now unittest, standard library, is supported)
 - [ ] Utility function of converting function arguments to docstring (for UltiSnips).
 
