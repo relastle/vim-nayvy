@@ -37,13 +37,13 @@ function! nayvy#sink_multiple_imports(list) abort
 endfunction
 
 " list all available imports by calling python API
-function! nayvy#nayvy_list_imports() abort
+function! nayvy#nayvy_list_import_lines_for_fzf() abort
   return py3eval('nayvy_list_import_lines_for_fzf()')
 endfunction
 
 " Import using fzf interface
 function! nayvy#import_fzf() abort
-  let l:import_lst = nayvy#nayvy_list_imports()
+  let l:import_lst = nayvy#nayvy_list_import_lines_for_fzf()
   call fzf#run(extend({
         \ 'source': l:import_lst,
         \ 'sink*': function('nayvy#sink_multiple_imports'),
@@ -51,6 +51,10 @@ function! nayvy#import_fzf() abort
         \ }, get(g:, 'fzf_layout', {})))
 endfunction
 
+" Get single import statement lists for deoplete
+function! nayvy#nayvy_list_imports() abort
+  return py3eval('nayvy_list_imports()')
+endfunction
 "---------------------------------------
 " Testing
 "---------------------------------------
