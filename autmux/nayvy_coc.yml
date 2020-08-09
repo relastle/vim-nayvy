@@ -1,0 +1,57 @@
+---
+name: nayvy-scenario
+description: Demonstration of coc-nvim completion with auto-importing
+steps:
+
+  - job: tmux_exec
+    description: hide status line
+    props:
+      command: set -g status off
+
+  - job: sleep
+    description: Sleep for recording
+    props:
+      sleep-ms: 4000
+
+  - job: send
+    description: launch nvim with tmp buffer
+    props:
+      chars: nvim ./nayvy_demo_project/package/tmp.py
+
+  - job: sleep
+    description: Sleep for launching neovim
+    props:
+      sleep-ms: 2000
+
+  - job: do
+    description: Expand ultisnips main
+    props:
+      keystrokes: 'Imain<sleep 500><C-j><ESC>'
+      key-interval-ms: 200
+
+  - job: do
+    description: write description
+    props:
+      keystrokes:
+        - 'A# Proper import statement will be inserted in proper position'
+        - '# when the completion item is selected.<ESC><sleep 1000>'
+      key-interval-ms: 10
+
+  - job: do
+    description: write python code with auto-completion
+    props:
+      keystrokes:
+        - 'O<sleep 500>parent_dirname = <sleep 500>basename<sleep 1000><C-N><sleep 1000><CR><sleep 300>(dirname<sleep 1000><C-N><sleep 1000><CR><sleep 300>(__file__<ESC>o'
+        - 'requests<sleep 1000><C-N><sleep 1000><CR><sleep 300>.get("hogeghoge.com"<ESC>o'
+        - 'sys<sleep 1000><C-N><sleep 1000><CR><sleep 300>.exit(1)<ESC>'
+      key-interval-ms: 100
+
+  - job: sleep
+    description: Sleep for end recording
+    props:
+      sleep-ms: 4000
+
+  - job: tmux_exec
+    description: restore status line
+    props:
+      command: set -g status on
