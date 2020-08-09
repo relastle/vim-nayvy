@@ -27,10 +27,6 @@ Plug 'relastle/vim-nayvy'
 
 ### 2.1 Commands
 
-Please refer [doc](./doc/vim-nayvy.txt) for full documentation.
-Some demonstrations are shown here.
-
-
 #### NayvyImports
 
 ![nayvy_imports](https://user-images.githubusercontent.com/6816040/76696704-9576a480-66d1-11ea-9561-b08914e263f4.gif)
