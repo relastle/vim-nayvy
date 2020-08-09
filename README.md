@@ -114,6 +114,33 @@ This is thanks to coc's ability to easily creating new coc sources
 
 ![nayvy_coc](https://user-images.githubusercontent.com/6816040/89722514-38371300-da25-11ea-8af3-7b93643d8a46.gif)
 
+
+You should bundle `neoclide/coc.nvim` as well as `relastle/vim-nayvy`.
+
+```vim
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'relastle/vim-nayvy'
+```
+
+The automatic import in completion is conducted by the item-selected event.
+By default, the event is fired by <kbd>Ctrl</kbd> + <kbd>y</kbd> (when the item is focused in pmenu).
+
+If you use the following settings described [here](https://github.com/neoclide/coc.nvim#example-vim-configuration),
+
+```vim
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+```
+
+the completion event can be trigger by just <kbd>Enter</kbd> (, which I personally recommend 👍).
+
+
 ## 3. Configurations
 
 ### 3.1 Configuration with vim `g:` variable or environment variable.
