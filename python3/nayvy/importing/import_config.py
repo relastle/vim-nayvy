@@ -1,6 +1,6 @@
 import os
 from typing import Any, Dict, List, Tuple, Optional, Generator
-from os.path import dirname
+from os.path import dirname, expandvars
 from pathlib import Path
 
 from .fixer import ImportStatementMap
@@ -25,16 +25,22 @@ class ImportConfig(ImportStatementMap):
             yield (k, v)
 
     @classmethod
-    def init(cls) -> Optional['ImportConfig']:
-        xdg_root = os.getenv(
-            'XDG_CONFIG_HOME',
-            '{}/.config'.format(
-                os.environ['HOME']
+    def init(
+        cls,
+        import_config_path: str = '',
+    ) -> Optional['ImportConfig']:
+        if import_config_path:
+            nayvy_import_config_path = expandvars(import_config_path)
+        else:
+            xdg_root = os.getenv(
+                'XDG_CONFIG_HOME',
+                '{}/.config'.format(
+                    os.environ['HOME']
+                )
             )
-        )
-        nayvy_import_config_path = '{}/nayvy/import_config.nayvy'.format(
-            xdg_root,
-        )
+            nayvy_import_config_path = '{}/nayvy/import_config.nayvy'.format(
+                xdg_root,
+            )
         custom_config = cls._of_config_py(nayvy_import_config_path)
         if custom_config is not None:
             return custom_config

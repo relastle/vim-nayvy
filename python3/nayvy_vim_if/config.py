@@ -16,6 +16,7 @@ class Config(BaseConfig):
     pyproject_root_markers: List[str] = ['pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt']  # noqa
     coc_enabled: int = 1
     coc_completion_icon: str = ' nayvy'
+    import_config_path: str = ''
 
 
 CONFIG = Config.new('nayvy')

@@ -40,7 +40,7 @@ class IntegratedMap(ImportStatementMap):
 
 
 def init_import_stmt_map(filepath: str) -> Optional[ImportStatementMap]:
-    config = ImportConfig.init()
+    config = ImportConfig.init(CONFIG.import_config_path)
     if config is None:
         error('Cannot load nayvy config file')
         return None

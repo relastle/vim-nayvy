@@ -96,9 +96,9 @@ Note that three arguments of `auto_import` are
 - Snip object of UltiSnips. you should always pass `snip`
 - Import statement string
 - The import level
-    - 0: Standard library imports.
-    - 1: Related third party imports.
-    - 2: Local application/library specific imports.
+  - 0: Standard library imports.
+  - 1: Related third party imports.
+  - 2: Local application/library specific imports.
 
 (cf. https://www.python.org/dev/peps/pep-0008/#imports)
 
@@ -154,13 +154,14 @@ Thus, the priority of load settings is as follows.
 Environment variable -> Vim script variable -> Default variable
 ```
 
-| Vim Script variable name       | Environment variable name    | Description                                                                                   |
-| ---                            | ---                          | ---                                                                                           |
-| g:nayvy_import_path_format     | NAYVY_IMPORT_PATH_FORMAT     | Define the import statement format when importing the class/function inside the same package. |
-| g:nayvy_linter_for_fix         | NAYVY_LINTER_FOR_FIX         | Define the linter to use when autofixing the missing imports or unused imports.               |
-| g:nayvy_pyproject_root_markers | NAYVY_PYPROJECT_ROOT_MARKERS | Define marker (filenames) indicating the python project root directory.                       |
-| g:nayvy_coc_enabled            | NAYVY_COC_ENABLED            | Define whether coc is enabled (1) or not (0).                                                 |
-| g:nayvy_coc_completion_icon    | NAYVY_COC_COMPLETION_ICON    | Define icon rendered in the completion item fron nayvy coc sources.                           |
+| Vim Script variable name         | Environment variable name       | Description                                                                                   |
+| ---                              | ---                             | ---                                                                                           |
+| `g:nayvy_import_path_format`     | `$NAYVY_IMPORT_PATH_FORMAT`     | Define the import statement format when importing the class/function inside the same package. |
+| `g:nayvy_linter_for_fix`         | `$NAYVY_LINTER_FOR_FIX`         | Define the linter to use when autofixing the missing imports or unused imports.               |
+| `g:nayvy_pyproject_root_markers` | `$NAYVY_PYPROJECT_ROOT_MARKERS` | Define marker (filenames) indicating the python project root directory.                       |
+| `g:nayvy_coc_enabled`            | `$NAYVY_COC_ENABLED`            | Define whether coc is enabled (1) or not (0).                                                 |
+| `g:nayvy_coc_completion_icon`    | `$NAYVY_COC_COMPLETION_ICON`    | Define icon rendered in the completion item fron nayvy coc sources.                           |
+| `g:nayvy_import_config_path`     | `$NAYVY_IMPORT_CONFIG_PATH`     | Define the file path containing your own import statement lines.                              |
 
 #### g:nayvy_import_path_format ($NAYVY_IMPORT_PATH_FORMAT)
 
@@ -201,11 +202,23 @@ export NAYVY_PYPROJECT_ROOT_MARKERS='pyproject.toml,setup.py'  # comma-separated
 
 Please set any string as you like 😄.
 
+#### g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)
+
+see the section below (3.2 Import configration).
+
 ### 3.2 Importing configuration
 
 Nayvy detects import statement should be used by looking into
 `$XDG_CONFIG_PATH/nayvy/import_config.nayvy`.
 (if $XDG_CONFIG_PATH is not set, `~/.config/nayvy/import_config.nayvy`)
+
+If you set `g:nayvy_import_config_path` or `$NAYVY_IMPORT_CONFIG_PATH`, the file will be used.
+
+You can use environment variable in the path like,
+
+```vim
+let g:nayvy_import_config_path = '$HOME/nayvy.py'
+```
 
 In the file, you can write any python import statements like this.
 
@@ -260,7 +273,7 @@ Thus, the main aim of `vim-nayvy` is providing a little bit utility functions :s
 #### :construction:
 
 - Please note that any destructive change (backward incompatible) can be done without any announcement.
-- This plugin is in a very early stage of development. Feel free to report problemcs and feature requests, or make PRs.
+- This plugin is in a very early stage of development.  Feel free to report problems or submit feature requests in [Issues](https://github.com/relastle/vim-nayvy/issues), or make [PRs](https://github.com/relastle/vim-nayvy/pulls).
 
 ## 7. [LICENSE](./LICENSE)
 
