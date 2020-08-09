@@ -1,13 +1,15 @@
 python3 << EOF
 import vim
 from nayvy_vim_if import *
+from nayvy_vim_if.config import CONFIG
 EOF
 
-let s:nayvy_coc_enabled = get(g:, 'nayvy_coc_enabled', 1)
+let s:nayvy_coc_enabled = py3eval('CONFIG.coc_enabled')
+let s:nayvy_coc_completion_icon = py3eval('CONFIG.coc_completion_icon')
+
 if !s:nayvy_coc_enabled || &compatible
-    finish
+  finish
 endif
-let s:nayvy_coc_completion_icon = get(g:, 'nayvy_coc_completion_icon', 'nayvy')
 
 function! coc#source#nayvy#init() abort
   return {
@@ -45,7 +47,6 @@ endfunction
 
 " When completed, import statement should be appended.
 function! coc#source#nayvy#on_complete(item) abort
-  echom 'a:item: ' . string(a:item)
   call py3eval(printf(
         \ 'nayvy_import_stmt(%s, %s)',
         \ printf('"%s"', a:item['statement']),
