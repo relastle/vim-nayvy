@@ -20,7 +20,7 @@ function! coc#source#nayvy#init() abort
         \}
 endfunction
 
-function s:nayvy_single_import_to_item(single_import) abort
+function! s:nayvy_single_import_to_item(single_import) abort
   return
         \ {
           \ 'word': a:single_import['name'],
@@ -35,7 +35,7 @@ function s:nayvy_single_import_to_item(single_import) abort
         \ }
 endfunction
 
-function s:get_items() abort
+function! s:get_items() abort
   let l:single_imports = py3eval('nayvy_list_imports()')
   let l:items = map(
         \ l:single_imports,
