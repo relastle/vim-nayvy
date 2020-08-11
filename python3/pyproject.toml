@@ -15,6 +15,7 @@ pytest = "^5.2"
 pytest-cov = "^2.8.1"
 pytest-html = "^2.0.1"
 coverage = {extras = ["toml"], version = "^5.0.3"}
+vim-vint = "^0.3.21"
 
 [tool.poetry.scripts]
 nayvy = 'nayvy.console:main'
