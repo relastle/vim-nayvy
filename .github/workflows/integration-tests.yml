@@ -24,25 +24,26 @@ jobs:
           neovim: true
       - name: Neovim unittest
         run: |
+          pip install wheel
           pip install pynvim
           ./vader_test_nvim.sh
 
-  test-vim:
-    name: Integration test on vim
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest]
-        version: [stable, nightly]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: rhysd/action-setup-vim@v1
-        id: vim
-        with:
-          version: ${{ matrix.version }}
-          neovim: false
-      - name: Vim unittest
-        run: ./vader_test_vim.sh
+  # test-vim:
+  #   name: Integration test on vim
+  #   strategy:
+  #     matrix:
+  #       os: [macos-latest, ubuntu-latest]
+  #       version: [stable, nightly]
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: rhysd/action-setup-vim@v1
+  #       id: vim
+  #       with:
+  #         version: ${{ matrix.version }}
+  #         neovim: false
+  #     - name: Vim unittest
+  #       run: ./vader_test_vim.sh
 
 # This workflow file is highly inspired by https://github.com/rhysd/git-messenger.vim/blob/master/.github/workflows/ci.yml
 
