@@ -168,7 +168,7 @@ def nayvy_import_stmt(statement: str, level: int) -> None:
     return
 
 
-def nayvy_list_imports() -> List[Dict[str, Any]]:
+def nayvy_list_imports(coc_menu_max_width: int = -1) -> List[Dict[str, Any]]:
     """List all available imports
     """
     filepath = vim.eval('expand("%")')
@@ -176,7 +176,7 @@ def nayvy_list_imports() -> List[Dict[str, Any]]:
     if stmt_map is None:
         return []
     return [
-        single_import.to_dict()
+        single_import.to_dict(coc_menu_max_width)
         for _, single_import in stmt_map.items()
     ]
 

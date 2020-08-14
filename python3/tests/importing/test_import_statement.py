@@ -259,3 +259,25 @@ class TestSingleImport(unittest.TestCase):
             'hoge : from .Hoge import hoge'
         )
         return
+
+    def test_trim_statement(self) -> None:
+        single_import = SingleImport(
+            'hoge',
+            'from .Hoge import hoge',  # length is 22
+            0,
+        )
+        assert (
+            single_import.trim_statement(20) ==
+            'from .H~ import hoge'
+        )
+
+        assert (
+            single_import.trim_statement(22) ==
+            'from .Hoge import hoge'
+        )
+
+        assert (
+            single_import.trim_statement(17) ==
+            'from ~ import hoge'
+        )
+        return

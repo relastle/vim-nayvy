@@ -159,9 +159,10 @@ Environment variable -> Vim script variable -> Default variable
 | `g:nayvy_import_path_format`     | `$NAYVY_IMPORT_PATH_FORMAT`     | Define the import statement format when importing the class/function inside the same package. |
 | `g:nayvy_linter_for_fix`         | `$NAYVY_LINTER_FOR_FIX`         | Define the linter to use when autofixing the missing imports or unused imports.               |
 | `g:nayvy_pyproject_root_markers` | `$NAYVY_PYPROJECT_ROOT_MARKERS` | Define marker (filenames) indicating the python project root directory.                       |
+| `g:nayvy_import_config_path`     | `$NAYVY_IMPORT_CONFIG_PATH`     | Define the file path containing your own import statement lines.                              |
 | `g:nayvy_coc_enabled`            | `$NAYVY_COC_ENABLED`            | Define whether coc is enabled (1) or not (0).                                                 |
 | `g:nayvy_coc_completion_icon`    | `$NAYVY_COC_COMPLETION_ICON`    | Define icon rendered in the completion item fron nayvy coc sources.                           |
-| `g:nayvy_import_config_path`     | `$NAYVY_IMPORT_CONFIG_PATH`     | Define the file path containing your own import statement lines.                              |
+| `g:nayvy_coc_menu_max_width`     | `$NAYVY_COC_MENU_MAX_WIDTH`     | Define max length of menu represented in completion menu by the coc source.                   |
 
 #### g:nayvy_import_path_format ($NAYVY_IMPORT_PATH_FORMAT)
 
@@ -193,6 +194,10 @@ Example of environment variable
 export NAYVY_PYPROJECT_ROOT_MARKERS='pyproject.toml,setup.py'  # comma-separated format
 ```
 
+#### g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)
+
+see the section below (3.2 Import configration).
+
 #### g:nayvy_coc_enabled ($NAYVY_COC_ENABLED)
 
 - 1: enabled
@@ -200,11 +205,17 @@ export NAYVY_PYPROJECT_ROOT_MARKERS='pyproject.toml,setup.py'  # comma-separated
 
 #### g:nayvy_coc_completion_icon ($NAYVY_COC_COMPLETION_ICON)
 
+![nayvy_coc_completion_icon](https://user-images.githubusercontent.com/6816040/90264644-5ae58380-de8c-11ea-917b-c1cc24daa1d0.png)
+
 Please set any string as you like 😄.
 
-#### g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)
+#### g:nayvy_coc_menu_max_width ($NAYVY_COC_MENU_MAX_WIDTH)
 
-see the section below (3.2 Import configration).
+If the completion menu gets too wide, it may bother you.
+So you can specify the max length of whole import statement.
+If the statement length gets longer than the value, the `from` part of import statement(, which typically tends to be longer) will be trimmed.
+
+![nayvy_coc_completion_menu](https://user-images.githubusercontent.com/6816040/90264634-57ea9300-de8c-11ea-90da-768ada57d660.png)
 
 ### 3.2 Importing configuration
 
