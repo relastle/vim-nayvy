@@ -13,7 +13,7 @@ endif
 
 function! coc#source#nayvy#init() abort
   return {
-        \ 'priority': 50,
+        \ 'priority': 10,
         \ 'shortcut': s:nayvy_coc_completion_icon,
         \ 'filetypes': ['python'],
         \ 'triggerCharacters': []
