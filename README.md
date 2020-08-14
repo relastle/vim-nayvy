@@ -170,10 +170,14 @@ Environment variable -> Vim script variable -> Default variable
 - `all_relative` (Prefer all project classes/functions are imported with ***relative*** path.)
 - `under_relative` (Prefer sub-package classes/functions are imported with ***relative*** path and ther other with ***absolute*** path)
 
+> default: `all_absolute`
+
 #### g:nayvy_linter_for_fix ($NAYVY_LINTER_FOR_FIX)
 
 - `pyflakes`
 - `flake8`
+
+> default: `pyflakes`
 
 #### g:nayvy_pyproject_root_markers ($NAYVY_PYPROJECT_ROOT_MARKERS)
 
@@ -194,20 +198,28 @@ Example of environment variable
 export NAYVY_PYPROJECT_ROOT_MARKERS='pyproject.toml,setup.py'  # comma-separated format
 ```
 
+> default: `['pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt']`
+
 #### g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)
 
 see the section below (3.2 Import configration).
+
+> default: ``
 
 #### g:nayvy_coc_enabled ($NAYVY_COC_ENABLED)
 
 - 1: enabled
 - 0: disabled
 
+> default: `1`
+
 #### g:nayvy_coc_completion_icon ($NAYVY_COC_COMPLETION_ICON)
 
 ![nayvy_coc_completion_icon](https://user-images.githubusercontent.com/6816040/90264644-5ae58380-de8c-11ea-917b-c1cc24daa1d0.png)
 
 Please set any string as you like 😄.
+
+> default: ` nayvy`
 
 #### g:nayvy_coc_menu_max_width ($NAYVY_COC_MENU_MAX_WIDTH)
 
@@ -216,6 +228,8 @@ So you can specify the max length of whole import statement.
 If the statement length gets longer than the value, the `from` part of import statement(, which typically tends to be longer) will be trimmed.
 
 ![nayvy_coc_completion_menu](https://user-images.githubusercontent.com/6816040/90264634-57ea9300-de8c-11ea-90da-768ada57d660.png)
+
+> default: `-1` (no limit)
 
 ### 3.2 Importing configuration
 
