@@ -3,7 +3,7 @@
 """
 import json
 from enum import Enum
-from typing import Any, Dict, List, Tuple, Generator, Optional
+from typing import Any, Dict, List, Tuple, Optional, Generator
 from dataclasses import asdict, dataclass, is_dataclass
 
 
@@ -50,6 +50,7 @@ class Function:
     line_begin: int
     line_end: int
     func_decl_type: FuncDeclType
+    signature_lines: List[str]
 
     def to_test(self) -> 'Function':
         return Function(
@@ -58,6 +59,7 @@ class Function:
             line_begin=-1,
             line_end=-1,
             func_decl_type=FuncDeclType.INSTANCE,
+            signature_lines=[],
         )
 
     @classmethod
@@ -70,7 +72,18 @@ class Function:
             line_begin=-1,
             line_end=-1,
             func_decl_type=FuncDeclType.NO_SET,
+            signature_lines=[],
         )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'name': self.name,
+            'docstring': self.docstring,
+            'line_begin': self.line_begin,
+            'line_end': self.line_end,
+            'func_decl_type': self.func_decl_type.name,
+            'signature_lines': self.signature_lines,
+        }
 
 
 @dataclass(frozen=True)
@@ -82,6 +95,7 @@ class Class:
     line_begin: int
     line_end: int
     function_map: Dict[str, Function]
+    signature_lines: List[str]
 
     def to_test(self) -> 'Class':
         return Class(
@@ -95,6 +109,7 @@ class Class:
                     for f in self.function_map.values()
                 )
             },
+            signature_lines=[],
         )
 
     def sub(self, _class: 'Class') -> 'Class':
@@ -109,6 +124,7 @@ class Class:
                 self.function_map.items()
                 if k not in _class.function_map
             },
+            signature_lines=[],
         )
 
     def intersect(self, _class: 'Class') -> 'Class':
@@ -123,7 +139,16 @@ class Class:
                 self.function_map.items()
                 if k in _class.function_map
             },
+            signature_lines=[],
         )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'name': self.name,
+            'line_begin': self.line_begin,
+            'line_end': self.line_end,
+            'signature_lines': self.signature_lines,
+        }
 
 
 @dataclass(frozen=True)
@@ -148,6 +173,7 @@ class Module:
                     v.line_begin,
                     v.line_begin,
                     {},
+                    [],
                 )
             ))
             for k, v in self.class_map.items()
@@ -180,6 +206,7 @@ class Module:
                     v.line_begin,
                     v.line_begin,
                     {},
+                    [],
                 )
             ))
             for k, v in self.class_map.items()
@@ -222,25 +249,26 @@ class Module:
                                 function.to_test() for function in
                                 self.function_map.values()
                             )
-                        }
+                        },
+                        [],
                     )
                 },
             },
         )
 
-    def get_nearest_function(self, line_index: int) -> Optional[str]:
+    def get_nearest_function(self, line_index: int) -> Optional[Function]:
         """ Get the name offunction that is wrapping `line_index`
         """
         # Loop over top level functions.
         for f in self.function_map.values():
             if f.line_begin <= line_index < f.line_end:
-                return f.name
+                return f
 
         # Loop over class methods and instance methods.
         for c in self.class_map.values():
             for f in c.function_map.values():
                 if f.line_begin <= line_index < f.line_end:
-                    return f.name
+                    return f
         return None
 
     def to_func_list_lines(self) -> List[str]:

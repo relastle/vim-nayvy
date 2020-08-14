@@ -6,11 +6,11 @@ from typing import Any, Dict, List, Tuple, Optional, Generator
 from os.path import abspath, dirname, relpath
 from dataclasses import dataclass
 
-from . import get_pyproject_root
-from .modules.loader import ModuleLoader
-from .modules.models import Module
-from ..importing.fixer import ImportStatementMap
-from ..importing.import_statement import SingleImport
+from nayvy.projects import get_pyproject_root
+from nayvy.importing.fixer import ImportStatementMap
+from nayvy.projects.modules.loader import ModuleLoader
+from nayvy.projects.modules.models import Class, Module, Function
+from nayvy.importing.import_statement import SingleImport
 
 
 class ImportPathFormat(Enum):
@@ -197,6 +197,8 @@ class ProjectImportHelperBuilder:
         current_modpath: ModulePath,
         modpath: ModulePath,
         name: str,
+        func: Optional[Function],
+        klass: Optional[Class],
     ) -> None:
         stmt_map[name] = SingleImport(
             name,
@@ -205,6 +207,8 @@ class ProjectImportHelperBuilder:
                 name,
             ),
             2,  # project level
+            func,
+            klass,
         )
 
     def make_map(
@@ -214,13 +218,16 @@ class ProjectImportHelperBuilder:
     ) -> Dict[str, SingleImport]:
         import_stmt_map: Dict[str, SingleImport] = {}
         for modpath in all_modpaths:
-            for name in modpath.mod.function_map.keys():
-                self._add_stmt(import_stmt_map, current_modpath, modpath, name)
-            for name in modpath.mod.class_map.keys():
-                self._add_stmt(import_stmt_map, current_modpath, modpath, name)
+            for name, func in modpath.mod.function_map.items():
+                self._add_stmt(import_stmt_map, current_modpath,
+                               modpath, name, func, None)
+            for name, klass in modpath.mod.class_map.items():
+                self._add_stmt(import_stmt_map, current_modpath,
+                               modpath, name, None, klass)
         return import_stmt_map
 
     def build(self) -> Optional[ProjectImportHelper]:
+        # Python project detection
         pyproject_root = get_pyproject_root_wrapper(
             self.current_filepath,
             self.pyproject_root_markers,
@@ -229,6 +236,7 @@ class ProjectImportHelperBuilder:
         if pyproject_root is None:
             return None
 
+        # Current module
         current_modpath = ModulePath.of_filepath(
             self.loader,
             self.current_filepath,
@@ -236,6 +244,8 @@ class ProjectImportHelperBuilder:
         )
         if current_modpath is None:
             return None
+
+        # Get all modules in the same python project
         all_python_script_paths = find_all_pythno_paths(pyproject_root)
         maybe_all_modpaths = [
             ModulePath.of_filepath(
@@ -244,6 +254,7 @@ class ProjectImportHelperBuilder:
                 pyproject_root,
             ) for _filepath in all_python_script_paths
         ]
+        # Filter out None and self.
         all_modpaths: List[ModulePath] = []
         for modpath in maybe_all_modpaths:
             if modpath is None:
