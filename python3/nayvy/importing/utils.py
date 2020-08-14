@@ -2,11 +2,11 @@ from typing import List, Tuple
 
 
 def get_first_line_num(lines: List[str]) -> int:
-    '''
+    """
     Return first python code line line line number(0-based)
     except for module DocString(__doc__)
     and shebang (#!/usr/bin/env python3)
-    '''
+    """
     in_docstring = False
     docstring_quotes = ''
     try:
@@ -32,9 +32,9 @@ def get_first_line_num(lines: List[str]) -> int:
 
 
 def already_exists(statement: str, lines: List[str]) -> bool:
-    '''
+    """
     Check if statement is in lines
-    '''
+    """
     return any(statement in line.strip() for line in lines)
 
 

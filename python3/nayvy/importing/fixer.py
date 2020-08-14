@@ -1,6 +1,6 @@
-'''
+"""
 Fix the python lines of code dependent on Linter result
-'''
+"""
 
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
@@ -177,8 +177,8 @@ class Fixer:
         lines: List[str],
         names: List[str],
     ) -> List[str]:
-        ''' add import by names
-        '''
+        """ add import by names
+        """
         return self._fix_lines(lines, [], names)
 
     def print_fixed_content(self, file_path: str) -> None:
