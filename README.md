@@ -112,10 +112,15 @@ This plugins also provide auto-completion of importable items, follewd by auto-i
 This is thanks to coc's ability to easily creating new coc sources
 [Create custom source · neoclide/coc.nvim Wiki](https://github.com/neoclide/coc.nvim/wiki/Create-custom-source).
 
+You can see how auto-importing is conducted in the GIF below.
+
 ![nayvy_coc](https://user-images.githubusercontent.com/6816040/89722514-38371300-da25-11ea-8af3-7b93643d8a46.gif)
 
+When you auto-complete Class/Function inside the current python project, the signature and docstring will also be shown like this.
 
-You should bundle `neoclide/coc.nvim` as well as `relastle/vim-nayvy`.
+![nayvy_coc_info](https://user-images.githubusercontent.com/6816040/90265780-080ccb80-de8e-11ea-9922-99394018eed5.png)
+
+To use this function, please bundle `neoclide/coc.nvim` as well as `relastle/vim-nayvy`.
 
 ```vim
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
