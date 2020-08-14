@@ -28,6 +28,7 @@ jobs:
           pip3 install -U pip setuptools
           pip3 install wheel pynvim dataclasses pyflakes
           pyflakes --version
+          export PATH="/home/runner/.local/bin:${PATH}"
           ./vader_test_nvim.sh
 
   # test-vim:
