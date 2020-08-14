@@ -14,9 +14,9 @@ Expect python (Remove unused and add undefined):
 
 Given python (an unused import and an undefined name):
   #!/usr/bin/env python3
-  '''
+  """
   There are unused import and undefined name
-  '''
+  """
   import os
 
 
@@ -28,9 +28,9 @@ Execute:
 
 Expect python (Remove unused and add undefined):
   #!/usr/bin/env python3
-  '''
+  """
   There are unused import and undefined name
-  '''
+  """
   from pprint import pprint as pp
 
 
@@ -41,9 +41,9 @@ Expect python (Remove unused and add undefined):
 
 Given python (Duplicated undefined name):
   #!/usr/bin/env python3
-  '''
+  """
   There are two undefined name (which are the same)
-  '''
+  """
 
 
   def hoge(bar: str) -> Optional[List[str]]:
@@ -58,9 +58,9 @@ Execute:
 
 Expect python (Single import is added):
   #!/usr/bin/env python3
-  '''
+  """
   There are two undefined name (which are the same)
-  '''
+  """
   from typing import List, Optional
 
 
@@ -76,9 +76,9 @@ Expect python (Single import is added):
 
 Given python (Non-configured import):
   #!/usr/bin/env python3
-  '''
+  """
   There is an undefined name, which is not configured
-  '''
+  """
 
   print(unconfigured_name)
 
@@ -87,9 +87,9 @@ Execute:
 
 Expect python (Nothing happned):
   #!/usr/bin/env python3
-  '''
+  """
   There is an undefined name, which is not configured
-  '''
+  """
 
   print(unconfigured_name)
 
@@ -97,10 +97,10 @@ Expect python (Nothing happned):
 
 Given python (Three blocks import):
   #!/usr/bin/env python3
-  '''
+  """
   There three undefined names and each is defined
   in different blocks respectively
-  '''
+  """
 
 
   pp(List)
@@ -112,10 +112,10 @@ Execute:
 
 Expect python (All are imported correctly):
   #!/usr/bin/env python3
-  '''
+  """
   There three undefined names and each is defined
   in different blocks respectively
-  '''
+  """
   from pprint import pprint as pp
   from typing import List
 
@@ -132,10 +132,10 @@ Expect python (All are imported correctly):
 
 Given python (Commented import):
   #!/usr/bin/env python3
-  '''
+  """
   There is commented (used) import and undefined name.
   Commented import should be as it is.
-  '''
+  """
   import os  # Some comment fot an import
 
 
@@ -147,10 +147,10 @@ Execute:
 
 Expect python (All are imported correctly):
   #!/usr/bin/env python3
-  '''
+  """
   There is commented (used) import and undefined name.
   Commented import should be as it is.
-  '''
+  """
   import os  # Some comment fot an import
   import sys
 

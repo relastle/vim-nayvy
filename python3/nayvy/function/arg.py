@@ -1,6 +1,6 @@
-'''
+"""
 Module for manipulating arg (of function)
-'''
+"""
 from typing import List
 from dataclasses import dataclass
 
@@ -8,9 +8,9 @@ from dataclasses import dataclass
 # The code is inspired by https://github.com/honza/vim-snippets
 @dataclass
 class Arg:
-    '''
+    """
     Domain object of one argument of `Function`,
-    '''
+    """
 
     arg_str: str
     name: str
@@ -23,24 +23,24 @@ class Arg:
         return '*' in self.name
 
     def make_assignment_stmt(self) -> str:
-        '''make assignment statment usually written in a initializer
+        """make assignment statment usually written in a initializer
 
         This makes assignment to single-under-scored `_`
         prefixed-member variable. (i.g. self._name = name)
-        '''
+        """
         return 'self._{} = {}'.format(
             self.name,
             self.name,
         )
 
     def make_docstring(self) -> str:
-        '''make arg description scheme used in docstring'''
+        """make arg description scheme used in docstring"""
         return '{}:'.format(
             self.name,
         )
 
     def make_docstring_with_type(self) -> str:
-        ''' `make_docstring` of type included version'''
+        """ `make_docstring` of type included version"""
         return '{} ({}):'.format(
             self.name,
             self.t,
