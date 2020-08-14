@@ -414,32 +414,36 @@ class SingleImport:
         Represent SingleImport dictionary as a signature help of
         completion floating window.
         """
-        if self.func is None and self.statement is None:
+        if self.func is None and self.klass is None:
             return (
-                '# Import\n'
-                '===\n'
+                'Import\n'
+                '{}\n'
                 '```python\n'
                 '{}\n'
                 '```\n'
-            ).format(self.statement)
+            ).format(
+                '-' * len(self.statement),
+                self.statement,
+            )
         if self.func is not None:
             signature_lines = self.func.signature_lines
         if self.klass is not None:
             signature_lines = self.klass.signature_lines
         return (
-            '# Import\n'
-            '===\n'
+            'Import\n'
+            '{}\n'
             '```python\n'
             '{}\n'
             '```\n'
             '\n'
-            '# Signature\n'
-            '===\n'
+            '{}\n'
             '```python\n'
             '{}\n'
             '```\n'
         ).format(
+            '-' * len(self.statement),
             self.statement,
+            '=' * len(self.statement),
             '\n'.join(signature_lines),
         )
 
