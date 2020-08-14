@@ -409,6 +409,27 @@ class SingleImport:
                 self.statement,
             )
 
+    def trim_statement(self, statement_trim_width: int) -> str:
+        REPLACEMENT_LEN = 1
+        REPLACEMENT_CHAR = '~'
+        if statement_trim_width <= 0:
+            # Not specified width
+            return self.statement
+        exessive_count = len(self.statement) - statement_trim_width
+        if exessive_count <= 0:
+            # No need for trimming
+            return self.statement
+        trim_count = exessive_count + REPLACEMENT_LEN
+        import_statement = ImportStatement.of(self.statement)
+        if import_statement is None:
+            # Invalid import statement
+            return self.statement
+        return 'from {}{} import {}'.format(
+            import_statement.from_what[:-trim_count],
+            REPLACEMENT_CHAR * REPLACEMENT_LEN,
+            str(import_statement.import_as_parts[0])
+        )
+
     def signature_to_floating_window(self) -> str:
         """
         Represent SingleImport dictionary as a signature help of
@@ -447,7 +468,10 @@ class SingleImport:
             '\n'.join(signature_lines),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        statement_trim_width: int = -1,
+    ) -> Dict[str, Any]:
         """
         Convert object to dictionary for getting it convertible to
         vim variable automatically.
@@ -455,6 +479,7 @@ class SingleImport:
         return {
             'name': self.name,
             'statement': self.statement,
+            'trimmed_statement': self.trim_statement(statement_trim_width),
             'level': self.level,
             'info': self.signature_to_floating_window(),
             'func': self.func.to_dict() if self.func else None,
