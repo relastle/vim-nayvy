@@ -25,6 +25,7 @@ jobs:
       - name: Add path
         run: |
           echo "::add-path::/home/runner/.local/bin"
+          echo "::set-env name=XDG_CONFIG_HOME::$(pwd)/config"
       - name: Neovim test
         run: |
           python3 --version
