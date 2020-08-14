@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 from ..utils.colors import Color
 
+from nayvy.projects.modules.models import Class, Function
+
 
 class ImportAsPart:
 
@@ -352,7 +354,7 @@ class ImportStatement:
         return import_statements
 
 
-@dataclass(frozen=True)
+@dataclass
 class SingleImport:
     """ Domain object for representing import statement list.
 
@@ -360,11 +362,36 @@ class SingleImport:
     - name: for what name is introduced to python's toplevel namespace.
     - statement: just a string import statement to be inserted to buffer.
     - level: import level. ( 0/1/2 ).
+
+    In case the single import statment is picked up from the python project,
+    Class or Function information is also contatained in this instance
+    for the purpose of rendering rich-information in floating window of completion.
     """
 
+    # Required
     name: str
     statement: str
     level: int
+
+    # Optional
+    func: Optional[Function]
+    klass: Optional[Class]
+
+    def __init__(
+        self,
+        name: str,
+        statement: str,
+        level: int,
+        func: Optional[Function] = None,
+        klass: Optional[Class] = None,
+    ) -> None:
+        self.name = name
+        self.statement = statement
+        self.level = level
+
+        self.func = func
+        self.klass = klass
+        return
 
     def to_line(self, color: bool = False) -> str:
         """ Convert object to line selected by fzf
@@ -391,4 +418,6 @@ class SingleImport:
             'name': self.name,
             'statement': self.statement,
             'level': self.level,
+            'func': self.func.to_dict() if self.func else None,
+            'klass': self.klass.to_dict() if self.klass else None,
         }

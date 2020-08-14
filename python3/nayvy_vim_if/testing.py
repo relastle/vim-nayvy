@@ -151,11 +151,11 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
             error('Please check the current buffer is valid')
             return
         # if `func_names` is not given, infer it as nearest function
-        func_name = impl_mod.get_nearest_function(vim.current.window.cursor[0] - 1)
-        if func_name is None:
+        func = impl_mod.get_nearest_function(vim.current.window.cursor[0] - 1)
+        if func is None:
             error('The cursor is probably outside the function.')
             return
-        func_names = [func_name]
+        func_names = [func.name]
 
     updated_test_module_lines = test_module_lines
     for func_name in func_names:

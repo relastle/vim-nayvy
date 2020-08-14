@@ -10,7 +10,12 @@ from nayvy.projects.path import (
     mod_relpath
 )
 from nayvy.projects.modules.loader import SyntacticModuleLoader
-from nayvy.projects.modules.models import Class, Module, Function
+from nayvy.projects.modules.models import (
+    Class,
+    Module,
+    Function,
+    FuncDeclType
+)
 from nayvy.importing.import_statement import SingleImport
 
 
@@ -167,6 +172,7 @@ class TestModulePath(unittest.TestCase):
                             'f1': Function.of_name('f1'),
                             'f2': Function.of_name('f2'),
                         },
+                        signature_lines=[]
                     ),
                 },
             )
@@ -215,9 +221,27 @@ class TestProjectImportHelper(unittest.TestCase):
         assert actual is not None
         # Can access to subpackage's function
         assert actual['sub_top_level_function1'] == SingleImport(
-            'sub_top_level_function1',
-            'from .subpackage.sub_main import sub_top_level_function1',
-            2,
+            name='sub_top_level_function1',
+            statement='from .subpackage.sub_main import sub_top_level_function1',
+            level=2,
+            func=Function(
+                name='sub_top_level_function1',
+                docstring='Top level function.\nsignature is multilined.\n',
+                line_begin=2,
+                line_end=11,
+                func_decl_type=FuncDeclType.TOP_LEVEL,
+                signature_lines=[
+                    'def sub_top_level_function1(',
+                    '    hoge: int,',
+                    '    fuga: str,',
+                    ') -> None:',
+                    '    """ Top level function.',
+                    '',
+                    '    signature is multilined.',
+                    '    """',
+                ],
+            ),
+            klass=None,
         )
 
         # Cannot access to function defined in self
