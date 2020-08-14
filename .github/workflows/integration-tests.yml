@@ -23,7 +23,9 @@ jobs:
           version: ${{ matrix.version }}
           neovim: true
       - name: Neovim unittest
-        run: ./vader_test_nvim.sh
+        run: |
+          pip install pynvim
+          ./vader_test_nvim.sh
 
   test-vim:
     name: Integration test on vim
