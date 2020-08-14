@@ -13,7 +13,7 @@ endif
 
 function! coc#source#nayvy#init() abort
   return {
-        \ 'priority': 10,
+        \ 'priority': 50,
         \ 'shortcut': s:nayvy_coc_completion_icon,
         \ 'filetypes': ['python'],
         \ 'triggerCharacters': []
@@ -30,7 +30,7 @@ function! s:nayvy_single_import_to_item(single_import) abort
           \ 'level': a:single_import['level'],
           \ 'documentation': [{
             \ 'filetype': 'markdown',
-            \ 'content': "```python\n" . a:single_import['statement'] . "\n```",
+            \ 'content': a:single_import['info'],
           \ }],
         \ }
 endfunction

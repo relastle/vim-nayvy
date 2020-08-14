@@ -30,3 +30,12 @@ class SubTopLevelClass1:
         signature is multilined.
         """
         return
+
+
+class SubTopLevelClass2:
+    """
+    Multiline docstring top level class.
+
+    This should be captured.
+    """
+    pass

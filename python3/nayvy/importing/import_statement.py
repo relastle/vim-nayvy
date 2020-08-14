@@ -409,6 +409,40 @@ class SingleImport:
                 self.statement,
             )
 
+    def signature_to_floating_window(self) -> str:
+        """
+        Represent SingleImport dictionary as a signature help of
+        completion floating window.
+        """
+        if self.func is None and self.statement is None:
+            return (
+                '# Import\n'
+                '===\n'
+                '```python\n'
+                '{}\n'
+                '```\n'
+            ).format(self.statement)
+        if self.func is not None:
+            signature_lines = self.func.signature_lines
+        if self.klass is not None:
+            signature_lines = self.klass.signature_lines
+        return (
+            '# Import\n'
+            '===\n'
+            '```python\n'
+            '{}\n'
+            '```\n'
+            '\n'
+            '# Signature\n'
+            '===\n'
+            '```python\n'
+            '{}\n'
+            '```\n'
+        ).format(
+            self.statement,
+            '\n'.join(signature_lines),
+        )
+
     def to_dict(self) -> Dict[str, Any]:
         """
         Convert object to dictionary for getting it convertible to
@@ -418,6 +452,7 @@ class SingleImport:
             'name': self.name,
             'statement': self.statement,
             'level': self.level,
+            'info': self.signature_to_floating_window(),
             'func': self.func.to_dict() if self.func else None,
             'klass': self.klass.to_dict() if self.klass else None,
         }
