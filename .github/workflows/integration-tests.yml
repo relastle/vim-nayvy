@@ -24,8 +24,8 @@ jobs:
           neovim: true
       - name: Neovim unittest
         run: |
-          pip install wheel
-          pip install pynvim
+          pip3 install wheel
+          pip3 install pynvim
           ./vader_test_nvim.sh
 
   # test-vim:
