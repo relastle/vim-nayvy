@@ -80,11 +80,11 @@ def nayvy_fix_lines(lines: List[str]) -> Optional[List[str]]:
 
 
 def nayvy_auto_imports() -> None:
-    '''
+    """
     Automatically
     - import for undefined names
     - remove unused imports
-    '''
+    """
     lines = vim.current.buffer[:]
     fixed_lines = nayvy_fix_lines(lines)
     if fixed_lines:
@@ -168,21 +168,21 @@ def nayvy_import_stmt(statement: str, level: int) -> None:
     return
 
 
-def nayvy_list_imports() -> List[Dict[str, Any]]:
-    ''' List all available imports
-    '''
+def nayvy_list_imports(coc_menu_max_width: int = -1) -> List[Dict[str, Any]]:
+    """List all available imports
+    """
     filepath = vim.eval('expand("%")')
     stmt_map = init_import_stmt_map(filepath)
     if stmt_map is None:
         return []
     return [
-        single_import.to_dict()
+        single_import.to_dict(coc_menu_max_width)
         for _, single_import in stmt_map.items()
     ]
 
 
 def nayvy_list_import_lines_for_fzf() -> List[str]:
-    ''' List all available import list for fzf
+    """ List all available import list for fzf
 
     The format will be
     ---
@@ -190,7 +190,7 @@ def nayvy_list_import_lines_for_fzf() -> List[str]:
 
     i.g.) tf : import tensorflow as tf
     ---
-    '''
+    """
     filepath = vim.eval('expand("%")')
     stmt_map = init_import_stmt_map(filepath)
     if stmt_map is None:

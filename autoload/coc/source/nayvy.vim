@@ -6,6 +6,7 @@ EOF
 
 let s:nayvy_coc_enabled = py3eval('CONFIG.coc_enabled')
 let s:nayvy_coc_completion_icon = py3eval('CONFIG.coc_completion_icon')
+let s:coc_menu_max_width = py3eval('CONFIG.coc_menu_max_width')
 
 if !s:nayvy_coc_enabled || &compatible
   finish
@@ -20,18 +21,23 @@ function! coc#source#nayvy#init() abort
         \}
 endfunction
 
-function s:nayvy_single_import_to_item(single_import) abort
-  return {
-        \ 'word': a:single_import['name'],
-        \ 'menu': '(' . a:single_import['statement'] . ')',
-        \ 'info': a:single_import['statement'],
-        \ 'statement': a:single_import['statement'],
-        \ 'level': a:single_import['level'],
+function! s:nayvy_single_import_to_item(single_import) abort
+  return
+        \ {
+          \ 'word': a:single_import['name'],
+          \ 'menu': '(' . a:single_import['trimmed_statement'] . ')',
+          \ 'filterText': a:single_import['statement'],
+          \ 'statement': a:single_import['statement'],
+          \ 'level': a:single_import['level'],
+          \ 'documentation': [{
+            \ 'filetype': 'markdown',
+            \ 'content': a:single_import['info'],
+          \ }],
         \ }
 endfunction
 
-function s:get_items() abort
-  let l:single_imports = py3eval('nayvy_list_imports()')
+function! s:get_items() abort
+  let l:single_imports = py3eval('nayvy_list_imports(' . s:coc_menu_max_width . ')')
   let l:items = map(
         \ l:single_imports,
         \ {_, single_import -> s:nayvy_single_import_to_item(single_import)},

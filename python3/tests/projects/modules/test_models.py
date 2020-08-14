@@ -1,4 +1,5 @@
 import unittest
+from typing import TypeVar, Optional
 
 from nayvy.projects.modules.models import (
     Class,
@@ -7,13 +8,20 @@ from nayvy.projects.modules.models import (
     FuncDeclType
 )
 
+T = TypeVar('T')
+
+
+def assert_not_none(x: Optional[T]) -> T:
+    assert x is not None
+    return x
+
 
 class TestModule(unittest.TestCase):
 
     def setUp(self) -> None:
         self.m1 = Module(
             function_map={
-                'a': Function('a', '', 1, 10, FuncDeclType.TOP_LEVEL),
+                'a': Function('a', '', 1, 10, FuncDeclType.TOP_LEVEL, []),
             },
             class_map={
                 'C': Class('C', 12, 30, {
@@ -23,6 +31,7 @@ class TestModule(unittest.TestCase):
                         13,
                         20,
                         FuncDeclType.INSTANCE,
+                        [],
                     ),
                     'b': Function(
                         'b',
@@ -30,8 +39,9 @@ class TestModule(unittest.TestCase):
                         21,
                         30,
                         FuncDeclType.INSTANCE,
+                        [],
                     )
-                }),
+                }, []),
             },
         )
         self.m2 = Module(
@@ -44,8 +54,9 @@ class TestModule(unittest.TestCase):
                         -1,
                         -1,
                         FuncDeclType.INSTANCE,
+                        [],
                     ),
-                }),
+                }, []),
             },
         )
         return
@@ -79,6 +90,7 @@ class TestModule(unittest.TestCase):
                             -1,
                             -1,
                             FuncDeclType.INSTANCE,
+                            [],
                         ),
                         'test_b': Function(
                             'test_b',
@@ -86,8 +98,10 @@ class TestModule(unittest.TestCase):
                             -1,
                             -1,
                             FuncDeclType.INSTANCE,
+                            [],
                         ),
-                    }
+                    },
+                    []
                 ),
                 'Test': Class(
                     'Test',
@@ -100,8 +114,10 @@ class TestModule(unittest.TestCase):
                             -1,
                             -1,
                             FuncDeclType.INSTANCE,
+                            [],
                         ),
-                    }
+                    },
+                    [],
                 ),
             },
         ))
@@ -109,10 +125,10 @@ class TestModule(unittest.TestCase):
     def test_get_nearest_function(self) -> None:
         # begin corner case
         assert self.m1.get_nearest_function(0) is None
-        assert self.m1.get_nearest_function(1) == 'a'
+        assert assert_not_none(self.m1.get_nearest_function(1)).name == 'a'
 
         # end corner case
-        assert self.m1.get_nearest_function(19) == 'a'
+        assert assert_not_none(self.m1.get_nearest_function(19)).name == 'a'
         assert self.m1.get_nearest_function(20) is None
 
     def test_to_func_list_lines(self) -> None:

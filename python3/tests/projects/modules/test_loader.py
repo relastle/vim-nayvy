@@ -43,6 +43,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 1,
                 3,
                 FuncDeclType.TOP_LEVEL,
+                [
+                    'def top_level_function1() -> None:',
+                ],
             )
         )
 
@@ -60,6 +63,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         10,
                         12,
                         FuncDeclType.INSTANCE,
+                        [
+                            'def instance_method1(self) -> None:',
+                        ],
                     ),
                     'class_method1': Function(
                         'class_method1',
@@ -67,6 +73,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         14,
                         16,
                         FuncDeclType.CLASS,
+                        [
+                            'def class_method1(cls) -> None:',
+                        ],
                     ),
                     'instance_method2': Function(
                         'instance_method2',
@@ -74,8 +83,14 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         17,
                         19,
                         FuncDeclType.INSTANCE,
+                        [
+                            'def instance_method2(self) -> None:',
+                        ],
                     ),
                 },
+                [
+                    'class TopLevelClass1:',
+                ]
             ))
         )
 
@@ -92,6 +107,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         30,
                         32,
                         FuncDeclType.INSTANCE,
+                        [
+                            'def instance_method3(self) -> None:',
+                        ],
                     ),
                     'class_method2': Function(
                         'class_method2',
@@ -99,6 +117,9 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         34,
                         36,
                         FuncDeclType.CLASS,
+                        [
+                            'def class_method2(cls) -> None:',
+                        ],
                     ),
                     'instance_method4': Function(
                         'instance_method4',
@@ -106,8 +127,14 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         37,
                         39,
                         FuncDeclType.INSTANCE,
+                        [
+                            'def instance_method4(self) -> None:',
+                        ],
                     ),
                 },
+                [
+                    'class TopLevelClass2:',
+                ]
             )
         )
 
@@ -123,8 +150,6 @@ class TestSyntacticModuleLoader(unittest.TestCase):
 
         assert module is not None
 
-        print(module.to_json())
-
         # Assertion of top level functions
         assert (
             module.function_map['sub_top_level_function1'] ==
@@ -134,6 +159,16 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 2,
                 11,
                 FuncDeclType.TOP_LEVEL,
+                [
+                    'def sub_top_level_function1(',
+                    '    hoge: int,',
+                    '    fuga: str,',
+                    ') -> None:',
+                    '    """ Top level function.',
+                    '',
+                    '    signature is multilined.',
+                    '    """',
+                ]
             )
         )
 
@@ -151,8 +186,39 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                         24,
                         32,
                         FuncDeclType.INSTANCE,
+                        [
+                            'def instance_method1(',
+                            '    self, hoge: int,',
+                            ') -> None:',
+                            '    """ Instance method.',
+                            '',
+                            '    signature is multilined.',
+                            '    """',
+                        ],
                     ),
                 },
+                [
+                    'class SubTopLevelClass1:'
+                ]
+            ))
+        )
+
+        # Assertion of class with docstring
+        assert (
+            vars(module.class_map['SubTopLevelClass2']) ==
+            vars(Class(
+                'SubTopLevelClass2',
+                34,
+                41,
+                {},
+                [
+                    'class SubTopLevelClass2:',
+                    '    """',
+                    '    Multiline docstring top level class.',
+                    '',
+                    '    This should be captured.',
+                    '    """',
+                ],
             ))
         )
         return

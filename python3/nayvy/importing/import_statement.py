@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 from ..utils.colors import Color
 
+from nayvy.projects.modules.models import Class, Function
+
 
 class ImportAsPart:
 
@@ -352,7 +354,7 @@ class ImportStatement:
         return import_statements
 
 
-@dataclass(frozen=True)
+@dataclass
 class SingleImport:
     """ Domain object for representing import statement list.
 
@@ -360,11 +362,36 @@ class SingleImport:
     - name: for what name is introduced to python's toplevel namespace.
     - statement: just a string import statement to be inserted to buffer.
     - level: import level. ( 0/1/2 ).
+
+    In case the single import statment is picked up from the python project,
+    Class or Function information is also contatained in this instance
+    for the purpose of rendering rich-information in floating window of completion.
     """
 
+    # Required
     name: str
     statement: str
     level: int
+
+    # Optional
+    func: Optional[Function]
+    klass: Optional[Class]
+
+    def __init__(
+        self,
+        name: str,
+        statement: str,
+        level: int,
+        func: Optional[Function] = None,
+        klass: Optional[Class] = None,
+    ) -> None:
+        self.name = name
+        self.statement = statement
+        self.level = level
+
+        self.func = func
+        self.klass = klass
+        return
 
     def to_line(self, color: bool = False) -> str:
         """ Convert object to line selected by fzf
@@ -382,7 +409,69 @@ class SingleImport:
                 self.statement,
             )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def trim_statement(self, statement_trim_width: int) -> str:
+        REPLACEMENT_LEN = 1
+        REPLACEMENT_CHAR = '~'
+        if statement_trim_width <= 0:
+            # Not specified width
+            return self.statement
+        exessive_count = len(self.statement) - statement_trim_width
+        if exessive_count <= 0:
+            # No need for trimming
+            return self.statement
+        trim_count = exessive_count + REPLACEMENT_LEN
+        import_statement = ImportStatement.of(self.statement)
+        if import_statement is None:
+            # Invalid import statement
+            return self.statement
+        return 'from {}{} import {}'.format(
+            import_statement.from_what[:-trim_count],
+            REPLACEMENT_CHAR * REPLACEMENT_LEN,
+            str(import_statement.import_as_parts[0])
+        )
+
+    def signature_to_floating_window(self) -> str:
+        """
+        Represent SingleImport dictionary as a signature help of
+        completion floating window.
+        """
+        if self.func is None and self.klass is None:
+            return (
+                'Import\n'
+                '{}\n'
+                '```python\n'
+                '{}\n'
+                '```\n'
+            ).format(
+                '-' * len(self.statement),
+                self.statement,
+            )
+        if self.func is not None:
+            signature_lines = self.func.signature_lines
+        if self.klass is not None:
+            signature_lines = self.klass.signature_lines
+        return (
+            'Import\n'
+            '{}\n'
+            '```python\n'
+            '{}\n'
+            '```\n'
+            '\n'
+            '{}\n'
+            '```python\n'
+            '{}\n'
+            '```\n'
+        ).format(
+            '-' * len(self.statement),
+            self.statement,
+            '=' * len(self.statement),
+            '\n'.join(signature_lines),
+        )
+
+    def to_dict(
+        self,
+        statement_trim_width: int = -1,
+    ) -> Dict[str, Any]:
         """
         Convert object to dictionary for getting it convertible to
         vim variable automatically.
@@ -390,5 +479,9 @@ class SingleImport:
         return {
             'name': self.name,
             'statement': self.statement,
+            'trimmed_statement': self.trim_statement(statement_trim_width),
             'level': self.level,
+            'info': self.signature_to_floating_window(),
+            'func': self.func.to_dict() if self.func else None,
+            'klass': self.klass.to_dict() if self.klass else None,
         }

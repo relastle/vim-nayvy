@@ -112,10 +112,15 @@ This plugins also provide auto-completion of importable items, follewd by auto-i
 This is thanks to coc's ability to easily creating new coc sources
 [Create custom source · neoclide/coc.nvim Wiki](https://github.com/neoclide/coc.nvim/wiki/Create-custom-source).
 
+You can see how auto-importing is conducted in the GIF below.
+
 ![nayvy_coc](https://user-images.githubusercontent.com/6816040/89722514-38371300-da25-11ea-8af3-7b93643d8a46.gif)
 
+When you auto-complete Class/Function inside the current python project, the signature and docstring will also be shown like this.
 
-You should bundle `neoclide/coc.nvim` as well as `relastle/vim-nayvy`.
+![nayvy_coc_info](https://user-images.githubusercontent.com/6816040/90265780-080ccb80-de8e-11ea-9922-99394018eed5.png)
+
+To use this function, please bundle `neoclide/coc.nvim` as well as `relastle/vim-nayvy`.
 
 ```vim
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -159,9 +164,10 @@ Environment variable -> Vim script variable -> Default variable
 | `g:nayvy_import_path_format`     | `$NAYVY_IMPORT_PATH_FORMAT`     | Define the import statement format when importing the class/function inside the same package. |
 | `g:nayvy_linter_for_fix`         | `$NAYVY_LINTER_FOR_FIX`         | Define the linter to use when autofixing the missing imports or unused imports.               |
 | `g:nayvy_pyproject_root_markers` | `$NAYVY_PYPROJECT_ROOT_MARKERS` | Define marker (filenames) indicating the python project root directory.                       |
+| `g:nayvy_import_config_path`     | `$NAYVY_IMPORT_CONFIG_PATH`     | Define the file path containing your own import statement lines.                              |
 | `g:nayvy_coc_enabled`            | `$NAYVY_COC_ENABLED`            | Define whether coc is enabled (1) or not (0).                                                 |
 | `g:nayvy_coc_completion_icon`    | `$NAYVY_COC_COMPLETION_ICON`    | Define icon rendered in the completion item fron nayvy coc sources.                           |
-| `g:nayvy_import_config_path`     | `$NAYVY_IMPORT_CONFIG_PATH`     | Define the file path containing your own import statement lines.                              |
+| `g:nayvy_coc_menu_max_width`     | `$NAYVY_COC_MENU_MAX_WIDTH`     | Define max length of menu represented in completion menu by the coc source.                   |
 
 #### g:nayvy_import_path_format ($NAYVY_IMPORT_PATH_FORMAT)
 
@@ -169,10 +175,14 @@ Environment variable -> Vim script variable -> Default variable
 - `all_relative` (Prefer all project classes/functions are imported with ***relative*** path.)
 - `under_relative` (Prefer sub-package classes/functions are imported with ***relative*** path and ther other with ***absolute*** path)
 
+> default: `all_absolute`
+
 #### g:nayvy_linter_for_fix ($NAYVY_LINTER_FOR_FIX)
 
 - `pyflakes`
 - `flake8`
+
+> default: `pyflakes`
 
 #### g:nayvy_pyproject_root_markers ($NAYVY_PYPROJECT_ROOT_MARKERS)
 
@@ -193,18 +203,38 @@ Example of environment variable
 export NAYVY_PYPROJECT_ROOT_MARKERS='pyproject.toml,setup.py'  # comma-separated format
 ```
 
+> default: `['pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt']`
+
+#### g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)
+
+see the section below (3.2 Import configration).
+
+> default: ``
+
 #### g:nayvy_coc_enabled ($NAYVY_COC_ENABLED)
 
 - 1: enabled
 - 0: disabled
 
+> default: `1`
+
 #### g:nayvy_coc_completion_icon ($NAYVY_COC_COMPLETION_ICON)
+
+![nayvy_coc_completion_icon](https://user-images.githubusercontent.com/6816040/90264644-5ae58380-de8c-11ea-917b-c1cc24daa1d0.png)
 
 Please set any string as you like 😄.
 
-#### g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)
+> default: ` nayvy`
 
-see the section below (3.2 Import configration).
+#### g:nayvy_coc_menu_max_width ($NAYVY_COC_MENU_MAX_WIDTH)
+
+If the completion menu gets too wide, it may bother you.
+So you can specify the max length of whole import statement.
+If the statement length gets longer than the value, the `from` part of import statement(, which typically tends to be longer) will be trimmed.
+
+![nayvy_coc_completion_menu](https://user-images.githubusercontent.com/6816040/90264634-57ea9300-de8c-11ea-90da-768ada57d660.png)
+
+> default: `-1` (no limit)
 
 ### 3.2 Importing configuration
 
