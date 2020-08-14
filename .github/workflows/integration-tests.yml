@@ -26,7 +26,7 @@ jobs:
         run: |
           python3 --version
           pip3 install -U pip setuptools
-          pip3 install wheel pynvim dataclasses
+          pip3 install wheel pynvim dataclasses pyflakes
           ./vader_test_nvim.sh
 
   # test-vim:
