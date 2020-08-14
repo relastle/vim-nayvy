@@ -8,7 +8,7 @@ on:
       - master
 
 jobs:
-  test:
+  test-nvim:
     name: Integration test on neovim
     strategy:
       matrix:
@@ -25,6 +25,7 @@ jobs:
       - name: Neovim unittest
         run: ./vader_test_nvim.sh
 
+  test-vim:
     name: Integration test on vim
     strategy:
       matrix:
