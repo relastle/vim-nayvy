@@ -202,4 +202,23 @@ class TestSyntacticModuleLoader(unittest.TestCase):
                 ]
             ))
         )
+
+        # Assertion of class with docstring
+        assert (
+            vars(module.class_map['SubTopLevelClass2']) ==
+            vars(Class(
+                'SubTopLevelClass2',
+                34,
+                41,
+                {},
+                [
+                    'class SubTopLevelClass2:',
+                    '    """',
+                    '    Multiline docstring top level class.',
+                    '',
+                    '    This should be captured.',
+                    '    """',
+                ],
+            ))
+        )
         return
