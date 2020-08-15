@@ -2,15 +2,17 @@ import glob
 import shutil
 import subprocess as sp
 from enum import Enum
-from typing import Any, Dict, List, Tuple, Optional, Generator
+from typing import Any, Dict, Generator, List, Optional, Tuple
 from os.path import abspath, dirname, relpath
 from dataclasses import dataclass
 
 from nayvy.projects import get_pyproject_root
 from nayvy.importing.fixer import ImportStatementMap
 from nayvy.projects.modules.loader import ModuleLoader
-from nayvy.projects.modules.models import Class, Module, Function
+from nayvy.projects.modules.models import Class, Function, Module
 from nayvy.importing.import_statement import SingleImport
+
+from nayvy.utils.string_utils import remove_suffix
 
 
 class ImportPathFormat(Enum):
@@ -72,7 +74,7 @@ class ModulePath:
             abspath(pyproject_root),
         )
         return ModulePath(
-            rel_path.replace('/', '.').rstrip('.py'),
+            remove_suffix(rel_path.replace('/', '.'), '.py'),
             mod,
         )
 

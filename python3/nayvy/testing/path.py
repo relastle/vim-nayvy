@@ -1,7 +1,9 @@
 import glob
 from typing import Optional
-from os.path import abspath, relpath, basename
+from os.path import abspath, basename, relpath
 from pathlib import Path
+
+from nayvy.utils.string_utils import remove_prefix
 
 
 def is_test_path(filepath: str) -> bool:
@@ -42,7 +44,7 @@ def test_path_to_impl_path(test_path: str, pyproject_root: str) -> Optional[str]
         Path(pyproject_root) /
         '*' /
         Path(*rel_path.parts[1:-1]) /
-        (rel_path.parts[-1].lstrip('test_'))
+        (remove_prefix(rel_path.parts[-1], 'test_'))
     )
 
     paths = glob.glob(str(impl_glob_path))
