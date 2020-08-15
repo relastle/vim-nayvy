@@ -3,14 +3,15 @@ from os.path import exists, abspath
 from dataclasses import dataclass
 
 import vim  # noqa
+from nayvy.projects import get_pyproject_root
 from nayvy.testing.path import (
     is_test_path,
     impl_path_to_test_path,
     test_path_to_impl_path
 )
-from nayvy.projects.modules.loader import SyntacticModuleLoader
 from nayvy.testing.autogen import AutoGenerator
-from nayvy.projects import get_pyproject_root
+from nayvy.utils.string_utils import remove_prefix
+from nayvy.projects.modules.loader import SyntacticModuleLoader
 from .utils import info, error
 from .config import CONFIG
 
@@ -53,7 +54,8 @@ def get_impl_and_test_paths(filepath: str) -> Optional[Tuple[str, str]]:
     """ check if filepath is a test script and return `impl` and `test` path
     """
     abs_filepath = abspath(filepath)
-    pyproject_root = get_pyproject_root(abs_filepath, CONFIG.pyproject_root_markers)
+    pyproject_root = get_pyproject_root(
+        abs_filepath, CONFIG.pyproject_root_markers)
     if pyproject_root is None:
         return None
     if is_test_path(filepath):
@@ -115,7 +117,7 @@ def nayvy_auto_touch_test() -> None:
 
 def nayvy_test_generate_multiple(fzf_selected_lines: List[str]) -> None:
     func_names = [
-        line.split('::')[1].strip().lstrip('test_')
+        remove_prefix(line.split('::')[1].strip(), 'test_')
         for line in fzf_selected_lines
     ]
     return nayvy_test_generate(func_names)

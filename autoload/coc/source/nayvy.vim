@@ -26,7 +26,6 @@ function! s:nayvy_single_import_to_item(single_import) abort
         \ {
           \ 'word': a:single_import['name'],
           \ 'menu': '(' . a:single_import['trimmed_statement'] . ')',
-          \ 'filterText': a:single_import['statement'],
           \ 'statement': a:single_import['statement'],
           \ 'level': a:single_import['level'],
           \ 'documentation': [{
