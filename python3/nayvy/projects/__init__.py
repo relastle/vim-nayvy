@@ -1,11 +1,13 @@
 from typing import List, Optional
 from os.path import exists, dirname, abspath
 
+DEFAULT_MAX_LOOK_UP_N = 5
+
 
 def _get_root(
     indicators: List[str],
     filepath: str,
-    parents_max_lookup_n: int = 10,
+    parents_max_lookup_n: int = DEFAULT_MAX_LOOK_UP_N,
 ) -> Optional[str]:
     """ get project root defined by `indicator`
     for a given file (directory) path
@@ -28,7 +30,7 @@ def _get_root(
 
 def get_git_root(
     filepath: str,
-    parents_max_lookup_n: int = 10,
+    parents_max_lookup_n: int = DEFAULT_MAX_LOOK_UP_N,
 ) -> Optional[str]:
     """ get git project root
     """
@@ -42,7 +44,7 @@ def get_git_root(
 def get_pyproject_root(
     filepath: str,
     pyproject_root_markers: List[str],
-    parents_max_lookup_n: int = 10,
+    parents_max_lookup_n: int = DEFAULT_MAX_LOOK_UP_N,
 ) -> Optional[str]:
     """ Get python project root
     """
