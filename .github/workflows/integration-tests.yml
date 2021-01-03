@@ -24,8 +24,8 @@ jobs:
           neovim: true
       - name: Add path
         run: |
-          echo "::add-path::/home/runner/.local/bin"
-          echo "::set-env name=XDG_CONFIG_HOME::$(pwd)/config"
+          echo "XDG_CONFIG_HOME=$(pwd)/config" >> $GITHUB_ENV
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
       - name: Neovim test
         run: |
           python3 --version
