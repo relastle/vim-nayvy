@@ -14,34 +14,6 @@
 <a href="https://codecov.io/gh/relastle/vim-nayvy"><img src="https://codecov.io/gh/relastle/vim-nayvy/branch/master/graph/badge.svg" /></a>
 </p>
 
-- [1. Installation](#1-installation)
-- [2. Usage](#2-usage)
-  * [2.1 Commands](#21-commands)
-    + [NayvyImports](#nayvyimports)
-    + [NayvyImportFZF](#nayvyimportfzf)
-    + [NayvyTestGenerate & NayvyTestGenerateFZF](#nayvytestgenerate--nayvytestgeneratefzf)
-  * [2.2 Use with other plugin.](#22-use-with-other-plugin)
-    + [2.2.1 [ALE](https://github.com/dense-analysis/ale)](#221-alehttpsgithubcomdense-analysisale)
-    + [2.2.2 [ultisnips](https://github.com/SirVer/ultisnips)](#222-ultisnipshttpsgithubcomsirverultisnips)
-      - [2.2.2.1 auto import when snippet expansion](#2221-auto-import-when-snippet-expansion)
-      - [2.2.2.2 pydocstring expansion](#2222-pydocstring-expansion)
-    + [2.2.3 [coc.nvim](https://github.com/neoclide/coc.nvim)](#223-cocnvimhttpsgithubcomneoclidecocnvim)
-- [3. Configurations](#3-configurations)
-  * [3.1 Configuration with vim `g:` variable or environment variable.](#31-configuration-with-vim-g-variable-or-environment-variable)
-    + [g:nayvy_import_path_format ($NAYVY_IMPORT_PATH_FORMAT)](#gnayvy_import_path_format-nayvy_import_path_format)
-    + [g:nayvy_linter_for_fix ($NAYVY_LINTER_FOR_FIX)](#gnayvy_linter_for_fix-nayvy_linter_for_fix)
-    + [g:nayvy_pyproject_root_markers ($NAYVY_PYPROJECT_ROOT_MARKERS)](#gnayvy_pyproject_root_markers-nayvy_pyproject_root_markers)
-    + [g:nayvy_import_config_path ($NAYVY_IMPORT_CONFIG_PATH)](#gnayvy_import_config_path-nayvy_import_config_path)
-    + [g:nayvy_coc_enabled ($NAYVY_COC_ENABLED)](#gnayvy_coc_enabled-nayvy_coc_enabled)
-    + [g:nayvy_coc_completion_icon ($NAYVY_COC_COMPLETION_ICON)](#gnayvy_coc_completion_icon-nayvy_coc_completion_icon)
-    + [g:nayvy_coc_menu_max_width ($NAYVY_COC_MENU_MAX_WIDTH)](#gnayvy_coc_menu_max_width-nayvy_coc_menu_max_width)
-  * [3.2 Importing configuration](#32-importing-configuration)
-- [4. Feature roadmap](#4-feature-roadmap)
-- [5. Philosophy](#5-philosophy)
-- [6. Note](#6-note)
-    + [:construction:](#construction)
-- [7. [LICENSE](./LICENSE)](#7-licenselicense)%
-
 ## 1. Installation
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
@@ -94,7 +66,7 @@ And here is demonstrations.
 
 #### 2.2.2 [ultisnips](https://github.com/SirVer/ultisnips)
 
-##### 2.2.2.1 auto import when snippet expansion
+**Auto import when snippet expansion**
 
 `vim-nayvy` provides `auto_import` function used with UltiSnips' snippet.
 UltiSnips provides `post_expand` trigger for each single snippet,
@@ -135,7 +107,7 @@ And here is demonstrations.
 
 ![ultisnips_auto_import_demo](https://user-images.githubusercontent.com/6816040/76824986-00ec7d80-685c-11ea-8945-d7386b3f620f.gif)
 
-##### 2.2.2.2 pydocstring expansion
+**Pydocstring expansionn**
 
 ```
 global !p
