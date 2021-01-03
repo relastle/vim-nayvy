@@ -1,8 +1,8 @@
 """
 Module for manipulating arg (of function)
 """
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
 
 # The code is inspired by https://github.com/honza/vim-snippets

@@ -16,7 +16,7 @@ Expect python (test snippet was expanded):
 
 ===============================================================================
 
-Given python (Test: postfix completion and auto import):
+Given python (Test: post action):
   List
   Dict
 
@@ -28,3 +28,52 @@ Expect python (test snippet was expanded):
   from typing import Dict, List
   List
   Dict
+
+
+===============================================================================
+
+Given python (Test: pydocstring expansion):
+  def test_function(a: str, b: int) -> None:
+      """
+
+Do (Expand):
+  ggjA\<tab>\<c-j>\<c-j>\<c-j>hoge\<esc>
+
+Expect python (test snippet was expanded):
+  def test_function(a: str, b: int) -> None:
+      """
+      description of this function
+
+      Args:
+          a (str): description of a
+          b (int): description of b
+      """
+      hoge
+
+
+===============================================================================
+
+Given python (Test: pydocstring expansion (hardcase)):
+  def test_function(a: str, b: int) -> None:
+
+      def inner_function(c: List[int], d: Dict[str, int]) -> List[Dict[str, Any]]:
+          """
+
+Do (Expand):
+  gg/"""\<cr>A\<tab>\<c-j>\<c-j>\<c-j>\<c-j>hoge\<Esc>
+
+Expect python (test snippet was expanded):
+  def test_function(a: str, b: int) -> None:
+
+      def inner_function(c: List[int], d: Dict[str, int]) -> List[Dict[str, Any]]:
+          """
+          description of this function
+
+          Args:
+              c (List[int]): description of c
+              d (Dict[str, int]): description of d
+
+          Returns:
+              List[Dict[str, Any]]: description of return value
+          """
+          hoge

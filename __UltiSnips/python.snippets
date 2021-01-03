@@ -1,6 +1,7 @@
 global !p
 from nayvy_vim_if.ultisnips import (
 	auto_import,
+	generate_pydocstring,
 )
 endglobal
 
@@ -21,3 +22,8 @@ post_expand "auto_import(snip, 'from typing import Dict', 0)"
 snippet Dict "Dict" w
 Dict
 endsnippet
+
+post_jump "generate_pydocstring(snip)"
+snippet """ "Pydocstring" w
+endsnippet
+

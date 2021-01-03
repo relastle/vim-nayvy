@@ -14,7 +14,6 @@
 <a href="https://codecov.io/gh/relastle/vim-nayvy"><img src="https://codecov.io/gh/relastle/vim-nayvy/branch/master/graph/badge.svg" /></a>
 </p>
 
-
 ## 1. Installation
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
@@ -67,6 +66,8 @@ And here is demonstrations.
 
 #### 2.2.2 [ultisnips](https://github.com/SirVer/ultisnips)
 
+**Auto import when snippet expansion**
+
 `vim-nayvy` provides `auto_import` function used with UltiSnips' snippet.
 UltiSnips provides `post_expand` trigger for each single snippet,
 which executes prerefined command when the snippet is expanded.
@@ -104,7 +105,29 @@ Note that three arguments of `auto_import` are
 
 And here is demonstrations.
 
-![ultisnips_demo](https://user-images.githubusercontent.com/6816040/76824986-00ec7d80-685c-11ea-8945-d7386b3f620f.gif)
+![ultisnips_auto_import_demo](https://user-images.githubusercontent.com/6816040/76824986-00ec7d80-685c-11ea-8945-d7386b3f620f.gif)
+
+**Pydocstring expansionn**
+
+```
+global !p
+from nayvy_vim_if.ultisnips import (
+	generate_pydocstring,
+)
+endglobal
+
+post_jump "generate_pydocstring(snip)"
+snippet """ "Pydocstring" w
+endsnippet
+```
+
+The snippet above enables the pydocstring expansion when the triple-quotes are triggered in a function.
+
+Here is a demonstration.
+
+![nayvy_ultisnips_pydocstring](https://user-images.githubusercontent.com/6816040/103473328-a7e5da00-4dda-11eb-91f8-9fb166cf1a9e.gif)
+
+
 
 #### 2.2.3 [coc.nvim](https://github.com/neoclide/coc.nvim)
 
@@ -279,8 +302,8 @@ Feel free to copy and paste and use it.
 - [x] Generating test functions using [fzf](https://github.com/junegunn/fzf).
 - [x] Providing some domain objects useful in creating [ultisnips](https://github.com/SirVer/ultisnips) snippets.
 - [x] Providing coc custom source which can insert import statement automatically.
+- [x] Utility function of converting function arguments to docstring (for UltiSnips).
 - [ ] Make auto generated Test template configurable. (Now unittest, standard library, is supported)
-- [ ] Utility function of converting function arguments to docstring (for UltiSnips).
 
 ## 5. Philosophy
 

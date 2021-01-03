@@ -2,13 +2,14 @@
 Utility function for ultisnips
 """
 
-from typing import Any, List, Iterable
+from typing import Any, Iterable, List
+from pprint import pformat
 
-from nayvy.importing.utils import (
-    get_first_line_num,
-    get_import_block_indices
-)
+from nayvy.function.func import get_current_func
 from nayvy.importing.import_statement import ImportStatement
+from nayvy.importing.utils import get_first_line_num, get_import_block_indices
+
+from nayvy_vim_if.utils import warning
 
 
 def buf2lines(buf: Iterable[str]) -> List[str]:
@@ -75,4 +76,60 @@ def auto_import(snip: Any, statement: str, level: int) -> None:
         snip.buffer[fitst_line_num:fitst_line_num] = import_lines
     else:
         snip.buffer[begin_end_indices[0][0]:begin_end_indices[-1][-1]] = import_lines
+    return
+
+
+def generate_pydocstring(snip: Any) -> None:
+    """
+    generating pydocstring when the snippet eas expanded.
+    """
+    _ = snip.buffer[snip.line].strip()
+
+    lines = buf2lines(snip.buffer)
+    func = get_current_func(lines, snip.line)
+
+    if not func:
+        warning("Possibly the cursor is outside function.")
+        return
+
+    print(f'func: {pformat(func, indent=2)}')
+
+    # erase current line
+    snip.buffer[snip.line] = ' ' * (func.indent + 4)
+
+    # Preparing anonymous snippet
+    anon_snippet_lines = []
+
+    # Args
+    anon_snippet_lines += [
+        '"""',
+        '${1:description of this function}',
+        '',
+        'Args:',
+    ]
+    anon_snippet_lines += [
+        f'    {arg.name} ({arg.t}): ${{{i+2}:description of {arg.name}}}'
+        for i, arg in enumerate(func.args)
+    ]
+
+    # Returns
+    if not (
+        func.return_type == "None" or
+        func.return_type == "NoReturn"
+    ):
+        anon_snippet_lines += [
+            '',
+            'Returns:',
+            f'    {func.return_type}: ${{{len(func.args)+2}:description of return value}}',  # noqa
+        ]
+
+    anon_snippet_lines += [
+        '"""',
+        '${0}',
+    ]
+    # Expand anonymous snippet
+    snip.expand_anon(
+        '\n'.join(anon_snippet_lines),
+        options='wm',
+    )
     return
