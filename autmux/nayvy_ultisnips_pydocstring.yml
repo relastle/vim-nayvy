@@ -1,0 +1,82 @@
+---
+name: nayvy-scenario
+description: Demonstration of pydocstring using ultisnips
+steps:
+
+  - job: sleep
+    description: Sleep for recording
+    props:
+      sleep-ms: 5000
+
+  - job: send
+    description: launch nvim with tmp buffer
+    props:
+      chars: nvim ./nayvy_demo_project/package/tmp.py
+
+  - job: sleep
+    description: Sleep for launching neovim
+    props:
+      sleep-ms: 2000
+
+  - job: do
+    description: write_python_code
+    props:
+      keystrokes:
+        - 'i'
+        - 'def function_should_be_documented(int_arg: int, str_arg: str) -> List[str]:'
+      key-interval-ms: 50
+
+  - job: do
+    description: expansion
+    props:
+      keystrokes: '"""<C-j>'
+      key-interval-ms: 200
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 600
+
+  - job: do
+    description: fill_placeholder function
+    props:
+      keystrokes: 'Wonderful description for the function you coded!<C-j>'
+      key-interval-ms: 30
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 600
+
+  - job: do
+    description: fill_placeholder arg 1
+    props:
+      keystrokes: 'Snippet placeholder is automatically prepared<C-j>'
+      key-interval-ms: 30
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 600
+
+  - job: do
+    description: fill_placeholder arg 2
+    props:
+      keystrokes: 'You can jump to the next one with the key you set (ctrl-j in my environment)<C-j>'
+      key-interval-ms: 50
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 600
+
+  - job: do
+    description: fill_placeholder return
+    props:
+      keystrokes: 'Return section will be omitted when the type of the return value is `None` or `NoReturn`<C-j>'
+      key-interval-ms: 50
+
+  - job: sleep
+    description: Sleep
+    props:
+      sleep-ms: 4000
