@@ -37,15 +37,18 @@ Given python (Test: pydocstring expansion):
       """
 
 Do (Expand):
-  ggjA\<tab>\<Esc>
+  ggjA\<tab>\<c-j>\<c-j>\<c-j>hoge\<esc>
 
 Expect python (test snippet was expanded):
   def test_function(a: str, b: int) -> None:
       """
+      description of this function
+
       Args:
           a (str): description of a
           b (int): description of b
       """
+      hoge
 
 
 ===============================================================================
@@ -57,13 +60,15 @@ Given python (Test: pydocstring expansion (hardcase)):
           """
 
 Do (Expand):
-  gg/"""\<cr>A\<tab>\<Esc>
+  gg/"""\<cr>A\<tab>\<c-j>\<c-j>\<c-j>\<c-j>hoge\<Esc>
 
 Expect python (test snippet was expanded):
   def test_function(a: str, b: int) -> None:
 
       def inner_function(c: List[int], d: Dict[str, int]) -> List[Dict[str, Any]]:
           """
+          description of this function
+
           Args:
               c (List[int]): description of c
               d (Dict[str, int]): description of d
@@ -71,3 +76,4 @@ Expect python (test snippet was expanded):
           Returns:
               List[Dict[str, Any]]: description of return value
           """
+          hoge

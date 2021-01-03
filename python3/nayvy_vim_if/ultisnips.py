@@ -103,7 +103,7 @@ def generate_pydocstring(snip: Any) -> None:
     # Args
     anon_snippet_lines += [
         '"""',
-        '${1: description of this function}',
+        '${1:description of this function}',
         '',
         'Args:',
     ]
