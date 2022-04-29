@@ -7,7 +7,7 @@ if [[ ! -e ./_ultisnips ]]; then
     git clone https://github.com/SirVer/ultisnips ./_ultisnips
 fi
 
-XDG_CONFIG_HOME="$(pwd)/configs"
+export XDG_CONFIG_HOME="$(pwd)/configs"
 
 vim -Nu <(cat << EOF
 filetype off
