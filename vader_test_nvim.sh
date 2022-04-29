@@ -11,9 +11,9 @@ XDG_CONFIG_HOME="$(pwd)/configs"
 
 nvim -Es -u <(cat << EOF
 filetype off
-set rtp+=$(pwd)/_vader.vim
-set rtp+=$(pwd)/_ultisnips
-set rtp+=$(pwd)
+set runtimepath+=$(pwd)/_vader.vim
+set runtimepath+=$(pwd)/_ultisnips
+set runtimepath+=$(pwd)
 let g:UltiSnipsSnippetDirectories = ['__UltiSnips']
 filetype plugin indent on
 syntax enable

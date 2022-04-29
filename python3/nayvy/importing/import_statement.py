@@ -437,34 +437,28 @@ class SingleImport:
         """
         if self.func is None and self.klass is None:
             return (
-                'Import\n'
-                '{}\n'
                 '```python\n'
                 '{}\n'
                 '```\n'
             ).format(
-                '-' * len(self.statement),
                 self.statement,
             )
         if self.func is not None:
             signature_lines = self.func.signature_lines
-        if self.klass is not None:
+        elif self.klass is not None:
             signature_lines = self.klass.signature_lines
+        else:
+            signature_lines = []
         return (
-            'Import\n'
-            '{}\n'
             '```python\n'
             '{}\n'
             '```\n'
             '\n'
-            '{}\n'
             '```python\n'
             '{}\n'
             '```\n'
         ).format(
-            '-' * len(self.statement),
             self.statement,
-            '=' * len(self.statement),
             '\n'.join(signature_lines),
         )
 

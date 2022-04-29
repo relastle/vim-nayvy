@@ -17,6 +17,7 @@ class Config(BaseConfig):
     import_config_path: str = ''
     # coc.nvim
     coc_enabled: int = 1
+    cmp_enabled: int = 0
     coc_completion_icon: str = ' nayvy'
     coc_menu_max_width: int = -1
 

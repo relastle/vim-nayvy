@@ -191,6 +191,7 @@ Environment variable -> Vim script variable -> Default variable
 | `g:nayvy_coc_enabled`            | `$NAYVY_COC_ENABLED`            | Define whether coc is enabled (1) or not (0).                                                 |
 | `g:nayvy_coc_completion_icon`    | `$NAYVY_COC_COMPLETION_ICON`    | Define icon rendered in the completion item fron nayvy coc sources.                           |
 | `g:nayvy_coc_menu_max_width`     | `$NAYVY_COC_MENU_MAX_WIDTH`     | Define max length of menu represented in completion menu by the coc source.                   |
+| `g:nayvy_cmp_enabled`            | `$NAYVY_CMP_ENABLED`            | Define whether cmp is enabled (1) or not (0).                                                 |
 
 #### g:nayvy_import_path_format ($NAYVY_IMPORT_PATH_FORMAT)
 
