@@ -11,13 +11,13 @@ end
 ---Return this source is available in current context or not. (Optional)
 ---@return boolean
 function source:is_available()
-  return true
+  return vim.bo.filetype == 'python'
 end
 
 ---Return the debug name of this source. (Optional)
 ---@return string
 function source:get_debug_name()
-  return 'debug name'
+  return 'nayvy'
 end
 
 ---Return keyword pattern for triggering completion. (Optional)
