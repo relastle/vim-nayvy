@@ -48,7 +48,7 @@ end
 ---@param params cmp.SourceCompletionApiParams
 ---@param callback fun(response: lsp.CompletionResponse|nil)
 function source:complete(params, callback)
-  local single_imports = vim.fn.pyeval("nayvy_list_imports(80)")
+  local single_imports = vim.fn.py3eval("nayvy_list_imports(80)")
   local res = {}
   for key, single_import in pairs(single_imports) do
     table.insert(res, nayvy_single_import_to_item(single_import))
@@ -72,7 +72,7 @@ end
 ---@param completion_item lsp.CompletionItem
 ---@param callback fun(completion_item: lsp.CompletionItem|nil)
 function source:execute(completion_item, callback)
-  vim.fn.pyeval(string.format("nayvy_import_stmt('%s', %s)", completion_item.statement, completion_item.level))
+  vim.fn.py3eval(string.format("nayvy_import_stmt('%s', %s)", completion_item.statement, completion_item.level))
   callback(completion_item)
 end
 
