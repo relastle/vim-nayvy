@@ -41,7 +41,7 @@ def parse_pyflakes_output(
 
 class PyflakesResult:
 
-    PYFLAKES_LINE_RE = r'(?P<filepath>[^:]+):(?P<row>\d+):(?P<column>\d+)? (?P<error_msg>.*)'  # noqa
+    PYFLAKES_LINE_RE = r'(?P<filepath>[^:]+):(?P<row>\d+):(?P<column>\d+)?:? (?P<error_msg>.*)'  # noqa
     PYFLAKES_UNUSED_MSG_RE = r"'(?P<target>.*)' imported but unused"
     PYFLAKES_UNDEFINED_MSG_RE = r"undefined name '(?P<target>.*)'"
 
