@@ -31,7 +31,7 @@ jobs:
           python3 --version
           pip3 install -U pip setuptools
           pip3 install wheel pynvim dataclasses ruff
-          pyflakes --version
+          ruff --version
           ./vader_test_nvim.sh
 
   # test-vim:
