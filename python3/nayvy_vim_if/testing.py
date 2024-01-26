@@ -188,8 +188,6 @@ def nayvy_test_generate(func_names: List[str] = []) -> None:
         info('Test function already exists')
 
     # search lines
-    row: int
-    column: int
     for i, line in enumerate(test_module_lines):
         needle = f'def test_{func_name}'
         if needle in line:

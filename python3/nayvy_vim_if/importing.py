@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Generator, List, Optional, Tuple
 
 import vim  # noqa
-from nayvy.importing.fixer import (Fixer, ImportStatementMap, LintEngine,
-                                   LinterForFix)
+from nayvy.importing.fixer import Fixer, ImportStatementMap, LintEngine, LinterForFix
 from nayvy.importing.flake8 import Flake8Engine
 from nayvy.importing.import_config import ImportConfig
 from nayvy.importing.import_statement import ImportStatement, SingleImport
@@ -14,6 +13,7 @@ from nayvy.projects.path import ProjectImportHelper, ProjectImportHelperBuilder
 
 from .config import CONFIG
 from .utils import error, warning
+from nayvy.importing.ruff import RuffEngine
 
 
 @dataclass(frozen=True)
@@ -70,7 +70,9 @@ def nayvy_fix_lines(lines: List[str]) -> Optional[List[str]]:
     if stmt_map is None:
         return lines
     linter: LintEngine
-    if CONFIG.linter_for_fix == LinterForFix.PYFLAKES:
+    if CONFIG.linter_for_fix == LinterForFix.RUFF:
+        linter = RuffEngine()
+    elif CONFIG.linter_for_fix == LinterForFix.PYFLAKES:
         linter = PyflakesEngine()
     elif CONFIG.linter_for_fix == LinterForFix.FLAKE8:
         linter = Flake8Engine()

@@ -1,10 +1,11 @@
 import re
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
-
-from ..utils.colors import Color
+from typing import Any, Dict, List, Optional
+from pprint import pformat
 
 from nayvy.projects.modules.models import Class, Function
+
+from ..utils.colors import Color
 
 
 class ImportAsPart:
@@ -159,7 +160,10 @@ class ImportStatement:
 
     def removed(self, import_name: str) -> Optional['ImportStatement']:
         if self.from_what == '':
-            if self._import_as_parts[0].import_name == import_name:
+            # ignore the difference between following two variations
+            # ruff: `pprint.pprint` imported but unused
+            # pyflakes: 'pprint.pprint as pp' imported but unused
+            if self._import_as_parts[0].import_name.split()[0] == import_name.split()[0]:
                 return None
             else:
                 return ImportStatement(
@@ -171,7 +175,7 @@ class ImportStatement:
             if not '{}.{}'.format(
                 self.from_what,
                 import_as_part.import_name
-            ) == import_name:
+            ).split()[0] == import_name.split()[0]:
                 res_import_as_parts.append(import_as_part)
         if not res_import_as_parts:
             return None
