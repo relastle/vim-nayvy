@@ -202,10 +202,11 @@ Environment variable -> Vim script variable -> Default variable
 
 #### g:nayvy_linter_for_fix ($NAYVY_LINTER_FOR_FIX)
 
+- `ruff`
 - `pyflakes`
 - `flake8`
 
-> default: `pyflakes`
+> default: `ruff`
 
 #### g:nayvy_pyproject_root_markers ($NAYVY_PYPROJECT_ROOT_MARKERS)
 

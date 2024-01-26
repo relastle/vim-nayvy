@@ -4,16 +4,17 @@ Fix the python lines of code dependent on Linter result
 
 import subprocess as sp
 from abc import ABCMeta, abstractmethod
-from enum import Enum
-from typing import Any, List, Tuple, Optional, Generator
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Generator, List, Optional, Tuple
 
+from .import_statement import ImportStatement, SingleImport
 from .utils import get_first_line_num, get_import_block_indices
-from .import_statement import SingleImport, ImportStatement
 
 
 class LinterForFix(Enum):
 
+    RUFF = 'ruff'
     PYFLAKES = 'pyflakes'
     FLAKE8 = 'flake8'
 
@@ -159,7 +160,6 @@ class Fixer:
         unused_imports, undefined_names = self.lint_engine.parse_output(
             lint_output,
         )
-
         if not unused_imports and not undefined_names:
             # If there is no problem, return None
             # for prevent vim from updating buffer.
