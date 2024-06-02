@@ -53,9 +53,9 @@ class ReactiveTestModule:
                 '',
                 '',
                 f'class {class_name}(unittest.TestCase):',
-                f'',
+                '',
                 f'    def {func_name}(self) -> None:',
-                f'        return',
+                '        return',
 
             ]
         else:
@@ -63,7 +63,7 @@ class ReactiveTestModule:
             self.lines[target_line:target_line] = [
                 '',
                 f'    def {func_name}(self) -> None:',
-                f'        return',
+                '        return',
             ]
 
         self.__refresh()

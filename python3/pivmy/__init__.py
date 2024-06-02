@@ -87,7 +87,7 @@ def _from_vim_config_int_list(
     if config_var.vim_variable_value:
         try:
             var = config_var.vim_variable_value
-            assert all(type(i) == int for i in var)
+            assert all(isinstance(i, int) for i in var)
         except Exception:
             print(f'[Nayvy Error] Global Variable g:{config_var.vim_variable_name} should be list of interger', file=sys.stderr)  # noqa
             return default
@@ -126,8 +126,8 @@ def _from_vim_config_str_list(
     if config_var.vim_variable_value:
         try:
             var = config_var.vim_variable_value
-            assert type(var) == list
-            assert all(type(s) == str for s in var)
+            assert isinstance(var, list)
+            assert all(isinstance(s, str) for s in var)
         except Exception:
             print(f'[Nayvy Error] Global Variable g:{config_var.vim_variable_name} should be list of string', file=sys.stderr)  # noqa
             return default
@@ -163,7 +163,7 @@ def _from_vim_config_enum(
 class BaseConfig:
 
     import_path_format: ImportPathFormat = ImportPathFormat.ALL_RELATIVE
-    linter_for_fix: LinterForFix = LinterForFix.PYFLAKES
+    linter_for_fix: LinterForFix = LinterForFix.RUFF
     pyproject_root_markers: List[str] = ['pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt']  # noqa
 
     @classmethod
