@@ -1,17 +1,16 @@
 import glob
 import shutil
 import subprocess as sp
-from enum import Enum
-from typing import Any, Dict, Generator, List, Optional, Tuple
-from os.path import abspath, dirname, relpath
 from dataclasses import dataclass
+from enum import Enum
+from os.path import abspath, dirname, relpath
+from typing import Any, Dict, Generator, List, Optional, Tuple
 
-from nayvy.projects import get_pyproject_root
 from nayvy.importing.fixer import ImportStatementMap
+from nayvy.importing.import_statement import SingleImport
+from nayvy.projects import get_pyproject_root, get_pythonpath_roots
 from nayvy.projects.modules.loader import ModuleLoader
 from nayvy.projects.modules.models import Class, Function, Module
-from nayvy.importing.import_statement import SingleImport
-
 from nayvy.utils.string_utils import remove_suffix
 
 
@@ -37,7 +36,7 @@ def get_pyproject_root_wrapper(
 
 @dataclass(frozen=True)
 class ModulePath:
-    """ Represent one module.
+    """Represent one module.
 
     - Content of module
     - Path within python project
@@ -47,12 +46,8 @@ class ModulePath:
     mod: Module
 
     def get_import(self, name: str) -> Optional[str]:
-        """ Get import statement string.
-        """
-        if (
-            name not in self.mod.function_map and
-            name not in self.mod.class_map
-        ):
+        """Get import statement string."""
+        if name not in self.mod.function_map and name not in self.mod.class_map:
             return None
         return f'from {self.mod_path} import {name}'
 
@@ -63,8 +58,7 @@ class ModulePath:
         filepath: str,
         pyproject_root: str,
     ) -> Optional['ModulePath']:
-        """ Constructing ModulePath object from script filepath.
-        """
+        """Constructing ModulePath object from script filepath."""
         mod = loader.load_module_from_path(filepath)
         if mod is None:
             return None
@@ -84,7 +78,7 @@ def mod_relpath(
     base_modpath: str,
     import_path_format: ImportPathFormat,
 ) -> str:
-    """ Get relative path to `target_modpath` from `base_modpath`
+    """Get relative path to `target_modpath` from `base_modpath`
 
     i.g.
         Args:
@@ -108,16 +102,10 @@ def mod_relpath(
         if target_elm != base_elm:
             break
         common_elm_num += 1
-    if (
-        (len(base_path_elms) - common_elm_num) >= 2 and
-        import_path_format == ImportPathFormat.UNDER_RELATIVE
-    ):
+    if (len(base_path_elms) - common_elm_num) >= 2 and import_path_format == ImportPathFormat.UNDER_RELATIVE:
         return target_modpath
 
-    return (
-        '.' * (len(base_path_elms) - common_elm_num) +
-        '.'.join(target_path_elms[common_elm_num:])
-    )
+    return '.' * (len(base_path_elms) - common_elm_num) + '.'.join(target_path_elms[common_elm_num:])
 
 
 def find_all_pythno_paths(root: str) -> List[str]:
@@ -157,8 +145,7 @@ def find_all_pythno_paths(root: str) -> List[str]:
 
 @dataclass
 class ProjectImportHelper(ImportStatementMap):
-    """ Importing helper that providing import within project.
-    """
+    """Importing helper that providing import within project."""
 
     _import_stmt_map: Dict[str, SingleImport]
 
@@ -168,14 +155,11 @@ class ProjectImportHelper(ImportStatementMap):
 
     # Override
     def items(self) -> Generator[Tuple[str, SingleImport], Any, Any]:
-        return (
-            (k, v) for k, v in self._import_stmt_map.items()
-        )
+        return ((k, v) for k, v in self._import_stmt_map.items())
 
 
 @dataclass(frozen=True)
 class ProjectImportHelperBuilder:
-
     current_filepath: str
     loader: ModuleLoader
     import_path_format: ImportPathFormat
@@ -221,15 +205,13 @@ class ProjectImportHelperBuilder:
         import_stmt_map: Dict[str, SingleImport] = {}
         for modpath in all_modpaths:
             for name, func in modpath.mod.function_map.items():
-                self._add_stmt(import_stmt_map, current_modpath,
-                               modpath, name, func, None)
+                self._add_stmt(import_stmt_map, current_modpath, modpath, name, func, None)
             for name, klass in modpath.mod.class_map.items():
-                self._add_stmt(import_stmt_map, current_modpath,
-                               modpath, name, None, klass)
+                self._add_stmt(import_stmt_map, current_modpath, modpath, name, None, klass)
         return import_stmt_map
 
     def build(self) -> Optional[ProjectImportHelper]:
-        # Python project detection
+        # Current project detection
         pyproject_root = get_pyproject_root_wrapper(
             self.current_filepath,
             self.pyproject_root_markers,
@@ -247,23 +229,31 @@ class ProjectImportHelperBuilder:
         if current_modpath is None:
             return None
 
-        # Get all modules in the same python project
-        all_python_script_paths = find_all_pythno_paths(pyproject_root)
-        maybe_all_modpaths = [
-            ModulePath.of_filepath(
-                self.loader,
-                _filepath,
-                pyproject_root,
-            ) for _filepath in all_python_script_paths
-        ]
-        # Filter out None and self.
+        # Get all modules from the current project and PYTHONPATH
         all_modpaths: List[ModulePath] = []
-        for modpath in maybe_all_modpaths:
-            if modpath is None:
-                continue
-            if modpath.mod_path == current_modpath.mod_path:
-                continue
-            all_modpaths.append(modpath)
-        stmt_map = self.make_map(current_modpath, all_modpaths)
 
+        # Add modules from current project
+        project_paths = [pyproject_root]
+        # Add modules from PYTHONPATH
+        project_paths.extend(get_pythonpath_roots())
+
+        for root in project_paths:
+            python_script_paths = find_all_pythno_paths(root)
+            maybe_modpaths = [
+                ModulePath.of_filepath(
+                    self.loader,
+                    _filepath,
+                    root,
+                )
+                for _filepath in python_script_paths
+            ]
+            # Filter out None and self
+            for modpath in maybe_modpaths:
+                if modpath is None:
+                    continue
+                if modpath.mod_path == current_modpath.mod_path:
+                    continue
+                all_modpaths.append(modpath)
+
+        stmt_map = self.make_map(current_modpath, all_modpaths)
         return ProjectImportHelper(stmt_map)
