@@ -5,9 +5,8 @@ from .fixer import LintEngine
 
 
 class RuffEngine(LintEngine):
-
     def get_cmd_piped(self) -> str:
-        return 'ruff check -'
+        return 'ruff check --output-format pylint -'
 
     def get_cmd_filepath(self, file_path: str) -> str:
         return 'ruff {}'.format(file_path)
@@ -40,10 +39,9 @@ def parse_ruff_output(
 
 
 class RuffResult:
-
     RUFF_LINE_RE = r'(?P<filepath>[^:]+):(?P<row>\d+):(?P<column>\d+)?:? \S+ (\[\*\] )?(?P<error_msg>.*)'  # noqa
-    RUFF_UNUSED_MSG_RE = r"`(?P<target>.*)` imported but unused"
-    RUFF_UNDEFINED_MSG_RE = r"Undefined name `(?P<target>.*)`"
+    RUFF_UNUSED_MSG_RE = r'`(?P<target>.*)` imported but unused'
+    RUFF_UNDEFINED_MSG_RE = r'Undefined name `(?P<target>.*)`'
 
     @property
     def filepath(self) -> str:
